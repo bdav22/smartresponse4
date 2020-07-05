@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "489186438681",
+    "firebase_url": "https://brew-crew-47c55.firebaseio.com",
+    "project_id": "brew-crew-47c55",
+    "storage_bucket": "brew-crew-47c55.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489186438681:android:eb1764db77ba6f17dc0488",
+        "android_client_info": {
+          "package_name": "com.davenporttechnologies.smartresponse4"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "489186438681-vurir12rn05f3lv4u256gq57j50edjsf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGciyJJT8tjAdi4U7pnn6NSoks6aXAfi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "489186438681-vurir12rn05f3lv4u256gq57j50edjsf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
