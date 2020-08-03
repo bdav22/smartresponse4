@@ -1,5 +1,5 @@
 name: smartresponse4
-description: A new Flutter application.
+description: Smart Response Emergency Communication Application
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -21,20 +21,26 @@ dependencies:
     sdk: flutter
   geolocator: ^5.3.2+2
   cupertino_icons: ^0.1.2
-  firebase_auth: ^0.14.0+5
+  firebase_auth: ^0.16.1
   cloud_firestore: ^0.12.9+4
   provider: ^3.1.0
   flutter_spinkit: ^4.1.2+1
   google_maps_flutter: ^0.5.21+15
-  firebase_core: ^0.4.0+6
+  firebase_core: ^0.4.5
   location: ^2.3.5
   permission: ^0.1.7
+  firebase_messaging: ^6.0.16
+  background_locator: ^1.1.11+1
+  location_permissions: ^3.0.0
+  path_provider: ^1.6.5
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  path_provider: ^1.6.5
+  location_permissions: ^3.0.0
 
 
 # For information on the generic Dart part of this file, see the
@@ -49,7 +55,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-
+  assets:
+    - assets/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

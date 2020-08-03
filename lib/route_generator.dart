@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:smartresponse4/FirstPage.dart';
 import 'package:smartresponse4/Settings.dart';
 import 'package:smartresponse4/chat.dart';
-import 'package:smartresponse4/home.dart';
-import 'package:smartresponse4/main.dart';
 import 'package:smartresponse4/ICS.dart';
-
-
+import 'package:smartresponse4/google_map.dart';
+import 'package:smartresponse4/authenticate.dart';
+import 'package:smartresponse4/locator_example.dart';
 
 
 
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    final args = settings.arguments;
-
+    //final args = settings.arguments;
     switch (settings.name) {
       case '/chat':
         return MaterialPageRoute(builder: (_) => Chat());
 
       case'/FirstPage':
-        return MaterialPageRoute(builder: (_) => FirstPage());
+        return MaterialPageRoute(builder: (_) => MyMapPage());
+        // return MaterialPageRoute(builder: (_) => MyMapPage());
 
 
       case '/ICS':
@@ -36,7 +34,7 @@ class RouteGenerator {
 
 
 
-
+/*
         if (args is String) {
           return MaterialPageRoute(
             builder: (_) => ICS(),
@@ -49,8 +47,10 @@ class RouteGenerator {
             builder: (_) => Chat(),
           );
         }
-
+*/
 
     }
+
+    return MaterialPageRoute(builder: (_) => Authenticate());
   }
 }

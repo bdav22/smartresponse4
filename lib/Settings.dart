@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/user.dart';
-import 'package:smartresponse4/loading.dart';
 import 'package:provider/provider.dart';
+import 'package:smartresponse4/loading.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class Settings extends StatefulWidget {
@@ -30,8 +31,9 @@ class _SettingsState extends State<Settings> {
       child: StreamBuilder<UserData>(
           stream: DatabaseService(uid: user.uid).userData,
           builder: (context, snapshot) {
-            if(snapshot.hasData){
+            if(snapshot.hasData) {
               UserData userData = snapshot.data;
+              //snapshot.hasData ? snapshot.data : UserData(name: "", rank: "", department: "");
               return Form(
                 key: _formKey,
                 child: Column(
@@ -44,23 +46,36 @@ class _SettingsState extends State<Settings> {
                     SizedBox(height: 40.0),
                     TextFormField(
                       initialValue: userData.name,
-                      decoration: textInputDecoration.copyWith(hintText: 'Name'),
-                      validator: (val) => val.isEmpty ? 'Please enter a name' : null,
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'Name'),
+                      validator: (val) =>
+                      val.isEmpty
+                          ? 'Please enter a name'
+                          : null,
                       onChanged: (val) => setState(() => _currentName = val),
                     ),
                     SizedBox(height: 10.0),
                     TextFormField(
                       initialValue: userData.rank,
-                      decoration: textInputDecoration.copyWith(hintText: 'Rank'),
-                      validator: (val) => val.isEmpty ? 'Please enter a rank' : null,
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'Rank'),
+                      validator: (val) =>
+                      val.isEmpty
+                          ? 'Please enter a rank'
+                          : null,
                       onChanged: (val) => setState(() => _currentRank = val),
                     ),
                     SizedBox(height: 10.0),
                     TextFormField(
                       initialValue: userData.department,
-                      decoration: textInputDecoration.copyWith(hintText: 'Department'),
-                      validator: (val) => val.isEmpty ? 'Please enter a department' : null,
-                      onChanged: (val) => setState(() => _currentDepartment = val),
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'Department'),
+                      validator: (val) =>
+                      val.isEmpty
+                          ? 'Please enter a department'
+                          : null,
+                      onChanged: (val) =>
+                          setState(() => _currentDepartment = val),
                     ),
                     SizedBox(height: 40.0),
                     RaisedButton(
@@ -70,11 +85,12 @@ class _SettingsState extends State<Settings> {
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {
-                          if(_formKey.currentState.validate()){
+                          if (_formKey.currentState.validate()) {
                             await DatabaseService(uid: user.uid).updateUserData(
                                 _currentName ?? snapshot.data.name,
                                 _currentRank ?? snapshot.data.rank,
-                                _currentDepartment ?? snapshot.data.department
+                                _currentDepartment ?? snapshot.data.department,
+                                EmailStorage.instance.email
                             );
                             Navigator.pop(context);
                           }
@@ -86,16 +102,19 @@ class _SettingsState extends State<Settings> {
                         'Back',
                         style: TextStyle(color: Colors.white),
                       ),
-                      onPressed: () async{
+                      onPressed: () async {
                         Navigator.pop(context);
                       },
                     )
                   ],
                 ),
               );
-            } else {
-              return Loading();
             }
+              else {
+                DatabaseService(uid: user.uid).createDBProfile();
+                return Loading();
+              }
+
           }
       ),
     );

@@ -16,11 +16,11 @@ class ProfileTile extends StatelessWidget {
         child: ListTile(
           leading: CircleAvatar(
             radius: 25.0,
-            backgroundColor: Colors.blue,
-            backgroundImage: AssetImage('assets/StarOfLife.jpg'),
+            backgroundColor: Colors.green,
+           //backgroundImage: AssetImage('assets/StarOfLife.jpg'),
           ),
-          title: Text(profile.name),
-          subtitle: Text(' ${profile.rank} '),
+          title: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(profile.name), Text(profile.email) ] ),
+          subtitle: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(' ${profile.rank} '), Text(profile.department) ] ),
         ),
       ),
     );

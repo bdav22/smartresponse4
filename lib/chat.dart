@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-
-
+import 'package:flutter/scheduler.dart';
+import 'package:smartresponse4/user.dart';
+import 'package:smartresponse4/profile_tile.dart';
+import 'package:smartresponse4/profile.dart';
 
 
 
@@ -12,9 +14,7 @@ import 'package:flutter/foundation.dart';
 
 
 class Chat extends StatefulWidget {
-  final FirebaseUser user;
-
-  const Chat({Key key, this.user}) : super(key: key);
+  const Chat({Key key}) : super(key: key);
 
   @override
   _ChatState createState() => _ChatState();
@@ -23,25 +23,37 @@ class Chat extends StatefulWidget {
 class _ChatState extends State<Chat> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _firestore = Firestore.instance;
+  final EmailStorage es = EmailStorage.instance;
 
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
 
-  Future<void> callback() async {
+  Future<void> sendMessageCallback() async {
     if (messageController.text.length > 0) {
+      FirebaseUser user = await _auth.currentUser();
+      //print("log this: "+  messageController.text + " " + user_email);
       await
       _firestore.collection('messages').add({
         'text': messageController.text,
-        'from': widget.user.email,
+        'from': EmailStorage.instance.userData.name,
+        'from-uid': user.uid,
+        'sent': FieldValue.serverTimestamp()
       });
       messageController.clear();
+
       scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
+        scrollController.position.minScrollExtent,
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 300),
       );
     }
   }
+
+  @override
+  void initState() {
+    super.initState();
+   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +67,7 @@ class _ChatState extends State<Chat> {
           children: <Widget>[
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore.collection('messages').snapshots(),
+                stream: _firestore.collection('messages').orderBy('sent', descending: true).snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData)
                     return Center(
@@ -68,11 +80,14 @@ class _ChatState extends State<Chat> {
                       .map((doc) => Message(
                     from: doc.data['from'],
                     text: doc.data['text'],
-                    me: widget.user.email == doc.data['from'],
+                    sent: doc.data['sent'],
+                    uid: doc.data['from-uid'],
+                    me: doc.data['from-uid'] == es.uid,
                   ))
                       .toList();
 
                   return ListView(
+                    reverse: true,
                     controller: scrollController,
                     children: [
                       ...messages,
@@ -85,7 +100,7 @@ class _ChatState extends State<Chat> {
               children: <Widget>[
                 Expanded(
                   child: TextField(
-                    onSubmitted: (value) => callback(),
+                    onSubmitted: (value) => sendMessageCallback(),
                     decoration: InputDecoration(
                       hintText: "Enter a Message...",
                       border: const OutlineInputBorder(),
@@ -95,7 +110,7 @@ class _ChatState extends State<Chat> {
                 ),
                 SendButton(
                   text: "Send",
-                  callback: callback,
+                  callback: sendMessageCallback,
                 )
               ],
             ),
@@ -126,20 +141,37 @@ class SendButton extends StatelessWidget {
 class Message extends StatelessWidget {
   final String from;
   final String text;
-
+  final Timestamp sent;
+  final String uid;
   final bool me;
 
-  const Message({Key key, this.from, this.text, this.me}) : super(key: key);
+  const Message({Key key, this.from, this.text, this.sent, this.uid, this.me}) : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return
+      GestureDetector(
+        onTap: () async {
+          Profile p = await getProfile(this.uid);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: p)));
+        },
+    child: Container(
       child: Column(
         crossAxisAlignment: me ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            from,
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  from,
+                ),
+                Text (
+                  //sent?.toDate()?.toLocal()?.toString() ?? "broken date",
+                  sent?.toDate()?.toLocal()?.toString()?.substring(0,19) ?? "BROKEN DATE",
+                  style: TextStyle(color: Colors.blueGrey),
+                )
+              ]
           ),
           Material(
             color: me ? Colors.teal : Colors.red,
@@ -147,13 +179,12 @@ class Message extends StatelessWidget {
             elevation: 6.0,
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-              child: Text(
-                text,
-              ),
+              child: Text( text ),
             ),
           ),
         ],
       ),
-    );
+    )
+      );
   }
 }

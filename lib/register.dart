@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/auth.dart';
 import 'package:smartresponse4/constants.dart';
-import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/loading.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smartresponse4/database.dart';
 
 class Register extends StatefulWidget {
 
@@ -78,11 +79,16 @@ class _RegisterState extends State<Register> {
                   if (_formKey.currentState.validate()) {
                     setState(() => loading = true);
                     dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-                    if(result == null) {
+                    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+                    if(user == null) {
                       setState(() {
-                        error = 'please supply a valid email';
+                        error = 'Please supply valid credentials.';
                         loading = false;
                       });
+                    }
+                    else {
+                      await DatabaseService(uid: user.uid).createDBProfile();
+                      print("Pushing to firebase - new profile");
                     }
                   }
                 },

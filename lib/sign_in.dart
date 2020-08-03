@@ -3,12 +3,8 @@ import 'package:smartresponse4/auth.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/loading.dart';
 
-
-
 class SignIn extends StatefulWidget {
 
-  String email;
-  String password;
 
 
   final Function toggleView;
@@ -23,9 +19,6 @@ class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
-
-
-
   // text field state
   String email = '';
   String password = '';
@@ -83,7 +76,9 @@ class _SignInState extends State<SignIn> {
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
                     setState(() => loading = true);
-                    dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                    debugPrint('email: $email password: $password');
+                    dynamic result = await _auth.signInWithEmailAndPassword(email.trim(), password);
+                    //dynamic result = await _auth.signInAnon();
                     if(result == null){
                       setState(() {
                         loading = false;

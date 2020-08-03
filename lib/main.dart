@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/auth.dart';
-
 import 'package:smartresponse4/route_generator.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/wrapper.dart';
@@ -36,3 +34,5 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NewPage extends StatelessWidget {
-  var title;
+  final title;
 
 
   NewPage(this.title);

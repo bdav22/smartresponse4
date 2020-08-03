@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/register.dart';
 import 'package:smartresponse4/sign_in.dart';
-import 'package:smartresponse4/register.dart';
 
 class Authenticate extends StatefulWidget {
   @override

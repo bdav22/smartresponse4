@@ -5,16 +5,35 @@ import 'package:smartresponse4/database.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/profile_list.dart';
+import 'package:smartresponse4/user.dart';
+import 'package:smartresponse4/wrapper.dart';
+
+class Home extends StatefulWidget {
+  const Home({Key key}) : super(key: key);
+  @override
+  _HomeState createState() => _HomeState();
+}
 
 
-class Home extends StatelessWidget {
+class _HomeState extends State<Home> {
 
   final AuthService _auth = AuthService();
+  UserData userData;
+  EmailStorage _es;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _es = EmailStorage.instance;
+    userData = _es.userData;
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
-
+    final p = ProfileInfo.of(context);
 
     return StreamProvider<List<Profile>>.value(
       value: DatabaseService().profiles,
@@ -24,11 +43,16 @@ class Home extends StatelessWidget {
             padding: EdgeInsets.zero,
             children: <Widget>[
               UserAccountsDrawerHeader(
-                accountName: Text('Ben Davenport'),
-                accountEmail: Text('bendavenport333@gmail.com'),
+
+                accountName:
+                  Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.name), Text(p.profile.email + " ") ] ),
+            //Text(EmailStorage.instance.userData.name),
+                accountEmail: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.rank), Text(p.profile.department + " ") ] ),
+                key: UniqueKey(),
+                //Text(EmailStorage.instance.email),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Theme.of(context).platform == TargetPlatform.iOS ?Colors.white: null,
-                  child: Text('B'),
+                  child: Text(p.profile.name.length > 0 ? p.profile.name[0] : "D"),
                 ),
               ),
               Divider(),
@@ -44,7 +68,7 @@ class Home extends StatelessWidget {
                 leading: Icon(Icons.chat),
                 title: Text('Chat'),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/chat', arguments: 'Hello');
+                  Navigator.of(context).pushNamed('/chat', arguments: 'hello');
                 },
               ),
               Divider(),
@@ -95,7 +119,7 @@ class Home extends StatelessWidget {
         body: Container(
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('assets/StarOfLife.jpg'),
+                    image: AssetImage('assets/StarOfLife.png'),
                     fit: BoxFit.scaleDown
                 )
             ),
