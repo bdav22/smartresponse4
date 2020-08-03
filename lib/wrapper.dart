@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/authenticate.dart';
-import 'package:smartresponse4/home.dart';
+import 'package:smartresponse4/scene_home.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/loading.dart';
@@ -72,14 +72,14 @@ class _WrapperState extends State<Wrapper> {
                         rank:  snapshot.data["rank"],
                         department: snapshot.data["department"]);
                   }
-                  return ProfileInfo(profile: p, child: Home()); //snapshot.data tihs snapshot data is actually a profileinfo fully filled in
+                  return ProfileInfo(profile: p, child: SceneHome()); //snapshot.data tihs snapshot data is actually a profileinfo fully filled in
                 }
                 else {
                   return Loading();
                 }
               }
             ); //ProfileInfo( profile: p, child: const Home());
-            return Home();
+            return SceneHome();
           } else {
             return Scaffold(
               body: Center (

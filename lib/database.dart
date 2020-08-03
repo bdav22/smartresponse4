@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/user.dart';
+import 'package:smartresponse4/scene_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseService {
@@ -10,6 +11,7 @@ class DatabaseService {
 
   // collection reference
   final CollectionReference profileCollection = Firestore.instance.collection('profiles');
+  final CollectionReference sceneCollection = Firestore.instance.collection('scenes');
 
   Future createDBProfile() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
@@ -57,12 +59,26 @@ class DatabaseService {
     }).toList();
   }
 
+
+  List<Scene> _sceneListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc){
+      return Scene(
+          location: doc.data['location'] ?? '',
+          created: doc.data['created'] ?? '',
+          desc: doc.data['desc'],
+      );
+    }).toList();
+  }
+
   //get profiles stream
   Stream<List<Profile>> get profiles {
     return profileCollection.snapshots()
         .map(_profileListFromSnapshot);
   }
 
+  Stream<List<Scene>> get scenes {
+    return sceneCollection.snapshots().map(_sceneListFromSnapshot);
+  }
 
 
 
