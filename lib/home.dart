@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
                 leading: Icon(Icons.map),
                 title: Text('Map'),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/FirstPage', arguments: 'Hello');
+                  Navigator.of(context).pushNamed('/MyMapPage');
                 },
               ),
               Divider(),

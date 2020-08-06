@@ -4,7 +4,7 @@ import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/loading.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 
 
 class Settings extends StatefulWidget {

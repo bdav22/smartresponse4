@@ -36,13 +36,6 @@ dependencies:
 
 
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  path_provider: ^1.6.5
-  location_permissions: ^3.0.0
-
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

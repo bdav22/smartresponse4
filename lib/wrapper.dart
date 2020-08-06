@@ -79,7 +79,7 @@ class _WrapperState extends State<Wrapper> {
                 }
               }
             ); //ProfileInfo( profile: p, child: const Home());
-            return SceneHome();
+            //return SceneHome();
           } else {
             return Scaffold(
               body: Center (

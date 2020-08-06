@@ -1,12 +1,12 @@
 import 'dart:async';
-//import 'dart:ffi';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-//import 'package:permission/permission.dart';
+import 'package:smartresponse4/scene.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,8 +26,9 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
 
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title, this.scene}) : super(key: key);
   final String title;
+  final Scene scene;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -38,6 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Location _locationTracker = Location();
   Marker marker;
   Circle circle;
+
   GoogleMapController _controller;
 
   static final CameraPosition initialLocation = CameraPosition(

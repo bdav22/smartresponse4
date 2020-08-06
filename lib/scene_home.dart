@@ -3,17 +3,11 @@ import 'package:smartresponse4/auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:provider/provider.dart';
-import 'package:smartresponse4/profile.dart';
+import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/scene_list.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/wrapper.dart';
 
-class Scene {
-  final location;
-  final created;
-  final desc;
-   Scene ({this.location, this.created, this.desc});
-}
 
 
 class SceneHome extends StatefulWidget {
@@ -68,7 +62,7 @@ class _SceneHomeState extends State<SceneHome> {
                 leading: Icon(Icons.map),
                 title: Text('Map'),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/FirstPage', arguments: 'Hello');
+                  Navigator.of(context).pushNamed('/MyMapPage');
                 },
               ),
               Divider(),

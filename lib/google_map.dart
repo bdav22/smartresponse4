@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:typed_data';
 import 'dart:isolate';
 import 'dart:ui';
@@ -8,12 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:permission/permission.dart';
 import 'package:smartresponse4/loading.dart';
+import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:background_locator/background_locator.dart';
-import 'package:background_locator/location_dto.dart';
 import 'package:background_locator/location_settings.dart';
 import 'package:location_permissions/location_permissions.dart' as location_permissions;
 
@@ -39,9 +37,9 @@ class MapPage extends StatelessWidget {
 }
 
 class MyMapPage extends StatefulWidget {
-  MyMapPage({Key key, this.title}) : super(key: key);
+  MyMapPage({Key key, this.title, this.scene}) : super(key: key);
   final String title;
-
+  final Scene scene;
   @override
   _MyMapPageState createState() => _MyMapPageState();
 }
@@ -50,7 +48,7 @@ class _MyMapPageState extends State<MyMapPage> {
   StreamSubscription _locationSubscription;
   Location _locationTracker = Location();
   LatLng _currentLocation = LatLng(38.9, -76.3);
-  LatLng _lastLocation =LatLng(38.9, -76.3);
+  LatLng _lastLocation = LatLng(38.9, -76.3);
   bool _bgLocationOn = false;
   Marker _pin;
   Marker marker;
@@ -59,15 +57,24 @@ class _MyMapPageState extends State<MyMapPage> {
   bool _trackerOn = false;
   bool _cameraTrackerOn = false;
   bool _placeMarkerOn = false;
-
+  static CameraPosition initialLocation;
   //Background_locator
-  static const _isolateName = "LocatorIsolateDARTE";
   ReceivePort port = ReceivePort(); //isolate import
 
   @override
   void initState() {
     super.initState();
-
+    if(widget.scene != null) {
+      initialLocation = CameraPosition(
+        target: LatLng(widget.scene.location.latitude, widget.scene.location.longitude),
+        zoom: 18,
+      );
+    } else {
+      initialLocation = CameraPosition(
+        target: _currentLocation,
+        zoom: 10,
+      );
+    }
 
     if (IsolateNameServer.lookupPortByName(
         LocationServiceRepository.isolateName) !=
@@ -100,10 +107,7 @@ class _MyMapPageState extends State<MyMapPage> {
 
 
 
-  static final CameraPosition initialLocation = CameraPosition(
-    target: LatLng(38.9, -76.3),
-    zoom: 10,
-  );
+
 
   Future<Uint8List> getMarker() async {
     ByteData byteData =
@@ -145,15 +149,6 @@ class _MyMapPageState extends State<MyMapPage> {
     }
   }
 
-  static Future<void> callback(LocationDto locationDto) async {
-    final SendPort send = IsolateNameServer.lookupPortByName(_isolateName);
-    print('location in googlemapdart: ${locationDto.toString()}');
-
-    GeoPoint geoPoint = GeoPoint(locationDto.latitude, locationDto.longitude);
-    print("pushing to firestore: " + EmailStorage.instance.uid);
-    await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({'location': geoPoint});
-    send?.send(locationDto);
-  }
 
 
   void toggleBGLocation() async {
@@ -358,12 +353,13 @@ class _MyMapPageState extends State<MyMapPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Marker> indvidual_markers = [];
+    List<Marker> indvidualMarkers = [];
+
     if(_pin != null) {
-      indvidual_markers.add(_pin);
+      indvidualMarkers.add(_pin);
     }
     if(marker != null) {
-      indvidual_markers.add(marker);
+      indvidualMarkers.add(marker);
     }
     return Scaffold(
         appBar: AppBar(
@@ -382,7 +378,7 @@ class _MyMapPageState extends State<MyMapPage> {
               position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
             )
         ).toList();
-        markers.addAll(indvidual_markers);
+        markers.addAll(indvidualMarkers);
         return Container(
           child: GoogleMap(
             mapType: MapType.hybrid,

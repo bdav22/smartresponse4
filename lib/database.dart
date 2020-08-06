@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/user.dart';
-import 'package:smartresponse4/scene_home.dart';
+import 'package:smartresponse4/scene.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseService {
