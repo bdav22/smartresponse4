@@ -81,7 +81,6 @@ class DatabaseService {
   }
 
 
-
 //get user doc stream
   Stream<UserData> get userData {
     return profileCollection.document(uid).snapshots()

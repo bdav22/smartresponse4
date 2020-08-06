@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
+import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/loading.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
@@ -57,6 +59,8 @@ class _MyMapPageState extends State<MyMapPage> {
   bool _trackerOn = false;
   bool _cameraTrackerOn = false;
   bool _placeMarkerOn = false;
+  BitmapDescriptor starOfLifeIcon, fireTruckIcon, fireIcon;
+
   static CameraPosition initialLocation;
   //Background_locator
   ReceivePort port = ReceivePort(); //isolate import
@@ -76,6 +80,8 @@ class _MyMapPageState extends State<MyMapPage> {
       );
     }
 
+    setCustomMapPin();
+
     if (IsolateNameServer.lookupPortByName(
         LocationServiceRepository.isolateName) !=
         null) {
@@ -94,6 +100,9 @@ class _MyMapPageState extends State<MyMapPage> {
     initPlatformState();
   }
 
+
+
+
   Future<void> initPlatformState() async {
     print('Initializing...');
     await BackgroundLocator.initialize();
@@ -104,7 +113,23 @@ class _MyMapPageState extends State<MyMapPage> {
     print('Running ${_isRunning.toString()}');
   }
 
+  void setCustomMapPin() async {
+    starOfLifeIcon = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(devicePixelRatio: 2.5),
+      'assets/car_icon.png'
+    );
 
+    fireTruckIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/firetruck50.png'
+    );
+
+    fireIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio:
+        2.5),
+        'assets/fire50.png'
+    );
+  }
 
 
 
@@ -367,19 +392,33 @@ class _MyMapPageState extends State<MyMapPage> {
         ),
         body: Stack(
           children: <Widget>[
-    StreamBuilder<QuerySnapshot>(
-    stream: Firestore.instance.collection("profiles").snapshots(),
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        List<DocumentSnapshot> docs = snapshot.data.documents;
-        List<Marker> markers = docs.map(
-                (doc) => Marker(
-              markerId: MarkerId(doc.documentID),
-              position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
-            )
-        ).toList();
-        markers.addAll(indvidualMarkers);
-        return Container(
+        StreamProvider<List<Scene>>.value(
+            value: DatabaseService().scenes,
+            child: StreamBuilder<QuerySnapshot>(
+               stream: Firestore.instance.collection("profiles").snapshots(),
+                builder: (context, snapshot) {
+                 if (snapshot.hasData) {
+                    List<DocumentSnapshot> docs = snapshot.data.documents;
+                    List<Marker> markers = docs.map(
+                            (doc) => Marker(
+                          markerId: MarkerId(doc.documentID),
+                          position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
+                              icon: fireTruckIcon,
+                        )
+                    ).toList();
+                    final scenes = Provider.of<List<Scene>>(context) ?? [];
+                    List<Marker> sceneMarkers = [];
+                    for ( Scene scene in scenes ){
+                     sceneMarkers.add(Marker(
+                       markerId: MarkerId(scene.desc),
+                       position: LatLng(scene.location.latitude, scene.location.longitude),
+                       icon: fireIcon,)
+                     );
+                    }
+                    markers.addAll(sceneMarkers);
+                    markers.addAll(indvidualMarkers);
+
+                  return Container(
           child: GoogleMap(
             mapType: MapType.hybrid,
             initialCameraPosition: initialLocation,
@@ -400,8 +439,9 @@ class _MyMapPageState extends State<MyMapPage> {
       return Loading();
     }
     ),
-    ],
         ),
+          ],
+    ),
         floatingActionButton: Row(
             mainAxisAlignment: MainAxisAlignment.center,
 
