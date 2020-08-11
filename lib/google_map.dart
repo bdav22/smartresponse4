@@ -8,8 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:smartresponse4/choose_marker.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/loading.dart';
+import 'package:smartresponse4/marker_data.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:geolocator/geolocator.dart';
@@ -59,7 +61,9 @@ class _MyMapPageState extends State<MyMapPage> {
   bool _trackerOn = false;
   bool _cameraTrackerOn = false;
   bool _placeMarkerOn = false;
+  MyMarker selectedPlacingMarker;
   BitmapDescriptor starOfLifeIcon, fireTruckIcon, fireIcon;
+  MarkerData mymarkers;
 
   static CameraPosition initialLocation;
   //Background_locator
@@ -118,17 +122,23 @@ class _MyMapPageState extends State<MyMapPage> {
       ImageConfiguration(devicePixelRatio: 2.5),
       'assets/car_icon.png'
     );
+    MyMarker star = MyMarker(iconBitmap: starOfLifeIcon, image: Image.asset('assets/car_icon.png'), commonName: "Star of Life");
+
 
     fireTruckIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 2.5),
         'assets/firetruck50.png'
     );
+    MyMarker truck = MyMarker(iconBitmap: fireTruckIcon, image: Image.asset('assets/firetruck50.png'), commonName: "Fire Engine");
 
     fireIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio:
         2.5),
         'assets/fire50.png'
     );
+    MyMarker fire = MyMarker(iconBitmap: fireIcon, image: Image(image: AssetImage('assets/fire50.png')), commonName: "Fire/Flames");
+    mymarkers = MarkerData(star: star, truck: truck, fire: fire);
+    selectedPlacingMarker = star; //default marker placing
   }
 
 
@@ -260,8 +270,9 @@ class _MyMapPageState extends State<MyMapPage> {
 
 
   void togglePlaceMarker() async {
+
     setState(() {
-      _placeMarkerOn = !_placeMarkerOn;
+          _placeMarkerOn = !_placeMarkerOn;
     });
   }
 
@@ -272,8 +283,8 @@ class _MyMapPageState extends State<MyMapPage> {
     }
   }
 
-  void addMarker(LatLng latlng) async {
-    Uint8List imageData = await getMarker();
+  void addMarker(LatLng latlng) { //removed async here...no longer needed? - may need to add it back to add to fire base
+  //    Uint8List imageData = await getMarker();
     setState(() {
         _pin = Marker(
             markerId: MarkerId("pin"),
@@ -282,7 +293,7 @@ class _MyMapPageState extends State<MyMapPage> {
             draggable: false,
             zIndex: 2,
             anchor: Offset(0.5, 0.5),
-            icon: BitmapDescriptor.fromBytes(imageData));
+            icon: selectedPlacingMarker.iconBitmap);
         _placeMarkerOn = false;
     });
 
@@ -466,7 +477,17 @@ class _MyMapPageState extends State<MyMapPage> {
                   child: Icon(Icons.navigation),
                   heroTag: null,
                   backgroundColor: (_placeMarkerOn ? Colors.blue : Colors.grey),
-                  onPressed: () {
+                  onPressed: () async {
+
+                    if(!_placeMarkerOn) { // it is about to be toggled on
+                      selectedPlacingMarker = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>
+                            ChooseMarker(markers: mymarkers)),
+                      );
+                      print("User selected the following marker: " +
+                          selectedPlacingMarker.commonName);
+                    }
                     togglePlaceMarker();
                   }),
               SizedBox(width: 20),
