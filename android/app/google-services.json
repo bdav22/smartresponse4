@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "597360606337",
+    "firebase_url": "https://smartresponse4.firebaseio.com",
+    "project_id": "smartresponse4",
+    "storage_bucket": "smartresponse4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597360606337:android:13aae8e3c95ee10ed1a180",
+        "android_client_info": {
+          "package_name": "com.davenporttechnologies.smartresponse4"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "597360606337-b03q5r7oh8n0i9go385egt867hce8m3v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVJCr6G2_cwuGFNAUc63jSe6UwQnaUQZ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "597360606337-b03q5r7oh8n0i9go385egt867hce8m3v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
