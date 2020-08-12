@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/marker_data.dart';
+import 'package:smartresponse4/marker_description.dart';
 
 class ChooseMarker extends StatelessWidget {
   final MarkerData markers;
@@ -19,7 +20,13 @@ class ChooseMarker extends StatelessWidget {
                 ListTile(
               leading: markers.markerList[index].image,
               title: Text(markers.markerList[index].commonName),
-                    onTap: () {
+                  onTap: () async {
+                     String desc = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                         MarkerDescription()),
+                    );
+                      markers.markerList[index].desc = desc;
                       Navigator.pop(context, markers.markerList[index]);
                     },
             )
