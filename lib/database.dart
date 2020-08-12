@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartresponse4/marker_data.dart';
 import 'package:smartresponse4/profile.dart';
@@ -118,6 +119,10 @@ class DatabaseService {
               zIndex: 2,
               anchor: Offset(0.5, 0.5),
               icon: myIcon,
+              infoWindow: InfoWindow(
+                title: doc?.data['desc'] ?? "Description Empty",
+                //snippet: "stuff is here"
+              )
       );
     }).toList();
   }
@@ -144,7 +149,7 @@ class DatabaseService {
   }
 
   Stream<List<Scene>> get scenes {
-    return sceneCollection.snapshots().map(_sceneListFromSnapshot);
+    return sceneCollection.orderBy('created', descending: true).snapshots().map(_sceneListFromSnapshot);
   }
 
 

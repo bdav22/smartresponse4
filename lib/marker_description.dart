@@ -1,0 +1,58 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:smartresponse4/constants.dart';
+
+
+class MarkerDescription extends StatelessWidget {
+
+  // form values
+  final myController = TextEditingController();
+
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Container(
+          padding:  EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
+          decoration: new BoxDecoration(color: Colors.blue),
+        child: Form(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 40.0),
+            Text(
+              'Give Information For this Marker:',
+              style: TextStyle(fontSize: 18.0),
+            ),
+            SizedBox(height: 40.0),
+            TextFormField(
+                controller: myController,
+                decoration: textInputDecoration.copyWith(
+                hintText: 'Enter your Marker Description'),
+            ),
+            SizedBox(height: 40.0),
+            RaisedButton(
+            color: Colors.blue[400],
+            child: Text(
+            'Submit Description',
+            style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () async {
+              String text = myController.text;
+              print("text: " + text);
+              Navigator.pop(context, text);
+            }
+            ),
+
+        ]),
+        )
+      ),
+    );
+
+  }
+
+
+}

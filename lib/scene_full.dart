@@ -52,11 +52,7 @@ class FullSceneTile extends StatelessWidget {
             margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
             child: Column(children: <Widget>[
               ListTile(
-                leading: CircleAvatar(
-                  radius: 25.0,
-                  backgroundColor: Colors.green,
-                  //backgroundImage: AssetImage('assets/StarOfLife.jpg'),
-                ),
+
                 title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[

@@ -9,6 +9,7 @@ class MyMarker {
   Image image;
   String commonName;
   String shortName;
+  String desc;
 }
 
 

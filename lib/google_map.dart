@@ -287,7 +287,7 @@ class _MyMapPageState extends State<MyMapPage> {
   //    Uint8List imageData = await getMarker();
     setState(() {
 
-        DatabaseService().addDBMarker(selectedPlacingMarker.shortName, latlng);
+        DatabaseService().addDBMarker(selectedPlacingMarker.shortName, latlng, desc: selectedPlacingMarker.desc);
         _pin = Marker(
             markerId: MarkerId("pin"),
             position: latlng,
@@ -297,7 +297,7 @@ class _MyMapPageState extends State<MyMapPage> {
             anchor: Offset(0.5, 0.5),
             icon: selectedPlacingMarker.iconBitmap);
         _placeMarkerOn = false;
-        individualMarkers.add(_pin);
+        //individualMarkers.add(_pin);
     });
 
 
@@ -392,6 +392,8 @@ class _MyMapPageState extends State<MyMapPage> {
     super.dispose();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -429,6 +431,7 @@ class _MyMapPageState extends State<MyMapPage> {
                                   markerId: MarkerId(doc.documentID),
                                   position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
                                   icon: fireTruckIcon,
+                                      infoWindow: InfoWindow(title: doc['name'], snippet: doc['department']),
                                 )
                             ).toList();
 
@@ -437,10 +440,14 @@ class _MyMapPageState extends State<MyMapPage> {
                               sceneMarkers.add(Marker(
                                 markerId: MarkerId(scene.desc),
                                 position: LatLng(scene.location.latitude, scene.location.longitude),
-                                icon: fireIcon,)
+                                icon: fireIcon,
+                                infoWindow: InfoWindow(title: "Reported Alert", snippet: scene.desc),
+                              )
                               );
                             }
 
+                            //List<Marker> updatedMarkers = updateAllMarkers(markersDB);
+                            //                            markers.addAll(updatedMarkers);
 
                             markers.addAll(markersDB);
                             markers.addAll(sceneMarkers);
@@ -510,7 +517,7 @@ class _MyMapPageState extends State<MyMapPage> {
                             ChooseMarker(markers: myMarkers)),
                       );
                       print("User selected the following marker: " +
-                          selectedPlacingMarker.commonName);
+                          selectedPlacingMarker.commonName + " -- " + selectedPlacingMarker.desc);
                     }
                     togglePlaceMarker();
                   }),
@@ -526,131 +533,3 @@ class _MyMapPageState extends State<MyMapPage> {
     );
   }
 }
-
-/*import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:smartresponse4/loading.dart';
-
-
-class MapPage extends StatefulWidget {
-  @override
-  _MapPageState createState() => _MapPageState();
-}
-
-class _MapPageState extends State<MapPage> {
-
-  bool mapToggle = false;
-
-  var currentLocation;
-  var lastLocation;
-
-  GoogleMapController mapController;
-
-  void initState() {
-    super.initState();
-
-    var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
-
-      print("init state updates?");
-    //StreamSubscription<Position> positionStream =
-
-       Geolocator().getPositionStream(locationOptions).listen(
-            (Position position) {
-          print(position == null ? 'Unknown' : 'pos: ' + position.latitude.toString() + ', ' + position.longitude.toString());
-          setState(() { currentLocation = position; });
-        });
-
-
-    Geolocator().getCurrentPosition().then((currloc) {
-      print("when is this called?");
-      print(currloc);
-      setState(() {
-        currentLocation = currloc;
-        mapToggle = true;
-      });
-    });
-  }
-
-  void getLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print('p2: ' + position.toString());
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Map'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Stack(
-            children: <Widget>[
-              StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance.collection("profiles").snapshots(),
-              builder: (context, snapshot) {
-                if(snapshot.hasData) {
-                  if(lastLocation != currentLocation) {
-                    lastLocation = currentLocation;
-                    //Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({'location': lastLocation});
-                  }
-                  List<DocumentSnapshot> docs = snapshot.data.documents;
-                  List<Marker> markers = docs.map(
-                      (doc) => Marker(
-                        markerId: MarkerId(doc.documentID),
-                        position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
-                      )
-                  ).toList();
-
-                  //for(var i = 0; i < markers.length; i++) {
-                  //  print(markers[i].position.latitude);
-                  //}
-
-                  return Container(
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height - 80.0,
-                      width: double.infinity,
-                      child: mapToggle ?
-                      GoogleMap(
-                        initialCameraPosition: CameraPosition(target: LatLng(
-                            currentLocation.latitude,
-                            currentLocation.longitude), zoom: 10),
-                        onMapCreated: onMapCreated,
-                        myLocationEnabled: true,
-                        markers: markers.toSet(),
-                        mapType: MapType.hybrid,
-                      ) :
-                      Center(child:
-                      Text('Loading.. Please wait..',
-                        style: TextStyle(
-                            fontSize: 20.0
-                        ),))
-                  );
-                }
-                else {
-                  return Loading();
-                  }
-                }
-                ),
-            ]
-          )
-        ],
-      ),
-    );
-  }
-
-  void onMapCreated(GoogleMapController controller) {
-    setState(() {
-      mapController = controller;
-    });
-  }
-}
-
-
- */
