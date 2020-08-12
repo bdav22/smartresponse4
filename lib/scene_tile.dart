@@ -78,10 +78,10 @@ class SceneTile extends StatelessWidget {
 
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
+          borderRadius: BorderRadius.circular(11.0),
           side: BorderSide(
-            color: Colors.black,
-            width: 1.0,
+            color: Colors.grey[700],
+            width: 2.0,
           ),
         ),
         elevation: 15,
@@ -90,11 +90,7 @@ class SceneTile extends StatelessWidget {
         child: Column (
     children: <Widget>[
       ListTile(
-          leading: CircleAvatar(
-            radius: 25.0,
-            backgroundColor: Colors.green,
-           //backgroundImage: AssetImage('assets/StarOfLife.jpg'),
-          ),
+
           title: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
             Text(scene.created.toDate().toLocal().toString().substring(0,16)),
             FutureBuilder<String>(

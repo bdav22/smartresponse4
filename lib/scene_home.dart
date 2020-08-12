@@ -123,10 +123,9 @@ class _SceneHomeState extends State<SceneHome> {
             decoration: BoxDecoration(
                 color: Colors.blue,
                 gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    colors: [Colors.red[100], Colors.blue[100]]),
-
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.redAccent[700], Colors.blueAccent[400]]),
             ),
             child: SceneList()),
       ),
