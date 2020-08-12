@@ -4,10 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MyMarker {
-  MyMarker({this.iconBitmap, this.image, this.commonName});
+  MyMarker({this.iconBitmap, this.image, this.commonName, this.shortName});
   BitmapDescriptor iconBitmap;
   Image image;
   String commonName;
+  String shortName;
 }
 
 

@@ -122,10 +122,11 @@ class _SceneHomeState extends State<SceneHome> {
 
             decoration: BoxDecoration(
                 color: Colors.blue,
-                image: DecorationImage(
-                    image: AssetImage('assets/StarOfLife.png'),
-                    fit: BoxFit.scaleDown
-                )
+                gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [Colors.red[100], Colors.blue[100]]),
+
             ),
             child: SceneList()),
       ),

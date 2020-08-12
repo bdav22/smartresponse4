@@ -57,15 +57,36 @@ class SceneTile extends StatelessWidget {
     }
   }
 
+  BoxDecoration myBoxDecoration() {
+    return BoxDecoration(
+      border: Border.all(
+          width: 2.0
+      ),
+      borderRadius: BorderRadius.all(
+          Radius.circular(10.0) //         <--- border radius here
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
     return Padding(
       padding: EdgeInsets.only(top: 8.0),
+        child: Container(
+          margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
 
       child: Card(
-        shadowColor: Colors.red,
-        margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+          side: BorderSide(
+            color: Colors.black,
+            width: 1.0,
+          ),
+        ),
+        elevation: 15,
+        shadowColor: Colors.black,
+        //margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
         child: Column (
     children: <Widget>[
       ListTile(
@@ -110,6 +131,7 @@ class SceneTile extends StatelessWidget {
       ]
       ),
       )
+    )
     );
   }
 }

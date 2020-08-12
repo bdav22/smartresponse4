@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
-import 'package:smartresponse4/choose_marker.dart';
+import 'package:smartresponse4/marker_chooser.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/loading.dart';
 import 'package:smartresponse4/marker_data.dart';
@@ -63,7 +63,8 @@ class _MyMapPageState extends State<MyMapPage> {
   bool _placeMarkerOn = false;
   MyMarker selectedPlacingMarker;
   BitmapDescriptor starOfLifeIcon, fireTruckIcon, fireIcon;
-  MarkerData mymarkers;
+  MarkerData myMarkers;
+  List<Marker> individualMarkers = [];
 
   static CameraPosition initialLocation;
   //Background_locator
@@ -122,22 +123,21 @@ class _MyMapPageState extends State<MyMapPage> {
       ImageConfiguration(devicePixelRatio: 2.5),
       'assets/car_icon.png'
     );
-    MyMarker star = MyMarker(iconBitmap: starOfLifeIcon, image: Image.asset('assets/car_icon.png'), commonName: "Star of Life");
+    MyMarker star = MyMarker(iconBitmap: starOfLifeIcon, image: Image.asset('assets/car_icon.png'), commonName: "Star of Life", shortName: "star");
 
 
     fireTruckIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 2.5),
         'assets/firetruck50.png'
     );
-    MyMarker truck = MyMarker(iconBitmap: fireTruckIcon, image: Image.asset('assets/firetruck50.png'), commonName: "Fire Engine");
+    MyMarker truck = MyMarker(iconBitmap: fireTruckIcon, image: Image.asset('assets/firetruck50.png'), commonName: "Fire Engine", shortName: "truck");
 
     fireIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio:
-        2.5),
+        ImageConfiguration(size: Size(100,100)), //TODO: this doesn't seem to work?
         'assets/fire50.png'
     );
-    MyMarker fire = MyMarker(iconBitmap: fireIcon, image: Image(image: AssetImage('assets/fire50.png')), commonName: "Fire/Flames");
-    mymarkers = MarkerData(star: star, truck: truck, fire: fire);
+    MyMarker fire = MyMarker(iconBitmap: fireIcon, image: Image(image: AssetImage('assets/fire50.png')), commonName: "Fire/Flames", shortName: "fire");
+    myMarkers = MarkerData(star: star, truck: truck, fire: fire);
     selectedPlacingMarker = star; //default marker placing
   }
 
@@ -286,6 +286,8 @@ class _MyMapPageState extends State<MyMapPage> {
   void addMarker(LatLng latlng) { //removed async here...no longer needed? - may need to add it back to add to fire base
   //    Uint8List imageData = await getMarker();
     setState(() {
+
+        DatabaseService().addDBMarker(selectedPlacingMarker.shortName, latlng);
         _pin = Marker(
             markerId: MarkerId("pin"),
             position: latlng,
@@ -295,7 +297,10 @@ class _MyMapPageState extends State<MyMapPage> {
             anchor: Offset(0.5, 0.5),
             icon: selectedPlacingMarker.iconBitmap);
         _placeMarkerOn = false;
+        individualMarkers.add(_pin);
     });
+
+
 
   }
 
@@ -389,70 +394,89 @@ class _MyMapPageState extends State<MyMapPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Marker> indvidualMarkers = [];
+
 
     if(_pin != null) {
-      indvidualMarkers.add(_pin);
+      individualMarkers.add(_pin);
     }
-    if(marker != null) {
-      indvidualMarkers.add(marker);
-    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text("Map Tracker"),
         ),
         body: Stack(
           children: <Widget>[
-        StreamProvider<List<Scene>>.value(
-            value: DatabaseService().scenes,
-            child: StreamBuilder<QuerySnapshot>(
-               stream: Firestore.instance.collection("profiles").snapshots(),
-                builder: (context, snapshot) {
-                 if (snapshot.hasData) {
-                    List<DocumentSnapshot> docs = snapshot.data.documents;
-                    List<Marker> markers = docs.map(
-                            (doc) => Marker(
-                          markerId: MarkerId(doc.documentID),
-                          position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
-                              icon: fireTruckIcon,
-                        )
-                    ).toList();
-                    final scenes = Provider.of<List<Scene>>(context) ?? [];
-                    List<Marker> sceneMarkers = [];
-                    for ( Scene scene in scenes ){
-                     sceneMarkers.add(Marker(
-                       markerId: MarkerId(scene.desc),
-                       position: LatLng(scene.location.latitude, scene.location.longitude),
-                       icon: fireIcon,)
-                     );
-                    }
-                    markers.addAll(sceneMarkers);
-                    markers.addAll(indvidualMarkers);
+            FutureBuilder<MarkerData>(
+              future: DatabaseService().getCustomMarkers(),
+              builder: (BuildContext context, AsyncSnapshot<MarkerData> markersData) {
+                if(markersData.hasData) {
+                 return StreamProvider<List<Marker>>.value(
+                  value: DatabaseService().markers(markersData.data),
+                  updateShouldNotify: (_, __) => true,
+                  child: StreamProvider<List<Scene>>.value(
+                    value: DatabaseService().scenes,
+                    updateShouldNotify: (_, __) => true,
+                    child: StreamBuilder<QuerySnapshot>(
+                        stream: Firestore.instance.collection("profiles").snapshots(),
+                        builder: (context, snapshot) {
+                          final scenes = Provider.of<List<Scene>>(context) ?? [];
+                          final markersDB = Provider.of<List<Marker>>(context) ?? [];
+                          print(markersDB.length);
+                          if (snapshot.hasData) {
+                            List<DocumentSnapshot> docs = snapshot.data.documents;
+                            List<Marker> markers = docs.map(
+                                    (doc) => Marker(
+                                  markerId: MarkerId(doc.documentID),
+                                  position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
+                                  icon: fireTruckIcon,
+                                )
+                            ).toList();
 
-                  return Container(
-          child: GoogleMap(
-            mapType: MapType.hybrid,
-            initialCameraPosition: initialLocation,
-            markers: markers?.toSet() ?? Set.of([marker]),
-            circles: Set.of((circle != null) ? [circle] : []),
-            onTap: (latlng) {
-              if (_placeMarkerOn) {
-                addMarker(latlng);
-                print('${latlng.latitude}, ${latlng.longitude}');
-              }
-            },
-            onMapCreated: (GoogleMapController controller) {
-              _controller = controller;
-            },
-          ),
-        );
-      }
-      return Loading();
-    }
-    ),
-        ),
-          ],
-    ),
+                            List<Marker> sceneMarkers = [];
+                            for ( Scene scene in scenes ){
+                              sceneMarkers.add(Marker(
+                                markerId: MarkerId(scene.desc),
+                                position: LatLng(scene.location.latitude, scene.location.longitude),
+                                icon: fireIcon,)
+                              );
+                            }
+
+
+                            markers.addAll(markersDB);
+                            markers.addAll(sceneMarkers);
+                            markers.addAll(individualMarkers);
+
+                            return Container(
+                              child: GoogleMap(
+                                mapType: MapType.hybrid,
+                                initialCameraPosition: initialLocation,
+                                markers: markers?.toSet() ?? Set.of([marker]),
+                                circles: Set.of((circle != null) ? [circle] : []),
+                                onTap: (latlng) {
+                                  if (_placeMarkerOn) {
+                                    addMarker(latlng);
+                                    print('${latlng.latitude}, ${latlng.longitude}');
+                                  }
+                                },
+                                onMapCreated: (GoogleMapController controller) {
+                                  _controller = controller;
+                                },
+                              ),
+                            );
+                          } //snapshot has data
+                          return Loading();
+                        }
+                    ),
+                  ),
+                );
+                } else {
+                     return Text("Loading...");
+                  }
+                }
+                ),
+
+                ],
+                ),
         floatingActionButton: Row(
             mainAxisAlignment: MainAxisAlignment.center,
 
@@ -483,7 +507,7 @@ class _MyMapPageState extends State<MyMapPage> {
                       selectedPlacingMarker = await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) =>
-                            ChooseMarker(markers: mymarkers)),
+                            ChooseMarker(markers: myMarkers)),
                       );
                       print("User selected the following marker: " +
                           selectedPlacingMarker.commonName);
