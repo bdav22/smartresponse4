@@ -25,7 +25,9 @@ dependencies:
   cloud_firestore: ^0.12.9+4
   provider: ^3.1.0
   flutter_spinkit: ^4.1.2+1
-  google_maps_flutter: ^0.5.21+15
+  #google_maps_flutter: ^0.5.21+15
+  google_maps_flutter: ^0.5.30
+  maps_launcher: ^1.2.2+1
   location: ^2.3.5
   permission: ^0.1.7
   background_locator: ^1.1.11+1

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:smartresponse4/marker_data.dart';
 //const apiKey = "AIzaSyB5A4tFZas3BSzgNiRmQ0Hk84U_khFuUAI";
 const apiKey = "AIzaSyAVr8ZnuAgE-DHim24vpsyHEnIevcFladc";
 
@@ -34,8 +36,11 @@ class GoogleMapsRoutes {
     _polyLines.add(Polyline(
         polylineId: PolylineId(latLng.toString()),
         width: 4,
-        points: _convertToLatLng(_decodePoly(encodedPoly)),  color: Colors.red)
-    );
+        points: _convertToLatLng(_decodePoly(encodedPoly)),
+        color: Colors.red,
+        startCap: Cap.roundCap,
+        endCap: Cap.squareCap //TODO: caps aren't implemented in the google_maps_flutter edition, add markers at end points?
+    ));
     return _polyLines;
   }
 }

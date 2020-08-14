@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/scene_tile.dart';
 import 'package:geolocator/geolocator.dart';
@@ -92,7 +93,8 @@ class FullSceneTile extends StatelessWidget {
                   child: const Text('Respond to This'),
                   onPressed: () {
                         Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
-                        Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
+                        //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
+                        MapsLauncher.launchQuery('105 Valley Road Chestertown, Md 21620, USA');
                   },
                 )
               ])
