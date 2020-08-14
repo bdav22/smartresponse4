@@ -94,7 +94,7 @@ class FullSceneTile extends StatelessWidget {
                   onPressed: () {
                         Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
                         //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
-                        MapsLauncher.launchQuery('105 Valley Road Chestertown, Md 21620, USA');
+                        MapsLauncher.launchQuery(scene.location.toString());
                   },
                 )
               ])
