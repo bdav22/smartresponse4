@@ -8,6 +8,7 @@ class FullSceneTile extends StatelessWidget {
   FullSceneTile({this.scene});
 
   Future<String> getLocality(Scene scene, {int version=0}) async {
+//    return "1234567890abcefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz";
     List<Placemark> places = await Geolocator().placemarkFromCoordinates(
         scene.location.latitude, scene.location.longitude);
     //print(places[0].toString() + " " + places[0].locality +  " " + places[0].administrativeArea);
@@ -56,12 +57,17 @@ class FullSceneTile extends StatelessWidget {
                 title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(0, 16) ?? "---"),
+                      Padding (
+                        padding: EdgeInsets.fromLTRB(0,0,10,0),
+                        child: Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
+                          style: TextStyle(color: Colors.blue)
+                        ),
+                      ),
                       FutureBuilder<String>(
                           future: getLocality(scene),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              return Text(snapshot.data);
+                              return Flexible(child: Text(snapshot.data, overflow: TextOverflow.ellipsis) );
                             } else {
                               return Text("location");
                             }
@@ -69,7 +75,7 @@ class FullSceneTile extends StatelessWidget {
                     ]),
                 subtitle: Text('Lat: ${scene.location.latitude.toString()}, Long:${scene.location.longitude.toString()} '),
               ),
-              FutureBuilder<String>( future: getLocality(scene, version: 1), builder: (context, snapshot) { if(snapshot.hasData) { return(Text(snapshot.data)); } else { return Text("full loc"); }}),
+              FutureBuilder<String>( future: getLocality(scene, version: 1), builder: (context, snapshot) { if(snapshot.hasData) { return(Flexible(child: Text(snapshot.data))); } else { return Text("full loc"); }}),
               Padding( padding: EdgeInsets.all(18.0), child: Text(scene?.desc ?? "---")),
               ButtonBar(children: <Widget>[
                 FlatButton(
@@ -80,11 +86,14 @@ class FullSceneTile extends StatelessWidget {
                 ),
                 FlatButton(
                   child: const Text('Show on Map'),
-                onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
+                  onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
                 ),
                 FlatButton(
                   child: const Text('Respond to This'),
-                  onPressed: () {},
+                  onPressed: () {
+                        Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
+                        Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
+                  },
                 )
               ])
             ]),

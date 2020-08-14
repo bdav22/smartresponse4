@@ -43,6 +43,7 @@ class SceneTile extends StatelessWidget {
     if(stateShortcut.containsKey(places[0].administrativeArea)) {
       shortName = ", " + stateShortcut[places[0].administrativeArea];
     }
+    //TODO: there are differences in ios/android here - fix
 
     return places[0].locality + shortName;
   }
@@ -92,12 +93,18 @@ class SceneTile extends StatelessWidget {
       ListTile(
 
           title: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-            Text(scene.created.toDate().toLocal().toString().substring(0,16)),
+            Padding (
+              padding: EdgeInsets.fromLTRB(0,0,10,0),
+              child: Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
+                  style: TextStyle(color: Colors.blue)
+              ),
+            ),
             FutureBuilder<String>(
               future: getLocality(),
               builder: (context, snapshot) {
                 if(snapshot.hasData) {
-                  return Text(snapshot.data);
+                  return Text(snapshot?.data ?? "location",
+                          overflow: TextOverflow.ellipsis);
                 } else {
                   return Text("location");
                 }

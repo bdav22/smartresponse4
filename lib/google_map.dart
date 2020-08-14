@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:isolate';
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:smartresponse4/google_route.dart';
 import 'package:smartresponse4/marker_chooser.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/loading.dart';
@@ -18,27 +19,17 @@ import 'package:geolocator/geolocator.dart';
 import 'package:background_locator/background_locator.dart';
 import 'package:background_locator/location_settings.dart';
 import 'package:location_permissions/location_permissions.dart' as location_permissions;
+import 'package:smartresponse4/utility.dart';
 
 
 import 'file_manager.dart';
 import 'location_callback_handler.dart';
 import 'location_service_repository.dart';
 
-//void main() => runApp(MyApp());
 
-class MapPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Maps',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyMapPage(title: 'Tracked Icon'),
-    );
-  }
-}
+
+
+
 
 class MyMapPage extends StatefulWidget {
   MyMapPage({Key key, this.title, this.scene}) : super(key: key);
@@ -51,20 +42,25 @@ class MyMapPage extends StatefulWidget {
 class _MyMapPageState extends State<MyMapPage> {
   StreamSubscription _locationSubscription;
   Location _locationTracker = Location();
-  LatLng _currentLocation = LatLng(38.9, -76.3);
-  LatLng _lastLocation = LatLng(38.9, -76.3);
+  LatLng _currentLocation = LatLng(39.2191, -76.07);
+  LatLng _lastLocation = LatLng(39.220, -76.0632);
   bool _bgLocationOn = false;
   Marker _pin;
-  Marker marker;
-  Circle circle;
+  Marker _marker; //current location
+  Circle _circle; //accuracy of current location
   GoogleMapController _controller;
   bool _trackerOn = false;
   bool _cameraTrackerOn = false;
   bool _placeMarkerOn = false;
   MyMarker selectedPlacingMarker;
-  BitmapDescriptor starOfLifeIcon, fireTruckIcon, fireIcon;
-  MarkerData myMarkers;
   List<Marker> individualMarkers = [];
+
+  //Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
+  Set<Polyline> polyline = {};
+  List<LatLng> routeCoords;
+  final googleMapsRoutes = GoogleMapsRoutes();
+  final LatLng secnd = LatLng(39.2098, -76.0658);
+
 
   static CameraPosition initialLocation;
   //Background_locator
@@ -73,6 +69,7 @@ class _MyMapPageState extends State<MyMapPage> {
   @override
   void initState() {
     super.initState();
+
     if(widget.scene != null) {
       initialLocation = CameraPosition(
         target: LatLng(widget.scene.location.latitude, widget.scene.location.longitude),
@@ -84,27 +81,33 @@ class _MyMapPageState extends State<MyMapPage> {
         zoom: 10,
       );
     }
+    selectedPlacingMarker = null;
 
-    setCustomMapPin();
-
-    if (IsolateNameServer.lookupPortByName(
+    if (ui.IsolateNameServer.lookupPortByName(
         LocationServiceRepository.isolateName) !=
         null) {
-      IsolateNameServer.removePortNameMapping(
+      ui.IsolateNameServer.removePortNameMapping(
           LocationServiceRepository.isolateName);
     }
 
-    IsolateNameServer.registerPortWithName(
+    ui.IsolateNameServer.registerPortWithName(
         port.sendPort, LocationServiceRepository.isolateName);
 
     port.listen(
           (dynamic data) async {
-        print("got data ");
+                  // print("got data "); // I'm not precisely sure why we need to listen to this port?
       },
     );
     initPlatformState();
   }
 
+
+  void _onMapCreated(GoogleMapController controller) {
+
+    setState(() {
+      _controller = controller;
+    });
+  }
 
 
 
@@ -118,28 +121,9 @@ class _MyMapPageState extends State<MyMapPage> {
     print('Running ${_isRunning.toString()}');
   }
 
-  void setCustomMapPin() async {
-    starOfLifeIcon = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(devicePixelRatio: 2.5),
-      'assets/car_icon.png'
-    );
-    MyMarker star = MyMarker(iconBitmap: starOfLifeIcon, image: Image.asset('assets/car_icon.png'), commonName: "Star of Life", shortName: "star");
 
 
-    fireTruckIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/firetruck50.png'
-    );
-    MyMarker truck = MyMarker(iconBitmap: fireTruckIcon, image: Image.asset('assets/firetruck50.png'), commonName: "Fire Engine", shortName: "truck");
 
-    fireIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(size: Size(100,100)), //TODO: this doesn't seem to work?
-        'assets/fire50.png'
-    );
-    MyMarker fire = MyMarker(iconBitmap: fireIcon, image: Image(image: AssetImage('assets/fire50.png')), commonName: "Fire/Flames", shortName: "fire");
-    myMarkers = MarkerData(star: star, truck: truck, fire: fire);
-    selectedPlacingMarker = star; //default marker placing
-  }
 
 
 
@@ -150,24 +134,25 @@ class _MyMapPageState extends State<MyMapPage> {
     return byteData.buffer.asUint8List();
   }
 
-  void updateMarkerandCircle(LocationData newLocalData, Uint8List imageData) {
-    LatLng latlng = LatLng(newLocalData.latitude, newLocalData.longitude);
+
+  void updateMarkerAndCircle(LocationData newLocalData) {
+    LatLng latLng = LatLng(newLocalData.latitude, newLocalData.longitude);
     var rotation = _cameraTrackerOn  ? 0.0 : newLocalData.heading;
     this.setState(() {
-      marker = Marker(
+      _marker = Marker(
           markerId: MarkerId("home"),
-          position: latlng,
+          position: latLng,
           rotation: rotation, //newLocalData.heading,
           draggable: false,
           zIndex: 2,
           anchor: Offset(0.5, 0.5),
-          icon: BitmapDescriptor.fromBytes(imageData));
-      circle = Circle(
+          icon: CustomMarkers.instance.myMarkerData.truck.iconBitmap);
+      _circle = Circle(
           circleId: CircleId("car"),
           radius: newLocalData.accuracy,
           zIndex: 1,
           strokeColor: Colors.blue,
-          center: latlng,
+          center: latLng,
           fillColor: Colors.blue.withAlpha(70));
     });
   }
@@ -194,11 +179,11 @@ class _MyMapPageState extends State<MyMapPage> {
       _onStart();
     }
     else {
-      onStop();
+      _onStop();
     }
   }
 
-  void onStop() {
+  void _onStop() {
     BackgroundLocator.unRegisterLocationUpdate();
     setState(() {
       // isRunning = false;
@@ -267,27 +252,26 @@ class _MyMapPageState extends State<MyMapPage> {
     );
   }
 
-
-
-  void togglePlaceMarker() async {
-
+  void togglePlaceMarker() async { //changes placemarkeron state
     setState(() {
           _placeMarkerOn = !_placeMarkerOn;
     });
   }
 
   void toggleCameraTracking() async {
-    _cameraTrackerOn = !_cameraTrackerOn;
-    if (!_cameraTrackerOn) {
+    if (_cameraTrackerOn) { // this is about to be turned off
       resetCamera();
     }
+    setState(() {
+      _cameraTrackerOn = !_cameraTrackerOn;
+    });
+
   }
 
   void addMarker(LatLng latlng) { //removed async here...no longer needed? - may need to add it back to add to fire base
-  //    Uint8List imageData = await getMarker();
-    setState(() {
+    DatabaseService().addDBMarker(selectedPlacingMarker.shortName, latlng, desc: selectedPlacingMarker.desc);
 
-        DatabaseService().addDBMarker(selectedPlacingMarker.shortName, latlng, desc: selectedPlacingMarker.desc);
+    setState(() {
         _pin = Marker(
             markerId: MarkerId("pin"),
             position: latlng,
@@ -304,30 +288,34 @@ class _MyMapPageState extends State<MyMapPage> {
 
   }
 
-
-
   void updateStateWithCurrentLocation(LatLng locationIn) async {
 
     double dInMeters = await Geolocator().distanceBetween(_currentLocation.latitude,_currentLocation.longitude,_lastLocation.latitude, _lastLocation.longitude);
-    print(dInMeters);
-    if(dInMeters > 30) {
-      print("updating");
-      setState(() {
-        _currentLocation =
-            LatLng(locationIn.latitude, locationIn.longitude);
-        _lastLocation = _currentLocation;
-      });
+    setState(() {
+      _currentLocation = LatLng(locationIn.latitude, locationIn.longitude);
+    });
 
+    print(dInMeters.toString() + " distance since last call to location changed ");
 
-
-
-      GeoPoint geoPoint = GeoPoint(_currentLocation.latitude, _currentLocation.longitude);
-      await Firestore.instance.collection("profiles").document(
+    if(dInMeters > 1) { //slow down route updates ... ? could just turn them off and force them through the
+      _lastLocation = _currentLocation;
+      print("updating navigation...");
+      if(widget.scene.turnOnNavigation == true) {
+        Set<Polyline> _poly = await googleMapsRoutes.sendRequest(_currentLocation,   asLatLng(widget.scene.location) );
+        setState(() {
+          polyline = _poly;
+        });
+      }
+      //let background push to firestore ....
+       /*GeoPoint geoPoint = GeoPoint(_currentLocation.latitude, _currentLocation.longitude);
+          await Firestore.instance.collection("profiles").document(
           EmailStorage.instance.uid).updateData({'location': geoPoint});
-    }
+        */
+    } //end if dInMeters -- if its less than 30 no need to update the route is it?
   }
 
   void getCurrentLocation() async {
+
     setState(() {
       _trackerOn = !_trackerOn; //swap true and false
       _cameraTrackerOn = _trackerOn; //follow suit
@@ -346,22 +334,22 @@ class _MyMapPageState extends State<MyMapPage> {
     }
 
     try {
-      Uint8List imageData = await getMarker();
+      await CustomMarkers.instance.getCustomMarkers(); //make sure custommarkers is up to date here -asset loading and resizing
       var location = await _locationTracker.getLocation();
-
-      updateMarkerandCircle(location, imageData);
+      updateMarkerAndCircle(location);
 
       if (_locationSubscription != null) {
         _locationSubscription.cancel();
       }
 
       _locationSubscription =
-          _locationTracker.onLocationChanged().listen((newLocalData) {
+          _locationTracker.onLocationChanged().listen((newLocalData) async {
         if (_controller != null) {
             _currentLocation =  LatLng(newLocalData.latitude, newLocalData.longitude);
             if(_currentLocation != _lastLocation) {
               print('Location changed: ${_currentLocation.latitude}  ${_currentLocation.longitude} -- ${EmailStorage.instance.uid}');
               LatLng ll = LatLng(newLocalData.latitude, newLocalData.longitude);
+
               updateStateWithCurrentLocation(ll);
             }
           if (_cameraTrackerOn) {
@@ -373,7 +361,7 @@ class _MyMapPageState extends State<MyMapPage> {
                     tilt: 0,
                     zoom: 18.00)));
           }
-          updateMarkerandCircle(newLocalData, imageData);
+          updateMarkerAndCircle(newLocalData);
         }
       });
     } on PlatformException catch (e) {
@@ -397,7 +385,9 @@ class _MyMapPageState extends State<MyMapPage> {
   @override
   Widget build(BuildContext context) {
 
-
+    if(_marker != null) { //remove this when background service is on
+      individualMarkers.add(_marker);
+    }
     if(_pin != null) {
       individualMarkers.add(_pin);
     }
@@ -409,11 +399,11 @@ class _MyMapPageState extends State<MyMapPage> {
         body: Stack(
           children: <Widget>[
             FutureBuilder<MarkerData>(
-              future: DatabaseService().getCustomMarkers(),
-              builder: (BuildContext context, AsyncSnapshot<MarkerData> markersData) {
-                if(markersData.hasData) {
+              future: CustomMarkers.instance.getCustomMarkers(),
+              builder: (BuildContext context, AsyncSnapshot<MarkerData> customMarkersData) {
+                if(customMarkersData.hasData) {
                  return StreamProvider<List<Marker>>.value(
-                  value: DatabaseService().markers(markersData.data),
+                  value: DatabaseService().markers(customMarkersData.data),
                   updateShouldNotify: (_, __) => true,
                   child: StreamProvider<List<Scene>>.value(
                     value: DatabaseService().scenes,
@@ -423,14 +413,14 @@ class _MyMapPageState extends State<MyMapPage> {
                         builder: (context, snapshot) {
                           final scenes = Provider.of<List<Scene>>(context) ?? [];
                           final markersDB = Provider.of<List<Marker>>(context) ?? [];
-                          print(markersDB.length);
                           if (snapshot.hasData) {
                             List<DocumentSnapshot> docs = snapshot.data.documents;
+                            docs.removeWhere( (DocumentSnapshot doc) => doc['email'] == EmailStorage.instance.email);
                             List<Marker> markers = docs.map(
                                     (doc) => Marker(
                                   markerId: MarkerId(doc.documentID),
                                   position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
-                                  icon: fireTruckIcon,
+                                  icon: customMarkersData.data.truck.iconBitmap, //TODO: map this to whatever is stored in profiles
                                       infoWindow: InfoWindow(title: doc['name'], snippet: doc['department']),
                                 )
                             ).toList();
@@ -440,7 +430,7 @@ class _MyMapPageState extends State<MyMapPage> {
                               sceneMarkers.add(Marker(
                                 markerId: MarkerId(scene.desc),
                                 position: LatLng(scene.location.latitude, scene.location.longitude),
-                                icon: fireIcon,
+                                icon: customMarkersData.data.fire.iconBitmap, //TODO: perhaps allow dispatch to decide this icon in some way.
                                 infoWindow: InfoWindow(title: "Reported Alert", snippet: scene.desc),
                               )
                               );
@@ -453,21 +443,21 @@ class _MyMapPageState extends State<MyMapPage> {
                             markers.addAll(sceneMarkers);
                             markers.addAll(individualMarkers);
 
+
                             return Container(
                               child: GoogleMap(
                                 mapType: MapType.hybrid,
                                 initialCameraPosition: initialLocation,
-                                markers: markers?.toSet() ?? Set.of([marker]),
-                                circles: Set.of((circle != null) ? [circle] : []),
+                                markers: markers?.toSet() ?? Set.of([_marker]),
+                                circles: Set.of((_circle != null) ? [_circle] : []),
                                 onTap: (latlng) {
                                   if (_placeMarkerOn) {
                                     addMarker(latlng);
                                     print('${latlng.latitude}, ${latlng.longitude}');
                                   }
                                 },
-                                onMapCreated: (GoogleMapController controller) {
-                                  _controller = controller;
-                                },
+                                onMapCreated: _onMapCreated,
+                                polylines: polyline,
                               ),
                             );
                           } //snapshot has data
@@ -514,7 +504,7 @@ class _MyMapPageState extends State<MyMapPage> {
                       selectedPlacingMarker = await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) =>
-                            ChooseMarker(markers: myMarkers)),
+                            ChooseMarker(markers: CustomMarkers.instance.myMarkerData)),
                       );
                       print("User selected the following marker: " +
                           selectedPlacingMarker.commonName + " -- " + selectedPlacingMarker.desc);

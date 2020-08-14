@@ -1,3 +1,5 @@
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,11 @@ import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+
+
+
+
 
 class DatabaseService {
 
@@ -76,27 +83,6 @@ class DatabaseService {
   }
 
 
-  Future<MarkerData> getCustomMarkers() async {
-    BitmapDescriptor starOfLifeIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/car_icon.png'
-    );
-    MyMarker star = MyMarker(iconBitmap: starOfLifeIcon, image: Image.asset('assets/car_icon.png'), commonName: "Star of Life");
-
-
-    BitmapDescriptor fireTruckIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/firetruck50.png'
-    );
-    MyMarker truck = MyMarker(iconBitmap: fireTruckIcon, image: Image.asset('assets/firetruck50.png'), commonName: "Fire Engine");
-
-    BitmapDescriptor fireIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(size: Size(100,100)), //TODO: this doesn't seem to work?
-        'assets/fire50.png'
-    );
-    MyMarker fire = MyMarker(iconBitmap: fireIcon, image: Image(image: AssetImage('assets/fire50.png')), commonName: "Fire/Flames");
-    return MarkerData(star: star, truck: truck, fire: fire);
-  }
 
   List<Marker> _markersFromSnapshot(QuerySnapshot snapshot) {
 
