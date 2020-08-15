@@ -146,7 +146,7 @@ class _MyMapPageState extends State<MyMapPage> {
           draggable: false,
           zIndex: 2,
           anchor: Offset(0.5, 0.5),
-          icon: CustomMarkers.instance.myMarkerData.fire.iconBitmap);
+          icon: CustomMarkers.instance.myMarkerData.truck.iconBitmap);
       _circle = Circle(
           circleId: CircleId("car"),
           radius: newLocalData.accuracy,
@@ -297,10 +297,10 @@ class _MyMapPageState extends State<MyMapPage> {
 
     print(dInMeters.toString() + " distance since last call to location changed ");
 
-    if(dInMeters > 300) { //slow down route updates ... ? could just turn them off and force them through the
+    if(dInMeters > 500) { //slow down route updates ... ? could just turn them off and force them through the
       _lastLocation = _currentLocation;
       print("updating navigation...");
-      if(widget.scene.turnOnNavigation == true) {
+      if(widget?.scene?.turnOnNavigation ?? false == true) {
         Set<Polyline> _poly = await googleMapsRoutes.sendRequest(_currentLocation,   asLatLng(widget.scene.location) );
         setState(() {
           polyline = _poly;

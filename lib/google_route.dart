@@ -5,9 +5,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:smartresponse4/marker_data.dart';
 //const apiKey = "AIzaSyB5A4tFZas3BSzgNiRmQ0Hk84U_khFuUAI";
-const apiKey = "AIzaSyAVr8ZnuAgE-DHim24vpsyHEnIevcFladc";
+//const apiKey = "AIzaSyAVr8ZnuAgE-DHim24vpsyHEnIevcFladc";
+const apiKey = "turned off for now";
 
 class GoogleMapsRoutes {
   final Set<Polyline> _polyLines = {};

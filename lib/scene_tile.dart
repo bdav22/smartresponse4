@@ -1,52 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:smartresponse4/scene.dart';
-import 'package:geolocator/geolocator.dart';
-
-final Map<String, String> stateShortcut = {
-  "Maryland": "MD",
-  "Delaware": "DE",
-  "Pennsylvania": "PA",
-  "Ohio": "OH",
-  "Utah": "UT",
-  "Tennessee": "TN",
-  "North Carolina": "NC",
-  "South Carolina": "SC",
-  "Virginia": "VA",
-  "West Virginia": "WV",
-  "New Jersey": "NJ",
-  "New York": "NY",
-  "Vermont": "VT",
-  "New Hampshire": "NH",
-  "Maine": "ME",
-  "Mississippi": "MS",
-  "Colorado": "CO",
-  "Florida": "FL",
-  "Georgia": "GA",
-  "Massachusetts": "MA",
-  "Michigan": "MI",
-  "Minnesota": "MN"
-};
 
 
 class SceneTile extends StatelessWidget {
 
   final Scene scene;
   SceneTile({ this.scene });
-  //TODO: could update this for more regions, but there is a shortcut to protect the card from overload
-  //TODO: if/when a new client comes aboard, we'll want to make sure there region is covered here.
-
-
-  Future<String> getLocality() async {
-    List<Placemark> places = await Geolocator().placemarkFromCoordinates(scene.location.latitude, scene.location.longitude);
-    //print(places[0].toString() + " " + places[0].locality +  " " + places[0].administrativeArea);
-    String shortName = ", " + places[0].administrativeArea.substring(0,2) + "...";
-    if(stateShortcut.containsKey(places[0].administrativeArea)) {
-      shortName = ", " + stateShortcut[places[0].administrativeArea];
-    }
-    //TODO: there are differences in ios/android here - fix
-
-    return places[0].locality + shortName;
-  }
 
   String getShortDescription(String desc) {
     final length = 85;
@@ -100,7 +60,7 @@ class SceneTile extends StatelessWidget {
               ),
             ),
             FutureBuilder<String>(
-              future: getLocality(),
+              future: scene.getLocality(),
               builder: (context, snapshot) {
                 if(snapshot.hasData) {
                   return Text(snapshot?.data ?? "location",
@@ -126,8 +86,16 @@ class SceneTile extends StatelessWidget {
             },
           ),
           FlatButton(
-            child: const Text('Respond to This'),
-            onPressed: () { },
+            child: const Text('Show on Map'),
+            onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
+          ),
+          FlatButton(
+              child: const Text('Directions'),
+               onPressed: () async {
+                //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
+                //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
+                MapsLauncher.launchQuery(await scene.getAddress());
+              }
           )
         ]
       )
