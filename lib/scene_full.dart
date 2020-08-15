@@ -22,7 +22,7 @@ class FullSceneTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Full Scene Descrption"),
+        title: Text("Full Scene Description"),
       ),
       backgroundColor: Colors.lightBlueAccent,
       body: Padding(

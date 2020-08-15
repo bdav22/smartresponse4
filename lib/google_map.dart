@@ -13,6 +13,8 @@ import 'package:smartresponse4/marker_chooser.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/loading.dart';
 import 'package:smartresponse4/marker_data.dart';
+import 'package:smartresponse4/profile.dart';
+import 'package:smartresponse4/profile_tile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:geolocator/geolocator.dart';
@@ -109,8 +111,6 @@ class _MyMapPageState extends State<MyMapPage> {
     });
   }
 
-
-
   Future<void> initPlatformState() async {
     print('Initializing...');
     await BackgroundLocator.initialize();
@@ -121,19 +121,11 @@ class _MyMapPageState extends State<MyMapPage> {
     print('Running ${_isRunning.toString()}');
   }
 
-
-
-
-
-
-
-
   Future<Uint8List> getMarker() async {
     ByteData byteData =
         await DefaultAssetBundle.of(context).load("assets/car_icon.png");
     return byteData.buffer.asUint8List();
   }
-
 
   void updateMarkerAndCircle(LocationData newLocalData) {
     LatLng latLng = LatLng(newLocalData.latitude, newLocalData.longitude);
@@ -146,7 +138,9 @@ class _MyMapPageState extends State<MyMapPage> {
           draggable: false,
           zIndex: 2,
           anchor: Offset(0.5, 0.5),
-          icon: CustomMarkers.instance.myMarkerData.truck.iconBitmap);
+          icon: CustomMarkers.instance.myMarkerData.truck.iconBitmap,
+          infoWindow: InfoWindow(title: "This is Me", snippet: EmailStorage.instance.userData.name),
+      );
       _circle = Circle(
           circleId: CircleId("car"),
           radius: newLocalData.accuracy,
@@ -168,8 +162,6 @@ class _MyMapPageState extends State<MyMapPage> {
               zoom: 14.00)));
     }
   }
-
-
 
   void toggleBGLocation() async {
     setState(() {
@@ -269,7 +261,7 @@ class _MyMapPageState extends State<MyMapPage> {
   }
 
   void addMarker(LatLng latlng) { //removed async here...no longer needed? - may need to add it back to add to fire base
-    DatabaseService().addDBMarker(selectedPlacingMarker.shortName, latlng, desc: selectedPlacingMarker.desc);
+    DatabaseService().addDBMarker(selectedPlacingMarker.shortName, latlng, desc: selectedPlacingMarker.desc, placedBy: EmailStorage.instance.userData.name);
 
     setState(() {
         _pin = Marker(
@@ -403,13 +395,13 @@ class _MyMapPageState extends State<MyMapPage> {
               builder: (BuildContext context, AsyncSnapshot<MarkerData> customMarkersData) {
                 if(customMarkersData.hasData) {
                  return StreamProvider<List<Marker>>.value(
-                  value: DatabaseService().markers(customMarkersData.data),
+                  value: DatabaseService().markers(customMarkersData.data),   //get all the assets loaded up
                   updateShouldNotify: (_, __) => true,
                   child: StreamProvider<List<Scene>>.value(
-                    value: DatabaseService().scenes,
+                    value: DatabaseService().scenes,  //get all the scenes for markers
                     updateShouldNotify: (_, __) => true,
                     child: StreamBuilder<QuerySnapshot>(
-                        stream: Firestore.instance.collection("profiles").snapshots(),
+                        stream: Firestore.instance.collection("profiles").snapshots(), //get all the people with the app for the moment
                         builder: (context, snapshot) {
                           final scenes = Provider.of<List<Scene>>(context) ?? [];
                           final markersDB = Provider.of<List<Marker>>(context) ?? [];
@@ -421,7 +413,12 @@ class _MyMapPageState extends State<MyMapPage> {
                                   markerId: MarkerId(doc.documentID),
                                   position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
                                   icon: customMarkersData.data.truck.iconBitmap, //TODO: map this to whatever is stored in profiles
-                                      infoWindow: InfoWindow(title: doc['name'], snippet: doc['department']),
+                                  infoWindow: InfoWindow(title: doc['name'], snippet: doc['department'],
+                                  onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: Profile(name: doc['name'],
+                                      rank: doc['rank'], department:  doc['department'], email: doc['email'], uid: doc['uid'], location: doc['location']))));
+                                  },
+                                  ),
                                 )
                             ).toList();
 
@@ -431,7 +428,12 @@ class _MyMapPageState extends State<MyMapPage> {
                                 markerId: MarkerId(scene.desc),
                                 position: LatLng(scene.location.latitude, scene.location.longitude),
                                 icon: customMarkersData.data.fire.iconBitmap, //TODO: perhaps allow dispatch to decide this icon in some way.
-                                infoWindow: InfoWindow(title: "Reported Alert", snippet: scene.desc),
+                                infoWindow: InfoWindow(title: "Reported Alert", snippet: scene.desc,
+                                onTap: () {
+                                      Navigator.pushNamed(context, '/FullSceneTile',
+                                        arguments: scene);
+                                   },
+                                ),
                               )
                               );
                             }

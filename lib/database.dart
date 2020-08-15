@@ -38,12 +38,13 @@ class DatabaseService {
     });
   }
 
-  Future addDBMarker(String name, LatLng loc, {String desc}) async {
+  Future addDBMarker(String name, LatLng loc, {String desc, String placedBy}) async {
     markerCollection.add(
         {
           'desc': desc ?? "uidnow",
           'loc': GeoPoint(loc.latitude, loc.longitude),
           'icon':  name,
+          'placedby': placedBy,
       }
     );
 
@@ -107,7 +108,7 @@ class DatabaseService {
               icon: myIcon,
               infoWindow: InfoWindow(
                 title: doc?.data['desc'] ?? "Description Empty",
-                //snippet: "stuff is here"
+                snippet: "placed By: " + (doc?.data['placedby'] ?? "Unknown"),
               )
       );
     }).toList();

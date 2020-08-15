@@ -7,8 +7,9 @@ class Profile {
   final String department;
   final String email;
   final String uid;
+  final GeoPoint location;
 
-  Profile({ this.name, this.rank, this.department, this.email, this.uid });
+  Profile({ this.name, this.rank, this.department, this.email, this.uid,this.location });
 }
 
 Future<Profile> getProfile(String inUid) async  {
@@ -18,5 +19,6 @@ Future<Profile> getProfile(String inUid) async  {
   final nRank = doc.data['rank'] ?? '';
   final nDepartment = doc.data['department'] ?? '';
   final nEmail= doc.data['email'] ?? '';
-  return Profile(uid: nUid, name: nName, rank: nRank, department: nDepartment, email: nEmail);
+  final nLoc = doc.data['location'] ?? GeoPoint(0.0,0.0);
+  return Profile(uid: nUid, name: nName, rank: nRank, department: nDepartment, email: nEmail, location: nLoc);
 }
