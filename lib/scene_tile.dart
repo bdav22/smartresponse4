@@ -79,17 +79,21 @@ class SceneTile extends StatelessWidget {
         ),
       ButtonBar(
         children: <Widget> [
-          FlatButton(
-            child: const Text('More Info'),
+          OutlineButton(
+            child: const Text('More'),
             onPressed: () {
               Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);
             },
           ),
-          FlatButton(
-            child: const Text('Show on Map'),
+          OutlineButton(
+            child: const Text('Map'),
             onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
           ),
-          FlatButton(
+          OutlineButton(
+            child: const Text('Respond'),
+            onPressed: () {},
+          ),
+          OutlineButton(
               child: const Text('Directions'),
                onPressed: () async {
                 //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);

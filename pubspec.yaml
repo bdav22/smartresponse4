@@ -19,9 +19,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  geolocator: ^5.3.2+2
-  cupertino_icons: ^0.1.2
-  firebase_auth: ^0.16.1
+  geolocator: ^5.3.2+2 #mit license
+  cupertino_icons: ^0.1.2 #mit license
+  firebase_auth: ^0.16.1 #bsd license
   cloud_firestore: ^0.12.9+4
   provider: ^3.1.0
   flutter_spinkit: ^4.1.2+1

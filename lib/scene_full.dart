@@ -26,7 +26,7 @@ class FullSceneTile extends StatelessWidget {
       ),
       backgroundColor: Colors.lightBlueAccent,
       body: Padding(
-          padding: EdgeInsets.only(top: 8.0),
+          padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
           child: Card(
             shadowColor: Colors.red,
             margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
