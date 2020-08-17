@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:smartresponse4/box_decoration.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/scene.dart';
@@ -119,14 +120,7 @@ class _SceneHomeState extends State<SceneHome> {
 
         ),
         body: Container(
-
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.redAccent[700], Colors.blueAccent[400]]),
-            ),
+            decoration: customBoxDecoration(),
             child: SceneList()),
       ),
     );
