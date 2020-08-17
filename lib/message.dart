@@ -59,8 +59,10 @@ class Message extends StatelessWidget {
                                 ]
                             ),
                             Container (
-                              color: Colors.blue,
-                              width: double.infinity, //CHANGE THIS TO SEE WHICH WE LIKE BETTER
+                              //TODO: decide if we want these next two lines in or not
+                              //color: Colors.red,
+                              //width: double.infinity, //CHANGE THIS TO SEE WHICH WE LIKE BETTER
+
                               //color: me ? Colors.teal : Colors.red,
                               //borderRadius: BorderRadius.circular(10.0),
                               //elevation: 6.0,
