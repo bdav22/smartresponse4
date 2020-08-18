@@ -69,6 +69,14 @@ class _SceneHomeState extends State<SceneHome> {
               Divider(),
               ListTile(
                 leading: Icon(Icons.chat),
+                title: Text('Private Messages'),
+                onTap: () {
+                  Navigator.of(context).pushNamed('/dms', arguments: 'hello');
+                },
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.chat),
                 title: Text('Chat'),
                 onTap: () {
                   Navigator.of(context).pushNamed('/chat', arguments: 'hello');

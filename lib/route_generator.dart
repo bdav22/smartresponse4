@@ -4,6 +4,7 @@ import 'package:smartresponse4/chat.dart';
 import 'package:smartresponse4/ICS.dart';
 import 'package:smartresponse4/google_map.dart';
 import 'package:smartresponse4/authenticate.dart';
+import 'package:smartresponse4/private_message.dart';
 import 'package:smartresponse4/scene_full.dart';
 import 'package:smartresponse4/scene.dart';
 
@@ -16,6 +17,9 @@ class RouteGenerator {
     switch (settings.name) {
       case '/chat':
         return MaterialPageRoute(builder: (_) => Chat());
+
+      case '/dms':
+        return MaterialPageRoute(builder: (_) => PrivateMessage());
 
       case '/MyMapPage':
         final Scene scene = settings?.arguments;
