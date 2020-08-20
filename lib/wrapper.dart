@@ -54,6 +54,7 @@ class _WrapperState extends State<Wrapper> {
             EmailStorage.instance.email = user.email;
             EmailStorage.instance.uid = user.uid;
             EmailStorage.instance.updateData(); // updates the user data...//TODO: move these three lines into one call inside user/EmailStorage
+
             Profile p = Profile(email: user.email, uid: user.uid, name: "def", rank: "def2", department: "def3");
             return StreamBuilder<DocumentSnapshot>(
               stream: Firestore.instance.collection('profiles').document(user.uid).snapshots(),

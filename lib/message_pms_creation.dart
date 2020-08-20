@@ -5,8 +5,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smartresponse4/user.dart';
 
-Future<DocumentReference> does_pms_exist_in_profile_uid(String myUID, String theirUID, String theirName)  async {
-    DocumentReference found;
+Future<DocumentReference> privateMessageGetOrCreate(String myUID, String theirUID, String theirName)  async {
     QuerySnapshot docs = await Firestore.instance.collection("profiles/" + myUID + "/private_messages").where("otheruid",isEqualTo: theirUID).limit(10).getDocuments();
     print(docs.documents.length);
     if(docs.documents.length > 0) {

@@ -45,7 +45,7 @@ class Scene {
 
 
 //TODO: could update this for more regions, but there is a shortcut to protect the card from overload
-//TODO: if/when a new client comes aboard, we'll want to make sure their region is covered here.
+// if/when a new client comes aboard, we'll want to make sure their region is covered here.
 
 final Map<String, String> stateShortcut = {
   "Maryland": "MD",

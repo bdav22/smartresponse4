@@ -43,7 +43,7 @@ class ProfileTile extends StatelessWidget {
                   FlatButton(
                   child: const Text('Send a Private Message'),
                   onPressed: () async {
-                    DocumentReference ref = await does_pms_exist_in_profile_uid(EmailStorage.instance.uid, profile.uid, profile.name);
+                    DocumentReference ref = await privateMessageGetOrCreate(EmailStorage.instance.uid, profile.uid, profile.name);
                         Navigator.push(context,  MaterialPageRoute(builder: (context) =>
                              Scaffold(
                                appBar: AppBar(
