@@ -416,7 +416,7 @@ class _MyMapPageState extends State<MyMapPage> {
                                   infoWindow: InfoWindow(title: doc['name'], snippet: doc['department'],
                                   onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: Profile(name: doc['name'],
-                                      rank: doc['rank'], department:  doc['department'], email: doc['email'], uid: doc['uid'], location: doc['location']))));
+                                      rank: doc['rank'], department:  doc['department'], email: doc['email'], uid: doc.documentID, location: doc['location']))));
                                   },
                                   ),
                                 )

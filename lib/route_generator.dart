@@ -4,7 +4,7 @@ import 'package:smartresponse4/chat.dart';
 import 'package:smartresponse4/ICS.dart';
 import 'package:smartresponse4/google_map.dart';
 import 'package:smartresponse4/authenticate.dart';
-import 'package:smartresponse4/private_message.dart';
+import 'package:smartresponse4/messages_with_private.dart';
 import 'package:smartresponse4/scene_full.dart';
 import 'package:smartresponse4/scene.dart';
 

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/box_decoration.dart';
+import 'package:smartresponse4/message_list_private.dart';
 import 'package:smartresponse4/user.dart';
 
 class PrivateMessage extends StatefulWidget {
@@ -33,17 +34,23 @@ class _PrivateMessageState extends State<PrivateMessage> {
                       List<Widget> messages = snapshot.data.documents.map((doc) =>
                         GestureDetector(
                           onTap: () {
-                              //TODO: bring up the full list of messages here - can we pass off to Message.dart?
                             Navigator.push(context,  MaterialPageRoute(builder: (context) =>
                                 Scaffold(
                                     appBar: AppBar(
-                                      title: Text('DMs with: ' + ( doc['user1'] == EmailStorage.instance.email ? doc['user2']: doc['user1'])),
+                                      title: Text('DMs with: ' + (doc['otheruser'] ?? "unknown")),
                                     ),
-                                    body: Text("List to be updated here with " + ( doc['user1'] == EmailStorage.instance.email ? doc['user2']: doc['user1']))),
+                                    body: PrivateMessageList(doc['dms'])),
+                                    //Text("List to be updated here with " + (doc['otheruser'] ?? "unknown"))),
                             ));
                           },
-                            child: Card(
-                              child: Text("Messages with: " + ( doc['user1'] == EmailStorage.instance.email ? doc['user2']: doc['user1'])),
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(20.0,5,20.0,5),
+                                  child: Card(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0, left: 20.0, right: 20.0),
+                                      child: Text("Messages with: " + (doc['otheruser'] ?? "unknown")),
+                                  ),
+                                ),
                             )
                         ),
                       ).toList();

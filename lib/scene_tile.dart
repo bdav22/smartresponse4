@@ -79,6 +79,7 @@ class SceneTile extends StatelessWidget {
         ),
       ButtonBar(
         children: <Widget> [
+
           OutlineButton(
             child: const Text('More'),
             onPressed: () {
@@ -94,7 +95,7 @@ class SceneTile extends StatelessWidget {
             onPressed: () {},
           ),
           OutlineButton(
-              child: const Text('Directions'),
+              child: const Text('Drive'),
                onPressed: () async {
                 //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
                 //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
