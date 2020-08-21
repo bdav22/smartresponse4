@@ -18,12 +18,13 @@ class MyMarker {
 
 
 class MarkerData {
-  MyMarker star, truck, fire;
+  MyMarker star, truck, fire, hydrant;
   List<MyMarker> markerList = List<MyMarker>();
-  MarkerData({this.star, this.truck, this.fire}) {
+  MarkerData({this.star, this.truck, this.fire, this.hydrant}) {
     markerList.add(star);
     markerList.add(truck);
     markerList.add(fire);
+    markerList.add(hydrant);
   }
 }
 
@@ -49,11 +50,13 @@ class CustomMarkers {
     if(!loaded) {
       BitmapDescriptor starOfLifeIcon =await getBitmapFromAsset('assets/car_icon.png', 150);
       MyMarker star = MyMarker(iconBitmap: starOfLifeIcon, image: Image.asset('assets/car_icon.png'), commonName: "Star of Life", shortName:  "star");
+      BitmapDescriptor hydrantIcon =await getBitmapFromAsset('assets/hydrant50.png',150);
+      MyMarker hydrant = MyMarker(iconBitmap: hydrantIcon, image: Image.asset('assets/hydrant50.png'), commonName: "Fire Hydrant", shortName:  "hydrant");
       BitmapDescriptor fireTruckIcon = await getBitmapFromAsset('assets/firetruck50.png', 150);
       MyMarker truck = MyMarker(iconBitmap: fireTruckIcon, image: Image.asset('assets/firetruck50.png'), commonName: "Fire Engine", shortName:  "truck");
       BitmapDescriptor fireIcon = await getBitmapFromAsset('assets/fire50.png', 150);
       MyMarker fire = MyMarker(iconBitmap: fireIcon, image: Image(image: AssetImage('assets/fire50.png')), commonName: "Fire/Flames", shortName: "fire");
-      myMarkerData =  MarkerData(star: star, truck: truck, fire: fire);
+      myMarkerData =  MarkerData(star: star, truck: truck, fire: fire, hydrant: hydrant);
       loaded = true;
     }
     return myMarkerData;

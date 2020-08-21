@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/google_route.dart';
+import 'package:smartresponse4/hydrant.dart';
 import 'package:smartresponse4/marker_chooser.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/loading.dart';
@@ -56,6 +57,7 @@ class _MyMapPageState extends State<MyMapPage> {
   bool _placeMarkerOn = false;
   MyMarker selectedPlacingMarker;
   List<Marker> individualMarkers = [];
+  List<Marker> hydrantMarkers = [];
 
   //Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
   Set<Polyline> polyline = {};
@@ -71,6 +73,10 @@ class _MyMapPageState extends State<MyMapPage> {
   @override
   void initState() {
     super.initState();
+
+
+
+
 
     if(widget.scene != null) {
       initialLocation = CameraPosition(
@@ -437,6 +443,17 @@ class _MyMapPageState extends State<MyMapPage> {
                               )
                               );
                             }
+
+                            for( LatLng l in hydrantLocations) {
+                              print(l.latitude);
+                              markers.add( Marker(
+                                markerId: MarkerId(hydrantLocations.toString()),
+                                position: l,
+                                icon: customMarkersData.data.hydrant.iconBitmap,
+                              ));
+                            }
+
+
 
                             //List<Marker> updatedMarkers = updateAllMarkers(markersDB);
                             //                            markers.addAll(updatedMarkers);
