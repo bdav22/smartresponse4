@@ -7,10 +7,12 @@ import 'package:smartresponse4/user.dart';
 
 Future<DocumentReference> privateMessageGetOrCreate(String myUID, String theirUID, String theirName)  async {
     QuerySnapshot docs = await Firestore.instance.collection("profiles/" + myUID + "/private_messages").where("otheruid",isEqualTo: theirUID).limit(10).getDocuments();
-    print(docs.documents.length);
+
     if(docs.documents.length > 0) {
-      return docs.documents[0].reference;
+      print(docs.documents.length.toString() + " "  + docs.documents[0].documentID);
+      return docs.documents[0]['dms'];
     }
+    print("setting up private messages");
 
     DocumentReference newDoc = await Firestore.instance.collection("private_messages").add({
       'user1': EmailStorage.instance.userData.name,

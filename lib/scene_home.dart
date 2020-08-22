@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:smartresponse4/box_decoration.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:provider/provider.dart';
+import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/scene_list.dart';
 import 'package:smartresponse4/user.dart';
@@ -30,6 +31,7 @@ class _SceneHomeState extends State<SceneHome> {
     super.initState();
     _es = EmailStorage.instance;
     userData = _es.userData;
+    BackgroundLocationInterface().initPlatformState(); //set up background locator stuffs stuffs
   }
 
 

@@ -11,8 +11,8 @@ class Scene {
   final GeoPoint location;
   final Timestamp created;
   final String desc;
-  final bool turnOnNavigation;
-  Scene ({this.location, this.created, this.desc, this.turnOnNavigation=false});
+  final DocumentReference ref;
+  Scene ({this.location, this.created, this.desc, this.ref});
 
   Future<String> getAddress() async {
     List<Placemark> places = await Geolocator().placemarkFromCoordinates(this.location.latitude, this.location.longitude);

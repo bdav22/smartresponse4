@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:isolate';
-import 'dart:ui' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +8,7 @@ import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/google_route.dart';
 import 'package:smartresponse4/hydrant.dart';
+import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/marker_chooser.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/loading.dart';
@@ -18,20 +17,6 @@ import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/profile_tile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:background_locator/background_locator.dart';
-import 'package:background_locator/location_settings.dart';
-import 'package:location_permissions/location_permissions.dart' as location_permissions;
-import 'package:smartresponse4/utility.dart';
-
-
-import 'file_manager.dart';
-import 'location_callback_handler.dart';
-import 'location_service_repository.dart';
-
-
-
-
 
 
 class MyMapPage extends StatefulWidget {
@@ -55,9 +40,11 @@ class _MyMapPageState extends State<MyMapPage> {
   bool _trackerOn = false;
   bool _cameraTrackerOn = false;
   bool _placeMarkerOn = false;
+  bool _hydrantsOn = false;
+  bool _hydrantsFirst = true;
   MyMarker selectedPlacingMarker;
   List<Marker> individualMarkers = [];
-  List<Marker> hydrantMarkers = [];
+  List<Marker> _hydrantMarkers = [];
 
   //Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
   Set<Polyline> polyline = {};
@@ -65,73 +52,38 @@ class _MyMapPageState extends State<MyMapPage> {
   final googleMapsRoutes = GoogleMapsRoutes();
   final LatLng secnd = LatLng(39.2098, -76.0658);
 
-
   static CameraPosition initialLocation;
   //Background_locator
-  ReceivePort port = ReceivePort(); //isolate import
+
 
   @override
   void initState() {
     super.initState();
-
-
-
-
-
     if(widget.scene != null) {
       initialLocation = CameraPosition(
-        target: LatLng(widget.scene.location.latitude, widget.scene.location.longitude),
-        zoom: 18,
-      );
+        target: LatLng(widget.scene.location.latitude, widget.scene.location.longitude),  zoom: 18,  );
     } else {
-      initialLocation = CameraPosition(
-        target: _currentLocation,
-        zoom: 10,
-      );
+      initialLocation = CameraPosition(target: _currentLocation,  zoom: 10,    );
     }
     selectedPlacingMarker = null;
-
-    if (ui.IsolateNameServer.lookupPortByName(
-        LocationServiceRepository.isolateName) !=
-        null) {
-      ui.IsolateNameServer.removePortNameMapping(
-          LocationServiceRepository.isolateName);
-    }
-
-    ui.IsolateNameServer.registerPortWithName(
-        port.sendPort, LocationServiceRepository.isolateName);
-
-    port.listen(
-          (dynamic data) async {
-                  // print("got data "); // I'm not precisely sure why we need to listen to this port?
-      },
-    );
-    initPlatformState();
   }
 
 
   void _onMapCreated(GoogleMapController controller) {
-
     setState(() {
       _controller = controller;
     });
   }
 
-  Future<void> initPlatformState() async {
-    print('Initializing...');
-    await BackgroundLocator.initialize();
-    final logStr = await FileManager.readLogFile();
-    print(logStr);
-    print('Initialization done');
-    final _isRunning = await BackgroundLocator.isRegisterLocationUpdate();
-    print('Running ${_isRunning.toString()}');
-  }
+
 
   Future<Uint8List> getMarker() async {
     ByteData byteData =
         await DefaultAssetBundle.of(context).load("assets/car_icon.png");
     return byteData.buffer.asUint8List();
   }
+
+
 
   void updateMarkerAndCircle(LocationData newLocalData) {
     LatLng latLng = LatLng(newLocalData.latitude, newLocalData.longitude);
@@ -157,6 +109,8 @@ class _MyMapPageState extends State<MyMapPage> {
     });
   }
 
+
+
   void resetCamera() {
     if (_controller != null) {
       _controller.animateCamera(CameraUpdate.newCameraPosition(
@@ -169,92 +123,57 @@ class _MyMapPageState extends State<MyMapPage> {
     }
   }
 
+  void toggleHydrants() async {
+    await CustomMarkers.instance.getCustomMarkers();
+    if(CustomMarkers.instance.loaded == false) {
+      print("ERROR HYDRANTS WONT LOAD");
+      return;
+    }
+    if(_hydrantsFirst == true) {
+      _hydrantsFirst = false;
+      List<Marker> newHydrants = [];
+      for (LatLng location in hydrantLocations) {
+        newHydrants.add(Marker(
+          markerId: MarkerId(location.toString()),
+          position: location,
+          icon: CustomMarkers.instance.myMarkerData.hydrant.iconBitmap,
+        ));
+      }
+      setState( () {
+        _hydrantMarkers = newHydrants;
+      });
+
+      print(_hydrantMarkers.length);
+    }
+
+    setState(() {
+      _hydrantsOn = !_hydrantsOn;
+    });
+  }
+
+
   void toggleBGLocation() async {
+
+    if(!_bgLocationOn) { //its about to be turned on though
+      BackgroundLocationInterface().onStart("default in toggleBG");
+    }
+    else {
+      BackgroundLocationInterface().onStop();
+    }
     setState(() {
       _bgLocationOn = !_bgLocationOn;
     });
-    if(_bgLocationOn) {
-      _onStart();
-    }
-    else {
-      _onStop();
-    }
   }
 
-  void _onStop() {
-    BackgroundLocator.unRegisterLocationUpdate();
-    setState(() {
-      // isRunning = false;
-//      lastTimeLocation = null;
-//      lastLocation = null;
-    });
-  }
 
-  void _onStart() async {
-    if (await _checkLocationPermission()) {
-      _startLocator();
-      setState(() {
-       // isRunning = true;
-       // lastTimeLocation = null;
-       // lastLocation = null;
-      });
-    } else {
-      // show error
-    }
-  }
 
-  Future<bool> _checkLocationPermission() async {
-    final access = await location_permissions.LocationPermissions().checkPermissionStatus();
-    switch (access) {
-      case location_permissions.PermissionStatus.unknown:
-      case location_permissions.PermissionStatus.denied:
-      case location_permissions.PermissionStatus.restricted:
-        final permission = await location_permissions.LocationPermissions().requestPermissions(
-          permissionLevel: location_permissions.LocationPermissionLevel.locationAlways,
-        );
-        if (permission == location_permissions.PermissionStatus.granted) {
-          return true;
-        } else {
-          return false;
-        }
-        break;
-      case location_permissions.PermissionStatus.granted:
-        return true;
-        break;
-      default:
-        return false;
-        break;
-    }
-  }
-
-  void _startLocator() {
-    Map<String, dynamic> data = {'countInit': 1, 'uid': EmailStorage.instance.uid};
-    BackgroundLocator.registerLocationUpdate(
-      LocationCallbackHandler.callback,
-      initCallback: LocationCallbackHandler.initCallback,
-      initDataCallback: data,
-/*
-        Comment initDataCallback, so service not set init variable,
-        variable stay with value of last run after unRegisterLocationUpdate
- */
-      disposeCallback: LocationCallbackHandler.disposeCallback,
-      androidNotificationCallback: LocationCallbackHandler.notificationCallback,
-      settings: LocationSettings(
-          notificationChannelName: "Location tracking service",
-          notificationTitle: "Start Location Tracking example",
-          notificationMsg: "Track location in background example",
-          wakeLockTime: 20,
-          autoStop: false,
-          distanceFilter: 10,
-          interval: 5),
-    );
-  }
-
-  void togglePlaceMarker() async { //changes placemarkeron state
+  void togglePlaceMarker() async { //changes place-marker-on state
     setState(() {
           _placeMarkerOn = !_placeMarkerOn;
     });
   }
+
+
 
   void toggleCameraTracking() async {
     if (_cameraTrackerOn) { // this is about to be turned off
@@ -281,39 +200,19 @@ class _MyMapPageState extends State<MyMapPage> {
         _placeMarkerOn = false;
         //individualMarkers.add(_pin);
     });
-
-
-
   }
 
-  void updateStateWithCurrentLocation(LatLng locationIn) async {
 
-    double dInMeters = await Geolocator().distanceBetween(_currentLocation.latitude,_currentLocation.longitude,_lastLocation.latitude, _lastLocation.longitude);
+
+  void updateStateWithCurrentLocation(LatLng locationIn) async {
     setState(() {
       _currentLocation = LatLng(locationIn.latitude, locationIn.longitude);
     });
-
-    print(dInMeters.toString() + " distance since last call to location changed ");
-
-    if(dInMeters > 500) { //slow down route updates ... ? could just turn them off and force them through the
-      _lastLocation = _currentLocation;
-      print("updating navigation...");
-      if(widget?.scene?.turnOnNavigation ?? false == true) {
-        Set<Polyline> _poly = await googleMapsRoutes.sendRequest(_currentLocation,   asLatLng(widget.scene.location) );
-        setState(() {
-          polyline = _poly;
-        });
-      }
-      //let background push to firestore ....
-       /*GeoPoint geoPoint = GeoPoint(_currentLocation.latitude, _currentLocation.longitude);
-          await Firestore.instance.collection("profiles").document(
-          EmailStorage.instance.uid).updateData({'location': geoPoint});
-        */
-    } //end if dInMeters -- if its less than 30 no need to update the route is it?
   }
 
-  void getCurrentLocation() async {
 
+
+  void getCurrentLocation() async {
     setState(() {
       _trackerOn = !_trackerOn; //swap true and false
       _cameraTrackerOn = _trackerOn; //follow suit
@@ -379,7 +278,6 @@ class _MyMapPageState extends State<MyMapPage> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
 
@@ -413,7 +311,8 @@ class _MyMapPageState extends State<MyMapPage> {
                           final markersDB = Provider.of<List<Marker>>(context) ?? [];
                           if (snapshot.hasData) {
                             List<DocumentSnapshot> docs = snapshot.data.documents;
-                            docs.removeWhere( (DocumentSnapshot doc) => doc['email'] == EmailStorage.instance.email);
+                            //IF YOU WANT TO REMOVE PERSONS OWN instance you can use this, but I don't recmomend
+                            //docs.removeWhere( (DocumentSnapshot doc) => doc['email'] == EmailStorage.instance.email);
                             List<Marker> markers = docs.map(
                                     (doc) => Marker(
                                   markerId: MarkerId(doc.documentID),
@@ -444,19 +343,9 @@ class _MyMapPageState extends State<MyMapPage> {
                               );
                             }
 
-                            for( LatLng l in hydrantLocations) {
-                              print(l.latitude);
-                              markers.add( Marker(
-                                markerId: MarkerId(hydrantLocations.toString()),
-                                position: l,
-                                icon: customMarkersData.data.hydrant.iconBitmap,
-                              ));
+                            if(_hydrantsOn == true ) {
+                              markers.addAll(_hydrantMarkers);
                             }
-
-
-
-                            //List<Marker> updatedMarkers = updateAllMarkers(markersDB);
-                            //                            markers.addAll(updatedMarkers);
 
                             markers.addAll(markersDB);
                             markers.addAll(sceneMarkers);
@@ -526,17 +415,22 @@ class _MyMapPageState extends State<MyMapPage> {
                             ChooseMarker(markers: CustomMarkers.instance.myMarkerData)),
                       );
                       print("User selected the following marker: " +
-                          selectedPlacingMarker.commonName + " -- " + selectedPlacingMarker.desc);
+                          (selectedPlacingMarker?.commonName??"None selected") + " -- " +
+                          (selectedPlacingMarker?.desc??"No Description")
+                      );
                     }
-                    togglePlaceMarker();
+                    if(selectedPlacingMarker?.desc != null) {
+                      togglePlaceMarker();
+                    }
                   }),
               SizedBox(width: 20),
               FloatingActionButton(
-                  child: Icon(Icons.error),
+                  child: Icon(Icons.account_balance),
                   heroTag: null,
-                  backgroundColor: (_bgLocationOn ? Colors.blue : Colors.grey),
-                  onPressed: () {
-                    toggleBGLocation();
+                  backgroundColor: (_hydrantsOn ? Colors.blue : Colors.grey),
+                  onPressed: () async {
+                    toggleHydrants();
+                    //toggleBGLocation();
                   }),
         ]),
     );

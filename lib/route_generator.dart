@@ -4,6 +4,7 @@ import 'package:smartresponse4/chat.dart';
 import 'package:smartresponse4/ICS.dart';
 import 'package:smartresponse4/google_map.dart';
 import 'package:smartresponse4/authenticate.dart';
+import 'package:smartresponse4/scene_logistic.dart';
 import 'package:smartresponse4/messages_with_private.dart';
 import 'package:smartresponse4/scene_full.dart';
 import 'package:smartresponse4/scene.dart';
@@ -21,6 +22,14 @@ class RouteGenerator {
       case '/dms':
         return MaterialPageRoute(builder: (_) => PrivateMessage());
 
+      case '/Logistics':
+        final Scene scene = settings?.arguments;
+        if(scene != null ) {
+          return MaterialPageRoute(builder: (_) => Logistic(scene: scene));
+        } else {
+          return MaterialPageRoute(builder: (_) => Logistic());
+        }
+        break;
       case '/MyMapPage':
         final Scene scene = settings?.arguments;
         if(scene != null ) {

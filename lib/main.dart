@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/auth.dart';
+import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/route_generator.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/wrapper.dart';
@@ -21,7 +23,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider.value(
+    return Provider<Repository> (
+      create: (_) => Repository(Firestore.instance),
+      child: StreamProvider.value(
       value: AuthService().user,
       child: StreamProvider<User>.value(
         value: AuthService().user,
@@ -31,6 +35,7 @@ class _MyAppState extends State<MyApp> {
           onGenerateRoute: RouteGenerator.generateRoute,
         ),
       ),
+    )
     );
   }
 }

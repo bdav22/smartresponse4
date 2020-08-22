@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/scene.dart';
+import 'package:smartresponse4/user.dart';
 
 
 class SceneTile extends StatelessWidget {
@@ -18,22 +21,13 @@ class SceneTile extends StatelessWidget {
     }
   }
 
-  BoxDecoration myBoxDecoration() {
-    return BoxDecoration(
-      border: Border.all(
-          width: 2.0
-      ),
-      borderRadius: BorderRadius.all(
-          Radius.circular(10.0) //         <--- border radius here
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: EdgeInsets.only(top: 8.0),
+      padding: EdgeInsets.only(top: 4.0, bottom: 4.0),
         child: Container(
           margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
 
@@ -92,7 +86,14 @@ class SceneTile extends StatelessWidget {
           ),
           OutlineButton(
             child: const Text('Respond'),
-            onPressed: () {},
+            onPressed: () async {
+              String address = await scene.getAddress();
+              Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+                "responding": scene.ref.documentID
+              });
+              print("Responding to this scene at: " + address);
+              BackgroundLocationInterface().onStart(scene.ref.documentID);
+            },
           ),
           OutlineButton(
               child: const Text('Drive'),

@@ -11,6 +11,44 @@ import 'package:smartresponse4/scene.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
+class Responder {
+  final String uid;
+  final String sceneID;
+  final String name;
+  final GeoPoint loc;
+  Responder(this.uid, this.sceneID, this.name, this.loc);
+  String toString() {
+    return "uid: " + (this?.uid??"null")
+        + " scene:" + (this?.sceneID ?? "null")
+        + " name:" + (this?.name ?? "null")
+        + " loc:" + (loc?.latitude?.toString() ?? "null") + "," + (loc?.latitude?.toString() ?? "null");
+  }
+}
+
+class Repository {
+  final Firestore _firestore;
+  String sceneID;
+  GeoPoint sceneLoc;
+
+  Repository(this._firestore) : assert(_firestore != null);
+
+
+  Stream<List<Responder>> getResponders(String sceneIDIn, GeoPoint sceneLocIn) {
+    this.sceneID = sceneIDIn;
+    this.sceneLoc = sceneLocIn;
+    return _firestore.collection('profiles').where("responding",isEqualTo: sceneID).snapshots().map(
+ //   return _firestore.collection('scenes/'+sceneID +'/responders').snapshots().map(
+        (snapshot) {
+          return snapshot.documents.map((doc) {
+            return Responder(doc.documentID, sceneID, doc['name'], doc['location']);
+          }).toList();
+        }
+    );
+  }
+
+}
+
+
 
 
 
@@ -120,6 +158,7 @@ class DatabaseService {
           location: doc.data['location'] ?? '',
           created: doc.data['created'] ?? '',
           desc: doc.data['desc'],
+          ref: doc.reference,
       );
     }).toList();
   }

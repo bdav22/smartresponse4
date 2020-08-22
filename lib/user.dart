@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
@@ -39,7 +39,7 @@ class EmailStorage {
   String email = 'Placeholder';
   String uid = 'Placeholder';
   UserData userData;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  //  final FirebaseAuth _auth = FirebaseAuth.instance;
 
 
   //get user doc stream
@@ -69,11 +69,13 @@ class EmailStorage {
 
 
   // Fetch email from logged in user on firebase
+  /*
   _get() async {
     FirebaseUser user = await _auth.currentUser();
     String userEmail = user?.email ?? "placeholder";
     this.email = userEmail;
   }
+  */
 
 
 }
