@@ -41,6 +41,10 @@ class EmailStorage {
   UserData userData;
   //  final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  void clearData() {
+    email = uid = 'PLACEHOLDER';
+    userData = UserData(name: 'PLACEHOLDER', rank: 'PLACEHOLDER', department: 'PLACEHOLDER', email: 'PLACEHOLDER@PLACEHOLDER.com');
+  }
 
   //get user doc stream
   Stream<UserData> getUserData(String newUid) {

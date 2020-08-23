@@ -124,6 +124,7 @@ class _SceneHomeState extends State<SceneHome> {
                 label: Text('logout'),
                 onPressed: () async {
                   await _auth.signOut();
+                  EmailStorage.instance.clearData();
                 },
               ),
             ]

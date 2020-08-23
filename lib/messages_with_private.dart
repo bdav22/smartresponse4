@@ -26,6 +26,8 @@ class _PrivateMessageState extends State<PrivateMessage> {
           child:StreamBuilder<QuerySnapshot>(
                   stream: Firestore.instance.collection("profiles/"+myuid+"/private_messages").snapshots(),
                   builder: (context, snapshot) {
+                      if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
+                      if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...'); }
                     //this is a singular profile of a specific user - from it, we make a streambuilder of its private messages
                     if(!snapshot.hasData) {
                       return Center ( child: CircularProgressIndicator() );

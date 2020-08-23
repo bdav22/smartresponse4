@@ -51,7 +51,7 @@ class Message extends StatelessWidget {
                                     ),
                                   Text (
                                     //sent?.toDate()?.toLocal()?.toString() ?? "broken date",
-                                    "sent: " + sent?.toDate()?.toLocal()?.toString()?.substring(5,16) ?? "BROKEN DATE",
+                                    "sent: " + (sent?.toDate()?.toLocal()?.toString()?.substring(5,16) ?? "BROKEN DATE"),
                                     style: TextStyle(color: Colors.blueGrey),
                                     overflow: TextOverflow.fade,
                                   ),
