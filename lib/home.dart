@@ -18,7 +18,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   final AuthService _auth = AuthService();
-  UserData userData;
+  Profile userData;
   EmailStorage _es;
 
 
@@ -101,30 +101,30 @@ class _HomeState extends State<Home> {
           ),
         ),
         backgroundColor: Colors.white,
-        appBar: AppBar(
-            title: Text('Smart Response'),
-            backgroundColor: Colors.lightBlue,
-            elevation: 0.0,
-            actions: <Widget>[
-              FlatButton.icon(
-                icon: Icon(Icons.person),
-                label: Text('logout'),
-                onPressed: () async {
-                  await _auth.signOut();
-                },
-              ),
-            ]
+          appBar: AppBar(
+              title: Text('Smart Response'),
+              backgroundColor: Colors.lightBlue,
+              elevation: 0.0,
+              actions: <Widget>[
+                FlatButton.icon(
+                  icon: Icon(Icons.person),
+                  label: Text('logout'),
+                  onPressed: () async {
+                    await _auth.signOut();
+                  },
+                ),
+              ]
 
+          ),
+          body: Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/StarOfLife.png'),
+                      fit: BoxFit.scaleDown
+                  )
+              ),
+              child: ProfileList()),
         ),
-        body: Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/StarOfLife.png'),
-                    fit: BoxFit.scaleDown
-                )
-            ),
-            child: ProfileList()),
-      ),
-    );
+      );
   }
 }

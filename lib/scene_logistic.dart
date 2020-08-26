@@ -28,8 +28,9 @@ class _LogisticState extends State<Logistic> {
   @override
   void initState() {
     super.initState();
-    _respondersStream = context.read<Repository>().getResponders(widget.scene.ref.documentID, widget.scene.location);
+    _respondersStream = context.read<Repository>().getResponders(widget.scene.ref.documentID); //, widget.scene.location);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,21 +62,20 @@ class _LogisticState extends State<Logistic> {
                                   elevation: 15,
                                   shadowColor: Colors.black,
                                   child: ListTile(
-                                    title: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[Text(responder.name),
+                                    title: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[Text(responder.profile?.name ?? "name broke?"),
                                      Text( "Responding",
                                         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
                                       )]),
                                     subtitle:
                                     FutureBuilder<double>(
-                                        future: distanceBetweenInMinutes(responder.loc, widget.scene.location),
+                                        future: distanceBetweenInMinutes(responder.profile.location, widget.scene.location),
                                         builder: (context, snapshot) {
                                             return Text("ETA: ~" + (snapshot?.data?.toInt()?.toString() ?? "??") + " minutes");
                                         }
                                     ),
-                                    onTap: () async {
+                                    onTap: () {
                                       print(responder.toString());
-                                      Profile p = await getProfile(responder.uid);
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: p)));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: responder.profile)));
                                     }
                                   ),
                               );

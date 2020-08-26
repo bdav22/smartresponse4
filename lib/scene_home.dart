@@ -5,6 +5,7 @@ import 'package:smartresponse4/box_decoration.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/map_location.dart';
+import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/scene_list.dart';
 import 'package:smartresponse4/user.dart';
@@ -22,7 +23,7 @@ class SceneHome extends StatefulWidget {
 class _SceneHomeState extends State<SceneHome> {
 
   final AuthService _auth = AuthService();
-  UserData userData;
+  Profile userData;
   EmailStorage _es;
 
 
@@ -52,7 +53,12 @@ class _SceneHomeState extends State<SceneHome> {
                 accountName:
                   Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.name), Text(p.profile.email + " ") ] ),
             //Text(EmailStorage.instance.userData.name),
-                accountEmail: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.rank), Text(p.profile.department + " ") ] ),
+                accountEmail: Column ( crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                      Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.rank), Text(p.profile.department + " ") ] ),
+                      Text("Depatment ID Code: " + p.profile.squadID),
+                  ]
+                ),
                 key: UniqueKey(),
                 //Text(EmailStorage.instance.email),
                 currentAccountPicture: CircleAvatar(
@@ -62,10 +68,10 @@ class _SceneHomeState extends State<SceneHome> {
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.map),
-                title: Text('Map'),
+                leading: Icon(Icons.people), // Icon.map when using this for map
+                title: Text('Department'),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/MyMapPage');
+                  Navigator.of(context).pushNamed('/Department');  //used to be map
                 },
               ),
               Divider(),

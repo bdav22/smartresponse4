@@ -86,7 +86,7 @@ class _RegisterState extends State<Register> {
                       });
                     }
                     else {
-                      await DatabaseService(uid: user.uid).createDBProfile();
+                      await DatabaseService(uid: user.uid).createDBProfile(user.email);
                       print("Pushing to firebase - new profile");
                     }
                   }

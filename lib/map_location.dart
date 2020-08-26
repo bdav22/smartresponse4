@@ -71,9 +71,9 @@ void onStart(String sceneID) async {
       disposeCallback: LocationCallbackHandler.disposeCallback,
       androidNotificationCallback: LocationCallbackHandler.notificationCallback,
       settings: LocationSettings(
-          notificationChannelName: "Location tracking service",
-          notificationTitle: "Start Location Tracking example",
-          notificationMsg: "Track location in background example",
+          notificationChannelName: "Smart Response Locator - Responding",
+          notificationTitle: "SmartResponse - Responding",
+          notificationMsg: "Background location for SmartResponse",
           wakeLockTime: 20,
           autoStop: false,
           distanceFilter: 10,

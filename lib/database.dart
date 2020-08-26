@@ -6,41 +6,43 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartresponse4/marker_data.dart';
 import 'package:smartresponse4/profile.dart';
-import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/scene.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 
 class Responder {
-  final String uid;
   final String sceneID;
-  final String name;
-  final GeoPoint loc;
-  Responder(this.uid, this.sceneID, this.name, this.loc);
+  final Profile profile;
+  Responder(this.sceneID, this.profile);
   String toString() {
-    return "uid: " + (this?.uid??"null")
+    return "uid: " + (this?.profile?.uid??"null")
         + " scene:" + (this?.sceneID ?? "null")
-        + " name:" + (this?.name ?? "null")
-        + " loc:" + (loc?.latitude?.toString() ?? "null") + "," + (loc?.latitude?.toString() ?? "null");
+        + " name:" + (this?.profile?.name ?? "null")
+        + " loc:" + (profile?.location?.latitude?.toString() ?? "null") + "," + (profile?.location?.latitude?.toString() ?? "null");
   }
 }
 
 class Repository {
   final Firestore _firestore;
-  String sceneID;
-  GeoPoint sceneLoc;
 
   Repository(this._firestore) : assert(_firestore != null);
 
 
-  Stream<List<Responder>> getResponders(String sceneIDIn, GeoPoint sceneLocIn) {
-    this.sceneID = sceneIDIn;
-    this.sceneLoc = sceneLocIn;
-    return _firestore.collection('profiles').where("responding",isEqualTo: sceneID).snapshots().map(
- //   return _firestore.collection('scenes/'+sceneID +'/responders').snapshots().map(
+  Stream<List<Responder>> getResponders(String sceneIDIn) {
+    return _firestore.collection('profiles').where("responding",isEqualTo: sceneIDIn).snapshots().map(
         (snapshot) {
           return snapshot.documents.map((doc) {
-            return Responder(doc.documentID, sceneID, doc['name'], doc['location']);
+
+            return Responder(sceneIDIn, fromSnapshot(doc));
+          }).toList();
+        }
+    );
+  }
+
+  Stream<List<Profile> > getSquadProfiles(String squadID) {
+    return _firestore.collection('profiles').where("squadID", isEqualTo: squadID).snapshots().map(
+        (snapshot) {
+          return snapshot.documents.map((doc) {
+              return fromSnapshot(doc);
           }).toList();
         }
     );
@@ -50,7 +52,14 @@ class Repository {
 
 
 
-
+Scene sceneFromSnapshot(DocumentSnapshot doc) {
+  return Scene(
+    location: doc.data['location'] ?? '',
+    created: doc.data['created'] ?? '',
+    desc: doc.data['desc'],
+    ref: doc.reference,
+  );
+}
 
 
 class DatabaseService {
@@ -65,14 +74,16 @@ class DatabaseService {
   final CollectionReference markerCollection = Firestore.instance.collection('markers');
 
 
-  Future createDBProfile() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  Future createDBProfile(String email) async {
+    //FirebaseUser user = await FirebaseAuth.instance.currentUser();
     return await profileCollection.document(uid).setData({
       'name': "New Name",
       'rank': "New Rank",
       'department': "New Department",
-      'email': user.email,
+      'email': email,
       'location': GeoPoint(0,0),
+      'responding': "unbusy",
+      'squadID': "-"
     });
   }
 
@@ -88,36 +99,24 @@ class DatabaseService {
 
   }
 
-  Future updateUserData(String name, String rank, String department, String email) async {
-
+  Future updateProfile(Profile p) async {
     return await profileCollection.document(uid).updateData({
-      'name': name,
-      'rank': rank,
-      'department': department,
-      'email': email,
+      'name': p.name,
+      'rank': p.rank,
+      'department': p.department,
+      'responding': p.responding,
+      'squadID': p.squadID,
+      'location': p.location,
     });
   }
 
-  // userData from snapshot
-  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
-    return UserData(
-      name: snapshot.data['name'],
-      rank: snapshot.data['rank'],
-      department: snapshot.data['department'],
-      email: snapshot.data['email']
-    );
-  }
+
+
 
   // profile list from snapshot
   List<Profile> _profileListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc){
-      return Profile(
-        name: doc.data['name'] ?? '',
-        rank: doc.data['rank'] ?? '',
-        department: doc.data['department'] ?? '',
-        uid: doc.documentID,
-        email: doc.data['email']
-      );
+      return fromSnapshot(doc);
     }).toList();
   }
 
@@ -152,14 +151,11 @@ class DatabaseService {
     }).toList();
   }
 
+
+
   List<Scene> _sceneListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc){
-      return Scene(
-          location: doc.data['location'] ?? '',
-          created: doc.data['created'] ?? '',
-          desc: doc.data['desc'],
-          ref: doc.reference,
-      );
+        return sceneFromSnapshot(doc);
     }).toList();
   }
 
@@ -178,11 +174,9 @@ class DatabaseService {
     return sceneCollection.orderBy('created', descending: true).snapshots().map(_sceneListFromSnapshot);
   }
 
+ Stream<Profile> get profile {
+    return profileCollection.document(uid).snapshots().map(fromSnapshot);
+ }
 
-//get user doc stream
-  Stream<UserData> get userData {
-    return profileCollection.document(uid).snapshots()
-        .map(_userDataFromSnapshot);
-  }
 
 }

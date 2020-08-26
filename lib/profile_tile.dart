@@ -31,10 +31,14 @@ class ProfileTile extends StatelessWidget {
             backgroundColor: Colors.green,
            //backgroundImage: AssetImage('assets/StarOfLife.jpg'),
           ),
-          title:  Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible ( child: Text(profile.name, overflow: TextOverflow.ellipsis,) ),
-                Text(profile.email, overflow: TextOverflow.ellipsis) ]
+          title:  Column(
+            children: <Widget>[
+                    Text(profile.name, overflow: TextOverflow.ellipsis,),
+                    Text(profile.email, overflow: TextOverflow.ellipsis),
+                    profile.responding == "unbusy" ?
+                    Text("Ready",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red))   :
+                    Text( "Responding", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+            ],
           ),
           subtitle: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(' ${profile.rank} '), Text(profile.department) ] ),
         ),
@@ -62,6 +66,15 @@ class ProfileTile extends StatelessWidget {
                       Navigator.of(context).pushNamed('/MyMapPage', arguments: Scene(location: profile.location));
                     },
                   ),
+                FlatButton(
+                  child: const Text("Show Scene"),
+                  onPressed: () async {
+                    DocumentReference ref = Firestore.instance.collection("scenes").document(profile.responding);
+                    DocumentSnapshot doc = await ref.get();
+                    Scene scene = Scene(location: doc['location'], created: doc['created'], desc: doc['desc'], ref: ref);
+                    Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);
+                  },
+                ),
                 FlatButton(
                   child: const Text('Back'),
                   onPressed: () { Navigator.pop(context); },

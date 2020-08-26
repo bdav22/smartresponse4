@@ -320,8 +320,12 @@ class _MyMapPageState extends State<MyMapPage> {
                                   icon: customMarkersData.data.truck.iconBitmap, //TODO: map this to whatever is stored in profiles
                                   infoWindow: InfoWindow(title: doc['name'], snippet: doc['department'],
                                   onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: Profile(name: doc['name'],
-                                      rank: doc['rank'], department:  doc['department'], email: doc['email'], uid: doc.documentID, location: doc['location']))));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: fromSnapshot(doc))));
+/*                                      fromProfile(name: doc['name'],
+                                      rank: doc['rank'], department:  doc['department'], email: doc['email'], uid: doc.documentID, location: doc['location'],
+                                      responding: doc['responding'], squadID: doc['squadID']))));
+
+ */
                                   },
                                   ),
                                 )

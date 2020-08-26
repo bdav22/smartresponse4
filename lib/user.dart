@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smartresponse4/profile.dart';
 
 class User {
   final String uid;
@@ -9,27 +10,6 @@ class User {
 }
 
 
-class UserData {
-
-
-  final String name;
-  final String rank;
-  final String department;
-  final String email;
-
-  UserData({ this.name, this.rank, this.department, this.email });
-
-}
-
-UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
-  return UserData(
-      name: snapshot.data['name'],
-      rank: snapshot.data['rank'],
-      department: snapshot.data['department'],
-      email: snapshot.data['email']
-  );
-}
-
 
 class EmailStorage {
   EmailStorage._privateConstructor();
@@ -38,34 +18,25 @@ class EmailStorage {
 
   String email = 'Placeholder';
   String uid = 'Placeholder';
-  UserData userData;
+  Profile userData;
   //  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void clearData() {
     email = uid = 'PLACEHOLDER';
-    userData = UserData(name: 'PLACEHOLDER', rank: 'PLACEHOLDER', department: 'PLACEHOLDER', email: 'PLACEHOLDER@PLACEHOLDER.com');
+    userData = Profile(name: 'PLACEHOLDER', rank: 'PLACEHOLDER', department: 'PLACEHOLDER', email: 'PLACEHOLDER@PLACEHOLDER.com');
   }
 
-  //get user doc stream
-  Stream<UserData> getUserData(String newUid) {
-    return Firestore.instance.collection('profiles').document(newUid).snapshots()
-        .map(_userDataFromSnapshot);
-  }
+
 
 
 
   void updateData() async {
     final data = await Firestore.instance.collection('profiles').document(uid).get();
     if(data.data != null) {
-      userData = _userDataFromSnapshot(data);
+      userData = fromSnapshot(data);
     }
     else {
-      userData = UserData(
-          name: "NameUserData",
-          rank: "RankData",
-          department: "DeptData",
-          email:  "EmailData"
-      );
+      userData = defaultProfile();
       print("user.dart updateData - ERROR - data broken");
     }
 

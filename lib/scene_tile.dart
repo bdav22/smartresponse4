@@ -85,14 +85,23 @@ class SceneTile extends StatelessWidget {
             onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
           ),
           OutlineButton(
-            child: const Text('Respond'),
+            child:  EmailStorage.instance?.userData?.responding != scene.ref.documentID ? const Text('Respond') : const Text('Leave'),
             onPressed: () async {
-              String address = await scene.getAddress();
-              Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-                "responding": scene.ref.documentID
-              });
-              print("Responding to this scene at: " + address);
-              BackgroundLocationInterface().onStart(scene.ref.documentID);
+              if(EmailStorage.instance.userData.responding != scene.ref.documentID) {
+                String address = await scene.getAddress();
+                Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+                  "responding": scene.ref.documentID
+                });
+                print("Responding to this scene at: " + address);
+                BackgroundLocationInterface().onStart(scene.ref.documentID);
+                EmailStorage.instance.updateData();
+              } else {
+                BackgroundLocationInterface().onStop();
+                Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+                  "responding": "unbusy"
+                });
+                EmailStorage.instance.updateData();
+              }
             },
           ),
           OutlineButton(
