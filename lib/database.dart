@@ -1,5 +1,4 @@
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartresponse4/marker_data.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/scene.dart';
+
+
+class CommandPosition {
+  final String name;
+  final String position;
+  final String uid;
+  final String documentID;
+  final bool validUID;
+  CommandPosition(this.name, this.position, this.validUID,{this.uid, this.documentID});
+}
 
 
 class Responder {
@@ -26,12 +35,17 @@ class Repository {
 
   Repository(this._firestore) : assert(_firestore != null);
 
+  Stream<List<CommandPosition>> getCommandPositions(String sceneIDIn) {
+    return _firestore.collection("scenes/" + sceneIDIn + "/ICS").snapshots().map( (snapshot) {
+      return snapshot.documents.map(commandPositionFromSnapshot).toList();
+    });
+  }
+
 
   Stream<List<Responder>> getResponders(String sceneIDIn) {
     return _firestore.collection('profiles').where("responding",isEqualTo: sceneIDIn).snapshots().map(
         (snapshot) {
           return snapshot.documents.map((doc) {
-
             return Responder(sceneIDIn, fromSnapshot(doc));
           }).toList();
         }
@@ -48,8 +62,31 @@ class Repository {
     );
   }
 
+  void updateICS(String sceneID, CommandPosition cp)  async {
+    await _firestore.collection("scenes/" + sceneID +"/ICS").add( {
+      "name": cp.name,
+      "position": cp.position,
+      "validuid": cp.validUID,
+      "uid": cp.uid,
+    });
+  }
+
+  void removeCommandPosition(String sceneID, String docID)  {
+    _firestore.document("scenes/" + sceneID +"/ICS/"+docID).delete();
+  }
+
 }
 
+CommandPosition commandPositionFromSnapshot(DocumentSnapshot doc) {
+  String name = doc['name'];
+  String position = doc['position'];
+  bool goodUID = doc['validuid'];
+  String uid = doc['uid'];
+  String documentID = doc.documentID;
+
+  return CommandPosition(name, position, goodUID, uid: uid, documentID: documentID);
+
+}
 
 
 Scene sceneFromSnapshot(DocumentSnapshot doc) {

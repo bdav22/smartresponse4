@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:597360606337:android:13aae8e3c95ee10ed1a180",
+        "mobilesdk_app_id": "1:597360606337:android:f25155fe0a0f3ba4d1a180",
         "android_client_info": {
-          "package_name": "com.davenporttechnologies.smartresponse4"
+          "package_name": "org.darteksolutions.smartresponse"
         }
       },
       "oauth_client": [

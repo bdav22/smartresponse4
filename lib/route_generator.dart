@@ -49,7 +49,14 @@ class RouteGenerator {
 
 
       case '/ICS':
-        return MaterialPageRoute(builder: (_) => ICS());
+        final Scene scene = settings?.arguments;
+        if(scene != null ) {
+          return MaterialPageRoute(builder: (_) => ICS(scene));
+        }
+        else {
+          return MaterialPageRoute(builder: (_) => Text("?? Loading ICS Error ?? "));
+        }
+        break;
 
       case '/Settings':
         return MaterialPageRoute(builder: (_) => Settings());

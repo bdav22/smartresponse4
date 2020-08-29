@@ -62,8 +62,16 @@ class FullSceneTile extends StatelessWidget {
                 ButtonBar(children: <Widget>[
                   FlatButton(
                     child: const Text('Logistics'),
-                    onPressed: () { Navigator.of(context).pushNamed('/Logistics', arguments: scene);},
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushNamed('/Logistics', arguments: scene);},
                   ),
+                  FlatButton(
+                    child: const Text('ICS'),
+                    onPressed: () { Navigator.of(context).pushNamed('/ICS', arguments: scene);},
+                  ),
+                ]),
+                ButtonBar(children: <Widget>[
                   FlatButton(
                     child: const Text('Show on Map'),
                     onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},

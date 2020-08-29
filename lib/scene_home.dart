@@ -85,17 +85,17 @@ class _SceneHomeState extends State<SceneHome> {
               Divider(),
               ListTile(
                 leading: Icon(Icons.chat),
-                title: Text('Chat'),
+                title: Text('Global Chat'),
                 onTap: () {
                   Navigator.of(context).pushNamed('/chat', arguments: 'hello');
                 },
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.update),
-                title: Text('ICS'),
+                leading: Icon(Icons.map),
+                title: Text('Map'),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/ICS', arguments: 'Hello');
+                  Navigator.of(context).pushNamed('/MyMapPage', arguments: Scene(location: p.profile.location));
                 },
 
               ),

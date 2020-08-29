@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/box_decoration.dart';
 import 'package:smartresponse4/database.dart';
-import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/profile_tile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:provider/provider.dart';
@@ -42,9 +41,9 @@ class _LogisticState extends State<Logistic> {
           decoration: customBoxDecoration(),
             child: Column(
             children: <Widget>[
-              Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[200],  child: Center(child:Text("Scene Information", textScaleFactor: 2.0,)))),
+              Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Scene Information", textScaleFactor: 2.0,)))),
               SceneTile(scene: widget.scene),
-              Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[200],  child: Center(child:Text("Responders and ETAs", textScaleFactor: 2.0,)))),
+              Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Responders and ETAs", textScaleFactor: 2.0,)))),
               Expanded(
                 child:  StreamBuilder<List<Responder>>(
                   stream: _respondersStream,

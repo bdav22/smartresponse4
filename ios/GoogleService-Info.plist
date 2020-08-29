@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>597360606337-u598qa10vbfdaq0v0r5m0dq332i6urb4.apps.googleusercontent.com</string>
+	<string>597360606337-b12bk06sf4b76vc06l20lr7mt46vj79l.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.597360606337-u598qa10vbfdaq0v0r5m0dq332i6urb4</string>
+	<string>com.googleusercontent.apps.597360606337-b12bk06sf4b76vc06l20lr7mt46vj79l</string>
 	<key>API_KEY</key>
 	<string>AIzaSyB5A4tFZas3BSzgNiRmQ0Hk84U_khFuUAI</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.davenporttechnologies.smartresponse4</string>
+	<string>org.darteksolutions.smartresponse</string>
 	<key>PROJECT_ID</key>
 	<string>smartresponse4</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:597360606337:ios:2eed25accad4e709d1a180</string>
+	<string>1:597360606337:ios:6c822261b3cd5c92d1a180</string>
 	<key>DATABASE_URL</key>
 	<string>https://smartresponse4.firebaseio.com</string>
 </dict>
