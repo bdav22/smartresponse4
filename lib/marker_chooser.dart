@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:smartresponse4/box_decoration.dart';
 import 'package:smartresponse4/marker_data.dart';
 import 'package:smartresponse4/marker_description.dart';
 
@@ -13,25 +14,28 @@ class ChooseMarker extends StatelessWidget {
         appBar: AppBar(
           title: Text("Marker Chooser")
         ),
-        body: ListView.builder(
-          itemCount: markers?.markerList?.length ?? 0,
-          itemBuilder: (context,index) {
-            return Card( child:
-                ListTile(
-              leading: markers.markerList[index].image,
-              title: Text(markers.markerList[index].commonName),
-                  onTap: () async {
-                     String desc = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>
-                         MarkerDescription()),
-                    );
-                      markers.markerList[index].desc = desc;
-                      Navigator.pop(context, markers.markerList[index]);
-                    },
-            )
-            );
-          }
+        body: Container (
+          decoration: customBoxDecoration(),
+          child: ListView.builder(
+            itemCount: markers?.markerList?.length ?? 0,
+            itemBuilder: (context,index) {
+              return Card( child:
+                  ListTile(
+                leading: markers.markerList[index].image,
+                title: Text(markers.markerList[index].commonName),
+                    onTap: () async {
+                       String desc = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>
+                           MarkerDescription()),
+                      );
+                        markers.markerList[index].desc = desc;
+                        Navigator.pop(context, markers.markerList[index]);
+                      },
+              )
+              );
+            }
+          ),
         )
       );
   }

@@ -1,51 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:maps_launcher/maps_launcher.dart';
+import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/scene.dart';
-import 'package:geolocator/geolocator.dart';
-
-final Map<String, String> stateShortcut = {
-  "Maryland": "MD",
-  "Delaware": "DE",
-  "Pennsylvania": "PA",
-  "Ohio": "OH",
-  "Utah": "UT",
-  "Tennessee": "TN",
-  "North Carolina": "NC",
-  "South Carolina": "SC",
-  "Virginia": "VA",
-  "West Virginia": "WV",
-  "New Jersey": "NJ",
-  "New York": "NY",
-  "Vermont": "VT",
-  "New Hampshire": "NH",
-  "Maine": "ME",
-  "Mississippi": "MS",
-  "Colorado": "CO",
-  "Florida": "FL",
-  "Georgia": "GA",
-  "Massachusetts": "MA",
-  "Michigan": "MI",
-  "Minnesota": "MN"
-};
+import 'package:smartresponse4/user.dart';
 
 
 class SceneTile extends StatelessWidget {
 
   final Scene scene;
   SceneTile({ this.scene });
-  //TODO: could update this for more regions, but there is a shortcut to protect the card from overload
-  //TODO: if/when a new client comes aboard, we'll want to make sure there region is covered here.
-
-
-  Future<String> getLocality() async {
-    List<Placemark> places = await Geolocator().placemarkFromCoordinates(scene.location.latitude, scene.location.longitude);
-    //print(places[0].toString() + " " + places[0].locality +  " " + places[0].administrativeArea);
-    String shortName = ", " + places[0].administrativeArea.substring(0,2) + "...";
-    if(stateShortcut.containsKey(places[0].administrativeArea)) {
-      shortName = ", " + stateShortcut[places[0].administrativeArea];
-    }
-
-    return places[0].locality + shortName;
-  }
 
   String getShortDescription(String desc) {
     final length = 85;
@@ -57,22 +21,13 @@ class SceneTile extends StatelessWidget {
     }
   }
 
-  BoxDecoration myBoxDecoration() {
-    return BoxDecoration(
-      border: Border.all(
-          width: 2.0
-      ),
-      borderRadius: BorderRadius.all(
-          Radius.circular(10.0) //         <--- border radius here
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: EdgeInsets.only(top: 8.0),
+      padding: EdgeInsets.only(top: 4.0, bottom: 4.0),
         child: Container(
           margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
 
@@ -92,12 +47,18 @@ class SceneTile extends StatelessWidget {
       ListTile(
 
           title: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-            Text(scene.created.toDate().toLocal().toString().substring(0,16)),
+            Padding (
+              padding: EdgeInsets.fromLTRB(0,0,10,0),
+              child: Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
+                  style: TextStyle(color: Colors.blue)
+              ),
+            ),
             FutureBuilder<String>(
-              future: getLocality(),
+              future: scene.getLocality(),
               builder: (context, snapshot) {
                 if(snapshot.hasData) {
-                  return Text(snapshot.data);
+                  return Text(snapshot?.data ?? "location",
+                          overflow: TextOverflow.ellipsis);
                 } else {
                   return Text("location");
                 }
@@ -112,15 +73,44 @@ class SceneTile extends StatelessWidget {
         ),
       ButtonBar(
         children: <Widget> [
-          FlatButton(
-            child: const Text('More Info'),
+
+          OutlineButton(
+            child: const Text('More'),
             onPressed: () {
               Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);
             },
           ),
-          FlatButton(
-            child: const Text('Respond to This'),
-            onPressed: () { },
+          OutlineButton(
+            child: const Text('Map'),
+            onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
+          ),
+          OutlineButton(
+            child:  EmailStorage.instance?.userData?.responding != scene.ref.documentID ? const Text('Respond') : const Text('Leave'),
+            onPressed: () async {
+              if(EmailStorage.instance.userData.responding != scene.ref.documentID) {
+                String address = await scene.getAddress();
+                Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+                  "responding": scene.ref.documentID
+                });
+                print("Responding to this scene at: " + address);
+                BackgroundLocationInterface().onStart(scene.ref.documentID);
+                EmailStorage.instance.updateData();
+              } else {
+                BackgroundLocationInterface().onStop();
+                Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+                  "responding": "unbusy"
+                });
+                EmailStorage.instance.updateData();
+              }
+            },
+          ),
+          OutlineButton(
+              child: const Text('Drive'),
+               onPressed: () async {
+                //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
+                //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
+                MapsLauncher.launchQuery(await scene.getAddress());
+              }
           )
         ]
       )

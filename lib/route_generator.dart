@@ -4,8 +4,12 @@ import 'package:smartresponse4/chat.dart';
 import 'package:smartresponse4/ICS.dart';
 import 'package:smartresponse4/google_map.dart';
 import 'package:smartresponse4/authenticate.dart';
+import 'package:smartresponse4/profile_dept.dart';
+import 'package:smartresponse4/scene_logistic.dart';
+import 'package:smartresponse4/messages_with_private.dart';
 import 'package:smartresponse4/scene_full.dart';
 import 'package:smartresponse4/scene.dart';
+import 'package:smartresponse4/user.dart';
 
 
 
@@ -17,6 +21,21 @@ class RouteGenerator {
       case '/chat':
         return MaterialPageRoute(builder: (_) => Chat());
 
+      case '/dms':
+        return MaterialPageRoute(builder: (_) => PrivateMessage());
+
+      case '/Department':
+        print(EmailStorage.instance.userData.squadID + " is my squadID");
+        return MaterialPageRoute(builder: (_) => DepartmentProfileList(EmailStorage.instance.userData.squadID));
+
+      case '/Logistics':
+        final Scene scene = settings?.arguments;
+        if(scene != null ) {
+          return MaterialPageRoute(builder: (_) => Logistic(scene: scene));
+        } else {
+          return MaterialPageRoute(builder: (_) => Logistic());
+        }
+        break;
       case '/MyMapPage':
         final Scene scene = settings?.arguments;
         if(scene != null ) {
@@ -30,7 +49,14 @@ class RouteGenerator {
 
 
       case '/ICS':
-        return MaterialPageRoute(builder: (_) => ICS());
+        final Scene scene = settings?.arguments;
+        if(scene != null ) {
+          return MaterialPageRoute(builder: (_) => ICS(scene));
+        }
+        else {
+          return MaterialPageRoute(builder: (_) => Text("?? Loading ICS Error ?? "));
+        }
+        break;
 
       case '/Settings':
         return MaterialPageRoute(builder: (_) => Settings());

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:smartresponse4/box_decoration.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:provider/provider.dart';
+import 'package:smartresponse4/map_location.dart';
+import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/scene_list.dart';
 import 'package:smartresponse4/user.dart';
@@ -20,7 +23,7 @@ class SceneHome extends StatefulWidget {
 class _SceneHomeState extends State<SceneHome> {
 
   final AuthService _auth = AuthService();
-  UserData userData;
+  Profile userData;
   EmailStorage _es;
 
 
@@ -29,6 +32,7 @@ class _SceneHomeState extends State<SceneHome> {
     super.initState();
     _es = EmailStorage.instance;
     userData = _es.userData;
+    BackgroundLocationInterface().initPlatformState(); //set up background locator stuffs stuffs
   }
 
 
@@ -49,7 +53,12 @@ class _SceneHomeState extends State<SceneHome> {
                 accountName:
                   Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.name), Text(p.profile.email + " ") ] ),
             //Text(EmailStorage.instance.userData.name),
-                accountEmail: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.rank), Text(p.profile.department + " ") ] ),
+                accountEmail: Column ( crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                      Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.rank), Text(p.profile.department + " ") ] ),
+                      Text("Depatment ID Code: " + p.profile.squadID),
+                  ]
+                ),
                 key: UniqueKey(),
                 //Text(EmailStorage.instance.email),
                 currentAccountPicture: CircleAvatar(
@@ -59,26 +68,34 @@ class _SceneHomeState extends State<SceneHome> {
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.map),
-                title: Text('Map'),
+                leading: Icon(Icons.people), // Icon.map when using this for map
+                title: Text('Department'),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/MyMapPage');
+                  Navigator.of(context).pushNamed('/Department');  //used to be map
                 },
               ),
               Divider(),
               ListTile(
                 leading: Icon(Icons.chat),
-                title: Text('Chat'),
+                title: Text('Private Messages'),
+                onTap: () {
+                  Navigator.of(context).pushNamed('/dms', arguments: 'hello');
+                },
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.chat),
+                title: Text('Global Chat'),
                 onTap: () {
                   Navigator.of(context).pushNamed('/chat', arguments: 'hello');
                 },
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.update),
-                title: Text('ICS'),
+                leading: Icon(Icons.map),
+                title: Text('Map'),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/ICS', arguments: 'Hello');
+                  Navigator.of(context).pushNamed('/MyMapPage', arguments: Scene(location: p.profile.location));
                 },
 
               ),
@@ -113,20 +130,14 @@ class _SceneHomeState extends State<SceneHome> {
                 label: Text('logout'),
                 onPressed: () async {
                   await _auth.signOut();
+                  EmailStorage.instance.clearData();
                 },
               ),
             ]
 
         ),
         body: Container(
-
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.redAccent[700], Colors.blueAccent[400]]),
-            ),
+            decoration: customBoxDecoration(),
             child: SceneList()),
       ),
     );

@@ -19,20 +19,23 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  geolocator: ^5.3.2+2
-  cupertino_icons: ^0.1.2
-  firebase_auth: ^0.16.1
-  cloud_firestore: ^0.12.9+4
-  provider: ^3.1.0
-  flutter_spinkit: ^4.1.2+1
-  google_maps_flutter: ^0.5.21+15
-  location: ^2.3.5
-  permission: ^0.1.7
-  background_locator: ^1.1.11+1
-  location_permissions: ^3.0.0
-  path_provider: ^1.6.5
+  background_locator: ^1.1.11+1 #MIT
+  cloud_firestore: ^0.12.9+4 #bsd https://github.com/FirebaseExtended/flutterfire/blob/master/packages/cloud_firestore/cloud_firestore/LICENSE
+  cupertino_icons: ^0.1.2 #mit license
+  firebase_auth: ^0.16.1 #bsd license https://github.com/FirebaseExtended/flutterfire/blob/master/packages/firebase_auth/firebase_auth/LICENSE
+  flutter_spinkit: ^4.1.2+1 #MIT
+  geolocator: ^5.3.2+2 #mit license
+  google_maps_flutter: ^0.5.30 # bsd  https://github.com/flutter/plugins/blob/master/packages/google_maps_flutter/google_maps_flutter/LICENSE
+  location: ^2.3.5 #MIT
+  location_permissions: ^3.0.0 #MIT
+  maps_launcher: ^1.2.2+1 #MIT
+  path_provider: ^1.6.5 # bsd https://github.com/flutter/plugins/blob/master/packages/path_provider/path_provider/LICENSE
+  permission: ^0.1.7 # https://pub.dev/packages/permission   - license file is empty
+  provider: ^4.1.0 # MIT //was 3.1.0
 
 
+# some packages that were used in the past that are not currently used
+# google_maps_flutter: ^0.5.21+15
 #  firebase_core: ^0.4.5
 #  firebase_messaging: ^6.0.16
 

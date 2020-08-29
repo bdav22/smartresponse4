@@ -53,33 +53,36 @@ class _WrapperState extends State<Wrapper> {
             }
             EmailStorage.instance.email = user.email;
             EmailStorage.instance.uid = user.uid;
-            EmailStorage.instance.updateData(); // updates the user data...//TODO: move these three lines into one call inside user/EmailStorage
-            Profile p = Profile(email: user.email, uid: user.uid, name: "def", rank: "def2", department: "def3");
-            return StreamBuilder<DocumentSnapshot>(
-              stream: Firestore.instance.collection('profiles').document(user.uid).snapshots(),
-              //future: getProfileInfo(user.uid, Home()),
-              builder: (context, snapshot) {
+            EmailStorage.instance.updateData(); // updates the user data...//POSSIBLE: move these three lines into one call inside user/EmailStorage
 
-                if(snapshot.hasData) {
+            Profile p = Profile(email: user.email, uid: user.uid, name: "def", rank: "def2", department: "def3", responding: "-", squadID: "-");
+            return
+              StreamBuilder<DocumentSnapshot> (
+                stream: Firestore.instance.collection("profiles").document(user.uid).snapshots(),
+                builder: (context, doc) {
+                  return StreamBuilder<DocumentSnapshot>(
+                      stream: Firestore.instance.collection('profiles').document(user.uid).snapshots(),
+                      //future: getProfileInfo(user.uid, Home()),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot?.data?.data == null) { //no profile yet?
+                            return Text("Loading...");
+                          }
+                          else {
+                            p = fromSnapshot(snapshot.data);
+                          }
+                          return ProfileInfo(profile: p,
+                              child: SceneHome()); //snapshot.data tihs snapshot data is actually a profileinfo fully filled in
+                        }
+                        else {
+                          return Loading();
+                        }
+                      }
+                  ); //ProfileInfo( profile: p, child: const Home());
+                  //return SceneHome();
+                }
+              );
 
-                  if(snapshot?.data?.data == null) { //no profile yet?
-                    p = Profile(email: user.email, uid: user.uid, name: "Your Name", rank: "Your Rank", department: "Your Department");
-                  }
-                  else {
-                    p = Profile(email: user.email,
-                        uid: user.uid,
-                        name: snapshot.data["name"],
-                        rank:  snapshot.data["rank"],
-                        department: snapshot.data["department"]);
-                  }
-                  return ProfileInfo(profile: p, child: SceneHome()); //snapshot.data tihs snapshot data is actually a profileinfo fully filled in
-                }
-                else {
-                  return Loading();
-                }
-              }
-            ); //ProfileInfo( profile: p, child: const Home());
-            //return SceneHome();
           } else {
             return Scaffold(
               body: Center (

@@ -1,4 +1,4 @@
-package com.davenporttechnologies.smartresponse4
+package org.darteksolutions.smartresponse
 
 import io.flutter.app.FlutterApplication
 import io.flutter.plugin.common.PluginRegistry
