@@ -6,16 +6,19 @@ import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
 
 
-class SceneTile extends StatefulWidget {
+class SceneTile extends StatelessWidget {
 
   final Scene scene;
   final String respond;
   SceneTile({ this.scene, this.respond ="Respond" });
+
+  /*
   @override
   _SceneTileState createState() => _SceneTileState();
 }
 
 class _SceneTileState extends State<SceneTile> {
+   */
 
   String getShortDescription(String desc) {
     final length = 85;
@@ -55,12 +58,12 @@ class _SceneTileState extends State<SceneTile> {
           title: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
             Padding (
               padding: EdgeInsets.fromLTRB(0,0,10,0),
-              child: Text(widget.scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
+              child: Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
                   style: TextStyle(color: Colors.blue)
               ),
             ),
             FutureBuilder<String>(
-              future: widget.scene.getLocality(),
+              future: scene.getLocality(),
               builder: (context, snapshot) {
                 if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
                 if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading.'); }
@@ -75,7 +78,7 @@ class _SceneTileState extends State<SceneTile> {
           subtitle: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                // Text(' ${scene.location.latitude.toString()}, ${scene.location.longitude.toString()} '),
-                Flexible(child: Text( getShortDescription(widget.scene?.desc ?? "--")) ),
+                Flexible(child: Text( getShortDescription(scene?.desc ?? "--")) ),
               ] ),
         ),
       ButtonBar(
@@ -84,26 +87,26 @@ class _SceneTileState extends State<SceneTile> {
           OutlineButton(
             child: const Text('More'),
             onPressed: () {
-              Navigator.pushNamed(context, '/FullSceneTile', arguments: widget.scene);
+              Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);
             },
           ),
           OutlineButton(
             child: const Text('Map'),
-            onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: widget.scene);},
+            onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
           ),
           OutlineButton(
-            child: Text(widget.respond),
+            child: Text(respond),
             onPressed: () async {
 
               //EmailStorage.instance.updateData();
               //if(EmailStorage.instance.userData?.responding != widget.scene.ref.documentID) {
-              if(widget.respond == "Respond") {
-                String address = await widget.scene.getAddress();
+              if(respond == "Respond") {
+                String address = await scene.getAddress();
                 await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-                  "responding": widget.scene.ref.documentID
+                  "responding": scene.ref.documentID
                 });
                 print("Responding to this scene at: " + address);
-                BackgroundLocationInterface().onStart(widget.scene.ref.documentID);
+                BackgroundLocationInterface().onStart(scene.ref.documentID);
                 EmailStorage.instance.updateData();
               } else {
                 BackgroundLocationInterface().onStop();
@@ -119,7 +122,7 @@ class _SceneTileState extends State<SceneTile> {
                onPressed: () async {
                 //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
                 //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
-                 String address = await widget.scene.getAddress();
+                 String address = await scene.getAddress();
                  MapsLauncher.launchQuery(address);
               }
           )
