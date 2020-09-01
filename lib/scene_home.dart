@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/auth.dart';
 import 'package:flutter/foundation.dart';
@@ -8,6 +9,7 @@ import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/scene_list.dart';
+import 'package:smartresponse4/scene_tile.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/wrapper.dart';
 
@@ -138,7 +140,35 @@ class _SceneHomeState extends State<SceneHome> {
         ),
         body: Container(
             decoration: customBoxDecoration(),
-            child: SceneList()),
+            child: Column(
+              children: <Widget>[
+                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Active Scene Information", textScaleFactor: 2.0,)))),
+                StreamBuilder(
+                  stream: Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).snapshots(),
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData && snapshot?.data != null) {
+                      return StreamBuilder(
+                        stream: Firestore.instance.collection("scenes").document(snapshot?.data['responding'] ?? "-").snapshots(),
+                        builder: (context, ss) {
+                          if(ss.hasData && ss?.data != null && snapshot.data['responding'] != "unbusy") {
+                            print(snapshot.data['responding']);
+                            return SceneTile(scene: sceneFromSnapshot(ss?.data), respond: "Leave");
+                          }
+                          else {
+                            return Text("No Active Scene Loaded Just Yet");
+                          }
+                        }
+                      );
+                    }
+                    else {
+                      return Text("loading user profile data");
+                    }
+                  }
+                ),
+                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Scene Information", textScaleFactor: 2.0,)))),
+                Expanded(child: SceneList()),
+              ],
+            )),
       ),
     );
   }

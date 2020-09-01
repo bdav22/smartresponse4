@@ -90,6 +90,7 @@ CommandPosition commandPositionFromSnapshot(DocumentSnapshot doc) {
 
 
 Scene sceneFromSnapshot(DocumentSnapshot doc) {
+  if(doc == null) return null;
   return Scene(
     location: doc.data['location'] ?? '',
     created: doc.data['created'] ?? '',

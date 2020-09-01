@@ -12,8 +12,6 @@ class _SceneListState extends State<SceneList> {
   @override
   Widget build(BuildContext context) {
     final scenes = Provider.of<List<Scene>>(context) ?? [];
-
-
     return ListView.builder(
       itemCount: scenes.length,
       itemBuilder: (context, index) {

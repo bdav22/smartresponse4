@@ -6,10 +6,16 @@ import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
 
 
-class SceneTile extends StatelessWidget {
+class SceneTile extends StatefulWidget {
 
   final Scene scene;
-  SceneTile({ this.scene });
+  final String respond;
+  SceneTile({ this.scene, this.respond ="Respond" });
+  @override
+  _SceneTileState createState() => _SceneTileState();
+}
+
+class _SceneTileState extends State<SceneTile> {
 
   String getShortDescription(String desc) {
     final length = 85;
@@ -49,15 +55,15 @@ class SceneTile extends StatelessWidget {
           title: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
             Padding (
               padding: EdgeInsets.fromLTRB(0,0,10,0),
-              child: Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
+              child: Text(widget.scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
                   style: TextStyle(color: Colors.blue)
               ),
             ),
             FutureBuilder<String>(
-              future: scene.getLocality(),
+              future: widget.scene.getLocality(),
               builder: (context, snapshot) {
                 if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
-                if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Wait: Tile'); }
+                if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading.'); }
                 if(snapshot.hasData) {
                   return Text(snapshot?.data ?? "location*", overflow: TextOverflow.ellipsis);
                 } else {
@@ -69,7 +75,7 @@ class SceneTile extends StatelessWidget {
           subtitle: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                // Text(' ${scene.location.latitude.toString()}, ${scene.location.longitude.toString()} '),
-                Flexible(child: Text( getShortDescription(scene?.desc ?? "--")) ),
+                Flexible(child: Text( getShortDescription(widget.scene?.desc ?? "--")) ),
               ] ),
         ),
       ButtonBar(
@@ -78,23 +84,26 @@ class SceneTile extends StatelessWidget {
           OutlineButton(
             child: const Text('More'),
             onPressed: () {
-              Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);
+              Navigator.pushNamed(context, '/FullSceneTile', arguments: widget.scene);
             },
           ),
           OutlineButton(
             child: const Text('Map'),
-            onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
+            onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: widget.scene);},
           ),
           OutlineButton(
-            child:  EmailStorage.instance?.userData?.responding != scene.ref.documentID ? const Text('Respond') : const Text('Leave'),
+            child: Text(widget.respond),
             onPressed: () async {
-              if(EmailStorage.instance.userData.responding != scene.ref.documentID) {
-                String address = await scene.getAddress();
+
+              //EmailStorage.instance.updateData();
+              //if(EmailStorage.instance.userData?.responding != widget.scene.ref.documentID) {
+              if(widget.respond == "Respond") {
+                String address = await widget.scene.getAddress();
                 await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-                  "responding": scene.ref.documentID
+                  "responding": widget.scene.ref.documentID
                 });
                 print("Responding to this scene at: " + address);
-                BackgroundLocationInterface().onStart(scene.ref.documentID);
+                BackgroundLocationInterface().onStart(widget.scene.ref.documentID);
                 EmailStorage.instance.updateData();
               } else {
                 BackgroundLocationInterface().onStop();
@@ -110,7 +119,7 @@ class SceneTile extends StatelessWidget {
                onPressed: () async {
                 //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
                 //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
-                 String address = await scene.getAddress();
+                 String address = await widget.scene.getAddress();
                  MapsLauncher.launchQuery(address);
               }
           )
