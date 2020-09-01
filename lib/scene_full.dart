@@ -48,10 +48,12 @@ class FullSceneTile extends StatelessWidget {
                         FutureBuilder<String>(
                             future: scene.getLocality(),
                             builder: (context, snapshot) {
+                              if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
+                              if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting'); }
                               if (snapshot.hasData) {
                                 return Flexible(child: Text(snapshot.data, overflow: TextOverflow.ellipsis) );
                               } else {
-                                return Text("location");
+                                return Text("location data is loading");
                               }
                             })
                       ]),
