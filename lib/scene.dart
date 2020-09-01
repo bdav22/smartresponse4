@@ -12,6 +12,7 @@ class Scene {
   final Timestamp created;
   final String desc;
   final DocumentReference ref;
+  Placemark placemark;
   String address = "unknown";
   String locality = "unknown"; //TODO harden this for ios
   Scene ({this.location, this.created, this.desc, this.ref});
@@ -27,29 +28,38 @@ class Scene {
         print(e);
       }
     }
+    print("returning this address " + address + " for scene " + ref.documentID);
     return address;
   }
 
   Future<String> getLocality({int version=0}) async {
 //    return "1234567890abcefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz";
-    List<Placemark> places = await Geolocator().placemarkFromCoordinates(
-        this.location.latitude, this.location.longitude);
+    if(placemark == null) {
+      try {
+        List<Placemark> places = await Geolocator().placemarkFromCoordinates(
+            this.location.latitude, this.location.longitude);
+        placemark = places[0];
+      } catch (e) {
+        print(e);
+      }
+    }
+    if(placemark == null) return "-loading place-";
     //print(places[0].toString() + " " + places[0].locality +  " " + places[0].administrativeArea);
     String shortName =
-        ", " + places[0].administrativeArea.substring(0, 2) + "...";
-    if (stateShortcut.containsKey(places[0].administrativeArea)) {
-      shortName = ", " + stateShortcut[places[0].administrativeArea];
+        ", " + placemark.administrativeArea.substring(0, 2) + "...";
+    if (stateShortcut.containsKey(placemark.administrativeArea)) {
+      shortName = ", " + stateShortcut[placemark.administrativeArea];
     }
 
     switch(version){
       case 0:
-        return places[0].locality + shortName;
+        return placemark.locality + shortName;
         break;
       case 1:
-        return "[" +places[0].name +  " " + places[0].thoroughfare + "] " + places[0].locality + ", " + places[0].administrativeArea +" " +  " " + places[0].postalCode;
+        return "[" +placemark.name +  " " + placemark.thoroughfare + "] " + placemark.locality + ", " + placemark.administrativeArea +" " +  " " + placemark.postalCode;
         break;
       default:
-        return places[0].locality + shortName;
+        return placemark.locality + shortName;
     }
   }
 }
