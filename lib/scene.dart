@@ -12,11 +12,22 @@ class Scene {
   final Timestamp created;
   final String desc;
   final DocumentReference ref;
+  String address = "unknown";
+  String locality = "unknown"; //TODO harden this for ios
   Scene ({this.location, this.created, this.desc, this.ref});
 
   Future<String> getAddress() async {
-    List<Placemark> places = await Geolocator().placemarkFromCoordinates(this.location.latitude, this.location.longitude);
-    return places[0].name +  " " + places[0].thoroughfare + " "+places[0].administrativeArea + " " + places[0].postalCode;
+    if(address == "unknown") {
+      try {
+        List<Placemark> places = await Geolocator().placemarkFromCoordinates(
+            this.location.latitude, this.location.longitude);
+        address = places[0].name + " " + places[0].thoroughfare + " " + places[0].administrativeArea + " " +
+            places[0].postalCode;
+      } catch(e) {
+        print(e);
+      }
+    }
+    return address;
   }
 
   Future<String> getLocality({int version=0}) async {
