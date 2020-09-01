@@ -56,11 +56,12 @@ class SceneTile extends StatelessWidget {
             FutureBuilder<String>(
               future: scene.getLocality(),
               builder: (context, snapshot) {
+                if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
+                if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Wait: Tile'); }
                 if(snapshot.hasData) {
-                  return Text(snapshot?.data ?? "location",
-                          overflow: TextOverflow.ellipsis);
+                  return Text(snapshot?.data ?? "location*", overflow: TextOverflow.ellipsis);
                 } else {
-                  return Text("location");
+                  return Text("location**");
                 }
               }
             )
@@ -89,7 +90,7 @@ class SceneTile extends StatelessWidget {
             onPressed: () async {
               if(EmailStorage.instance.userData.responding != scene.ref.documentID) {
                 String address = await scene.getAddress();
-                Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+                await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
                   "responding": scene.ref.documentID
                 });
                 print("Responding to this scene at: " + address);
@@ -97,7 +98,7 @@ class SceneTile extends StatelessWidget {
                 EmailStorage.instance.updateData();
               } else {
                 BackgroundLocationInterface().onStop();
-                Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+                await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
                   "responding": "unbusy"
                 });
                 EmailStorage.instance.updateData();
