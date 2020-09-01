@@ -109,7 +109,8 @@ class SceneTile extends StatelessWidget {
                onPressed: () async {
                 //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
                 //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
-                MapsLauncher.launchQuery(await scene.getAddress());
+                 String address = await scene.getAddress();
+                 MapsLauncher.launchQuery(address);
               }
           )
         ]

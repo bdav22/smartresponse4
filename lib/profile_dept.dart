@@ -70,10 +70,19 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                               StreamBuilder<DocumentSnapshot>(
                                 stream: Firestore.instance.collection("scenes").document(responder.responding).snapshots(),
                                 builder: (context, snapshot) {
+                                    if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
+                                    if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting'); }
                                     if(snapshot.hasData) {
                                       return FutureBuilder<String>(
                                         future: sceneFromSnapshot(snapshot.data).getAddress(),
-                                          builder: (context, address) { return Text(address?.data ?? "-abc-", overflow: TextOverflow.ellipsis); } ,
+                                        builder: (context, address) {
+                                          if(address.hasError) { return Text('Error: ${address.error}');    }
+                                          if(address.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting2'); }
+                                          if(address.hasData)
+                                            return Text(address?.data ?? "-Address Loading-", overflow: TextOverflow.ellipsis);
+                                          else
+                                            return Text("-address Loading-");
+                                        }
 
                                       );
                                     }
