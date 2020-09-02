@@ -70,6 +70,8 @@ void onStart(String sceneID) async {
  */
       disposeCallback: LocationCallbackHandler.disposeCallback,
       //androidNotificationCallback: LocationCallbackHandler.notificationCallback,
+      iosSettings: IOSSettings(accuracy: LocationAccuracy.NAVIGATION, distanceFilter: 10),
+      /*
       settings: LocationSettings(
           notificationChannelName: "Smart Response Locator - Responding",
           notificationTitle: "SmartResponse - Responding",
@@ -78,6 +80,8 @@ void onStart(String sceneID) async {
           autoStop: false,
           distanceFilter: 10,
           interval: 5),
+
+       */
     );
   }
 
