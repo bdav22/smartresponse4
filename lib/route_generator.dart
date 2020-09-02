@@ -25,7 +25,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => PrivateMessage());
 
       case '/Department':
-        print(EmailStorage.instance.userData.squadID + " is my squadID");
+        print("route_generator.dart: " + EmailStorage.instance.userData.squadID + " is my squadID");
         return MaterialPageRoute(builder: (_) => DepartmentProfileList(EmailStorage.instance.userData.squadID));
 
       case '/Logistics':

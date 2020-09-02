@@ -24,6 +24,6 @@ class LocationCallbackHandler {
   }
 
   static Future<void> notificationCallback() async {
-    print('***notificationCallback');
+    print('location_callback_handler.dart: ***notificationCallback');
   }
 }

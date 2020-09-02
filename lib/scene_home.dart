@@ -151,7 +151,7 @@ class _SceneHomeState extends State<SceneHome> {
                         stream: Firestore.instance.collection("scenes").document(snapshot?.data['responding'] ?? "-").snapshots(),
                         builder: (context, ss) {
                           if(ss.hasData && ss?.data != null && snapshot.data['responding'] != "unbusy") {
-                            print("to what am I responding scene responding data:" + snapshot.data['responding']);
+                            print("scene_home.dart: to what am I responding scene responding data:" + snapshot.data['responding']);
                             return SceneTile(scene: sceneFromSnapshot(ss?.data), respond: "Leave");
                           }
                           else {

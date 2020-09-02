@@ -16,13 +16,13 @@ class ICS extends StatefulWidget {
 
 class _ICSState extends State<ICS> {
 
-  Stream< List<CommandPosition> > _ICSStream;
+  Stream< List<CommandPosition> > _commandStream;
 
 
   @override
   void initState() {
     super.initState();
-    _ICSStream = context.read<Repository>().getCommandPositions(widget.scene.ref.documentID);
+    _commandStream = context.read<Repository>().getCommandPositions(widget.scene.ref.documentID);
   }
 
   @override
@@ -35,7 +35,7 @@ class _ICSState extends State<ICS> {
         width: double.infinity,
         decoration: customBoxDecoration(),
         child: StreamBuilder<List<CommandPosition>>(
-          stream: _ICSStream,
+          stream: _commandStream,
           builder: (BuildContext context, AsyncSnapshot<List<CommandPosition>> snapshot) {
             if(snapshot.hasError) {
             return Text('Error: ${snapshot.error}');

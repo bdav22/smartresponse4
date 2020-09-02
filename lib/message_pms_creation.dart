@@ -9,10 +9,10 @@ Future<DocumentReference> privateMessageGetOrCreate(String myUID, String theirUI
     QuerySnapshot docs = await Firestore.instance.collection("profiles/" + myUID + "/private_messages").where("otheruid",isEqualTo: theirUID).limit(10).getDocuments();
 
     if(docs.documents.length > 0) {
-      print(docs.documents.length.toString() + " "  + docs.documents[0].documentID);
+      print("message_pms_creation.dart: " + docs.documents.length.toString() + " "  + docs.documents[0].documentID);
       return docs.documents[0]['dms'];
     }
-    print("setting up private messages");
+    print("message_pms_creation.dart: " + "setting up private messages");
 
     DocumentReference newDoc = await Firestore.instance.collection("private_messages").add({
       'user1': EmailStorage.instance.userData.name,

@@ -104,7 +104,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
 
                            */
                           onTap: () async {
-                            print("Responder to string is " + responder.toString());
+                            print("profile_dept.dart: Responder to string is " + responder.toString());
                             Profile p = await getProfile(responder.uid);
                             Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: p)));
                           }

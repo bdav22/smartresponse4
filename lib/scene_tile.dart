@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
@@ -66,11 +67,11 @@ class _SceneTileState extends State<SceneTile> {
               future: scene.getLocality(),
               builder: (context, snapshot) {
                 if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
-                if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading.'); }
+                if(snapshot.connectionState == ConnectionState.waiting) { return Text(""); }
                 if(snapshot.hasData) {
                   return Text(snapshot?.data ?? "location*", overflow: TextOverflow.ellipsis);
                 } else {
-                  return Text("location**");
+                  return Text("Data Missing - Report");
                 }
               }
             )
@@ -105,7 +106,7 @@ class _SceneTileState extends State<SceneTile> {
                 await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
                   "responding": scene.ref.documentID
                 });
-                print("Responding to this scene at: " + address);
+                print("scene_tile.dart: Responding to this scene at: " + address);
                 BackgroundLocationInterface().onStart(scene.ref.documentID);
                 EmailStorage.instance.updateData();
               } else {

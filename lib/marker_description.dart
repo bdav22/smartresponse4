@@ -47,7 +47,7 @@ class MarkerDescription extends StatelessWidget {
               ),
               onPressed: () async {
                 String text = myController.text;
-                print("text: " + text);
+                print("marker_description.dart: text: " + text);
                 Navigator.pop(context, text);
               }
               ),

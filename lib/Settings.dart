@@ -37,7 +37,7 @@ class _SettingsState extends State<Settings> {
             stream: DatabaseService(uid: user.uid).profile,
             builder: (context, snapshot) {
               if(snapshot.hasData) {
-                print("in database service user.uid is " + user.uid);
+                print("Settings.dart: in database service user.uid is " + user.uid);
                 Profile userData = snapshot.data;
                 //snapshot.hasData ? snapshot.data : UserData(name: "", rank: "", department: "");
                 return Form(

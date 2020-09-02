@@ -62,23 +62,29 @@ class FullSceneTile extends StatelessWidget {
                 FutureBuilder<String>( future: scene.getLocality( version: 1), builder: (context, snapshot) { if(snapshot.hasData) { return(Flexible(child: Text(snapshot.data))); } else { return Text("full loc"); }}),
                 Padding( padding: EdgeInsets.all(18.0), child: Text(scene?.desc ?? "---")),
                 ButtonBar(children: <Widget>[
-                  FlatButton(
+                  OutlineButton(
+                    child: const Text('Notes/Chat'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushNamed('/Logistics', arguments: scene);},
+                  ),
+                  OutlineButton(
                     child: const Text('Logistics'),
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.of(context).pushNamed('/Logistics', arguments: scene);},
                   ),
-                  FlatButton(
+                  OutlineButton(
                     child: const Text('ICS'),
                     onPressed: () { Navigator.of(context).pushNamed('/ICS', arguments: scene);},
                   ),
                 ]),
                 ButtonBar(children: <Widget>[
-                  FlatButton(
+                  OutlineButton(
                     child: const Text('Show on Map'),
                     onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
                   ),
-                  FlatButton(
+                  OutlineButton(
                     child: const Text('Directions'),
                     onPressed: () async {
                       //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);

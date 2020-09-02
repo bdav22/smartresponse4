@@ -22,24 +22,25 @@ class EmailStorage {
   //  final FirebaseAuth _auth = FirebaseAuth.instance;
   Map placemarks = {};
 
-  Future<Placemark> getPlacemark(String ID, GeoPoint location) async {
-    if(placemarks.containsKey(ID)) {
-      print(" --retrieved dynamically the location for scene " + ID);
-      return placemarks[ID];
+  Future<Placemark> getPlacemark(String sceneIdentifier, GeoPoint location) async {
+    if(placemarks.containsKey(sceneIdentifier)) {
+      print("user.dart: --retrieved dynamically the location for scene " + sceneIdentifier);
+      return placemarks[sceneIdentifier];
     }
     else {
       try {
-        print("---------- retrieving location from Geolocator for scene " + ID);
+        print("user.dart: ---------- retrieving location from Geolocator for scene " + sceneIdentifier);
         List<Placemark> places = await Geolocator().placemarkFromCoordinates(
             location.latitude, location.longitude);
-        placemarks[ID] = places[0];
-        print(" -- retrieved");
+        placemarks[sceneIdentifier] = places[0];
+        print("user.dart:  -- retrieved");
         return places[0];
       }
       catch (e) {
-        print("error in getPlacemark: " + e);
+        print("user.dart: error in getPlacemark: " + e);
       }
     }
+    return null;
   }
 
 

@@ -15,7 +15,7 @@ GeoPoint asGeoPoint(LatLng l) {
 
 Future<double> distanceBetweenInMinutes (dynamic a, dynamic b) async {
    double meters =  await Geolocator().distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude);
-   print("distance away = " + meters.toString());
+   print("utility.dart: distance away = " + meters.toString());
    if(meters < 40) return 1;
    if(meters < 16000) return meters/800+2;
    return meters/1100 + 2;

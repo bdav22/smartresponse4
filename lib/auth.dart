@@ -25,7 +25,7 @@ class AuthService {
       FirebaseUser user = result.user;
       return _userFromFirebaseUser(user);
     } catch(e) {
-      print(e.toString());
+      print("auth.dart: Error: " + e.toString());
       return null;
     }
   }
@@ -39,7 +39,7 @@ class AuthService {
       //await DatabaseService(uid: user.uid).updateUserData('John Smith', 'Captain', 'Goodwill Fire');
 
     } catch(e){
-      print(e.toString());
+      print("auth.dart: Error: " + e.toString());
       return null;
     }
   }
@@ -54,7 +54,7 @@ class AuthService {
 
       return _userFromFirebaseUser(user);
     } catch(e){
-      print(e.toString());
+      print("auth.dart: Error: " + e.toString());
       return null;
     }
   }
@@ -63,7 +63,7 @@ class AuthService {
     try {
       return await _auth.signOut();
     } catch(e){
-      print(e.toString());
+      print("auth.dart: Error: " + e.toString());
       return null;
     }
   }

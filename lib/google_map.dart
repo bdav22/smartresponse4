@@ -126,7 +126,7 @@ class _MyMapPageState extends State<MyMapPage> {
   void toggleHydrants() async {
     await CustomMarkers.instance.getCustomMarkers();
     if(CustomMarkers.instance.loaded == false) {
-      print("ERROR HYDRANTS WONT LOAD");
+      print("google_map.dart: ERROR HYDRANTS WONT LOAD");
       return;
     }
     if(_hydrantsFirst == true) {
@@ -143,7 +143,7 @@ class _MyMapPageState extends State<MyMapPage> {
         _hydrantMarkers = newHydrants;
       });
 
-      print(_hydrantMarkers.length);
+      print("google_map.dart: hydrant length:" +_hydrantMarkers.length.toString());
     }
 
     setState(() {
@@ -244,7 +244,7 @@ class _MyMapPageState extends State<MyMapPage> {
         if (_controller != null) {
             _currentLocation =  LatLng(newLocalData.latitude, newLocalData.longitude);
             if(_currentLocation != _lastLocation) {
-              print('Location changed: ${_currentLocation.latitude}  ${_currentLocation.longitude} -- ${EmailStorage.instance.uid}');
+              print('google_map.dart: Location changed: ${_currentLocation.latitude}  ${_currentLocation.longitude} -- ${EmailStorage.instance.uid}');
               LatLng ll = LatLng(newLocalData.latitude, newLocalData.longitude);
 
               updateStateWithCurrentLocation(ll);
@@ -365,7 +365,7 @@ class _MyMapPageState extends State<MyMapPage> {
                                 onTap: (latlng) {
                                   if (_placeMarkerOn) {
                                     addMarker(latlng);
-                                    print('${latlng.latitude}, ${latlng.longitude}');
+                                    print('google_map.dart - marker placed at ${latlng.latitude}, ${latlng.longitude}');
                                   }
                                 },
                                 onMapCreated: _onMapCreated,
@@ -418,7 +418,7 @@ class _MyMapPageState extends State<MyMapPage> {
                         MaterialPageRoute(builder: (context) =>
                             ChooseMarker(markers: CustomMarkers.instance.myMarkerData)),
                       );
-                      print("User selected the following marker: " +
+                      print("google_map.dart - User selected the following marker: " +
                           (selectedPlacingMarker?.commonName??"None selected") + " -- " +
                           (selectedPlacingMarker?.desc??"No Description")
                       );

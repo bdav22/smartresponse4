@@ -26,7 +26,7 @@ class Scene {
       address = placemark.name + " " + placemark.thoroughfare + " " + placemark.administrativeArea + " " +
           placemark.postalCode;
     }
-    print("returning this address " + address + " for scene " + ref.documentID);
+    print("scene.dart: returning this address " + address + " for scene " + ref.documentID);
     return address;
   }
 
