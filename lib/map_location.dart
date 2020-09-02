@@ -1,6 +1,6 @@
 
 import 'package:background_locator/background_locator.dart';
-import 'package:background_locator/location_settings.dart';
+//import 'package:background_locator/location_settings.dart';
 import 'package:location_permissions/location_permissions.dart' as location_permissions;
 import 'package:smartresponse4/location_callback_handler.dart';
 import 'package:smartresponse4/user.dart';
@@ -69,7 +69,7 @@ void onStart(String sceneID) async {
         variable stay with value of last run after unRegisterLocationUpdate
  */
       disposeCallback: LocationCallbackHandler.disposeCallback,
-      androidNotificationCallback: LocationCallbackHandler.notificationCallback,
+      //androidNotificationCallback: LocationCallbackHandler.notificationCallback,
       settings: LocationSettings(
           notificationChannelName: "Smart Response Locator - Responding",
           notificationTitle: "SmartResponse - Responding",
