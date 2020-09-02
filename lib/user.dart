@@ -1,5 +1,5 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:smartresponse4/profile.dart';
 
 class User {
@@ -20,14 +20,33 @@ class EmailStorage {
   String uid = 'Placeholder';
   Profile userData;
   //  final FirebaseAuth _auth = FirebaseAuth.instance;
+  Map placemarks = {};
+
+  Future<Placemark> getPlacemark(String ID, GeoPoint location) async {
+    if(placemarks.containsKey(ID)) {
+      print(" --retrieved dynamically the location for scene " + ID);
+      return placemarks[ID];
+    }
+    else {
+      try {
+        print("---------- retrieving location from Geolocator for scene " + ID);
+        List<Placemark> places = await Geolocator().placemarkFromCoordinates(
+            location.latitude, location.longitude);
+        placemarks[ID] = places[0];
+        print(" -- retrieved");
+        return places[0];
+      }
+      catch (e) {
+        print("error in getPlacemark: " + e);
+      }
+    }
+  }
+
 
   void clearData() {
     email = uid = 'PLACEHOLDER';
     userData = Profile(name: 'PLACEHOLDER', rank: 'PLACEHOLDER', department: 'PLACEHOLDER', email: 'PLACEHOLDER@PLACEHOLDER.com');
   }
-
-
-
 
 
   void updateData() async {

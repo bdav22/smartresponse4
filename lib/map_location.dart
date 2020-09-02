@@ -1,7 +1,9 @@
 
 import 'package:background_locator/background_locator.dart';
+import 'package:background_locator/settings/android_settings.dart';
 import 'package:background_locator/settings/ios_settings.dart';
 import 'package:background_locator/settings/locator_settings.dart';
+import 'package:flutter/material.dart';
 //import 'package:background_locator/location_settings.dart';
 import 'package:location_permissions/location_permissions.dart' as location_permissions;
 import 'package:smartresponse4/location_callback_handler.dart';
@@ -66,6 +68,7 @@ void onStart(String sceneID) async {
       LocationCallbackHandler.callback,
       initCallback: LocationCallbackHandler.initCallback,
       initDataCallback: data,
+      autoStop: false,
 /*
         Comment initDataCallback, so service not set init variable,
         variable stay with value of last run after unRegisterLocationUpdate
@@ -73,17 +76,19 @@ void onStart(String sceneID) async {
       disposeCallback: LocationCallbackHandler.disposeCallback,
       //androidNotificationCallback: LocationCallbackHandler.notificationCallback,
       iosSettings: IOSSettings(accuracy: LocationAccuracy.NAVIGATION, distanceFilter: 10),
-      /*
-      settings: LocationSettings(
-          notificationChannelName: "Smart Response Locator - Responding",
-          notificationTitle: "SmartResponse - Responding",
-          notificationMsg: "Background location for SmartResponse",
+      androidSettings: AndroidSettings(
+          androidNotificationSettings: AndroidNotificationSettings(
+            notificationChannelName: "Smart Response Locator - Responding",
+            notificationTitle: "SmartResponse - Responding",
+            notificationMsg: "Background location for SmartResponse",
+            notificationBigMsg: "Background location is on to keep Smart Response up to date with your location as you are responding to an alert.",
+            notificationIcon: '',
+            notificationIconColor: Colors.green,
+            notificationTapCallback: LocationCallbackHandler.notificationCallback,
+          ),
           wakeLockTime: 20,
-          autoStop: false,
           distanceFilter: 10,
           interval: 5),
-
-       */
     );
   }
 

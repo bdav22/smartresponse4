@@ -61,8 +61,8 @@ class ProfileTile extends StatelessWidget {
                   FlatButton(
                     child: const Text('Show on Map'),
                     onPressed: () {
-                      print(profile.name);
-                      print(profile.location.latitude);
+                      print("My profile name is: " + profile.name);
+                      print("My latitude is    : " + profile.location.latitude.toString());
                       Navigator.of(context).pushNamed('/MyMapPage', arguments: Scene(location: profile.location));
                     },
                   ),

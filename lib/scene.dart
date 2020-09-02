@@ -6,6 +6,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:smartresponse4/user.dart';
 
 class Scene {
   final GeoPoint location;
@@ -13,20 +14,17 @@ class Scene {
   final String desc;
   final DocumentReference ref;
   Placemark placemark;
-  String address = "unknown";
-  String locality = "unknown"; //TODO harden this for ios
   Scene ({this.location, this.created, this.desc, this.ref});
 
   Future<String> getAddress() async {
-    if(address == "unknown") {
-      try {
-        List<Placemark> places = await Geolocator().placemarkFromCoordinates(
-            this.location.latitude, this.location.longitude);
-        address = places[0].name + " " + places[0].thoroughfare + " " + places[0].administrativeArea + " " +
-            places[0].postalCode;
-      } catch(e) {
-        print(e);
-      }
+    String address = "-loading address-";
+    if(placemark == null) {
+      placemark = await EmailStorage.instance.getPlacemark(this.ref.documentID, this.location);
+    }
+
+    if(placemark != null) {
+      address = placemark.name + " " + placemark.thoroughfare + " " + placemark.administrativeArea + " " +
+          placemark.postalCode;
     }
     print("returning this address " + address + " for scene " + ref.documentID);
     return address;
@@ -35,15 +33,10 @@ class Scene {
   Future<String> getLocality({int version=0}) async {
 //    return "1234567890abcefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz";
     if(placemark == null) {
-      try {
-        List<Placemark> places = await Geolocator().placemarkFromCoordinates(
-            this.location.latitude, this.location.longitude);
-        placemark = places[0];
-      } catch (e) {
-        print(e);
-      }
+      placemark = await EmailStorage.instance.getPlacemark(this.ref.documentID, this.location);
     }
     if(placemark == null) return "-loading place-";
+
     //print(places[0].toString() + " " + places[0].locality +  " " + places[0].administrativeArea);
     String shortName =
         ", " + placemark.administrativeArea.substring(0, 2) + "...";

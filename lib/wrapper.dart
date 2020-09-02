@@ -16,7 +16,7 @@ class ProfileInfo extends InheritedWidget {
       context.dependOnInheritedWidgetOfExactType<ProfileInfo>();
 
   bool updateShouldNotify(ProfileInfo old) =>
-      old.profile != profile;
+      old.profile.uid != profile.uid;
 }
 
 Future<ProfileInfo> getProfileInfo(String inUid, Widget child) async  {
@@ -59,11 +59,7 @@ class _WrapperState extends State<Wrapper> {
             return
               StreamBuilder<DocumentSnapshot> (
                 stream: Firestore.instance.collection("profiles").document(user.uid).snapshots(),
-                builder: (context, doc) {
-                  return StreamBuilder<DocumentSnapshot>(
-                      stream: Firestore.instance.collection('profiles').document(user.uid).snapshots(),
-                      //future: getProfileInfo(user.uid, Home()),
-                      builder: (context, snapshot) {
+                builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot?.data?.data == null) { //no profile yet?
                             return Text("Loading...");
@@ -78,9 +74,6 @@ class _WrapperState extends State<Wrapper> {
                           return Loading();
                         }
                       }
-                  ); //ProfileInfo( profile: p, child: const Home());
-                  //return SceneHome();
-                }
               );
 
           } else {

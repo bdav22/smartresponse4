@@ -73,7 +73,7 @@ class _LogisticState extends State<Logistic> {
                                         }
                                     ),
                                     onTap: () {
-                                      print(responder.toString());
+                                      print("in scene logistic responder: " + responder.toString());
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: responder.profile)));
                                     }
                                   ),
