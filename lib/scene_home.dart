@@ -142,7 +142,7 @@ class _SceneHomeState extends State<SceneHome> {
             decoration: customBoxDecoration(),
             child: Column(
               children: <Widget>[
-                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Active Scene Information", textScaleFactor: 2.0,)))),
+                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Active Scene", textScaleFactor: 2.0,)))),
                 StreamBuilder(
                   stream: Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).snapshots(),
                   builder: (context, snapshot) {
@@ -155,7 +155,7 @@ class _SceneHomeState extends State<SceneHome> {
                             return SceneTile(scene: sceneFromSnapshot(ss?.data), respond: "Leave");
                           }
                           else {
-                            return Text("No Active Scene Loaded Just Yet");
+                            return SizedBox(height: 20); // Text("No Active Scene Loaded Just Yet");
                           }
                         }
                       );
@@ -165,7 +165,7 @@ class _SceneHomeState extends State<SceneHome> {
                     }
                   }
                 ),
-                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Scene Information", textScaleFactor: 2.0,)))),
+                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("All Scenes", textScaleFactor: 2.0,)))),
                 Expanded(child: SceneList()),
               ],
             )),
