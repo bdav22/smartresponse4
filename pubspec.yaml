@@ -19,7 +19,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  background_locator: ^1.1.11+1 #MIT
+  background_locator: ^1.2.2+1 #MIT
   cloud_firestore: ^0.12.9+4 #bsd https://github.com/FirebaseExtended/flutterfire/blob/master/packages/cloud_firestore/cloud_firestore/LICENSE
   cupertino_icons: ^0.1.2 #mit license
   firebase_auth: ^0.16.1 #bsd license https://github.com/FirebaseExtended/flutterfire/blob/master/packages/firebase_auth/firebase_auth/LICENSE
