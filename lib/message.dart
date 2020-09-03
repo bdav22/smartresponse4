@@ -67,12 +67,14 @@ class Message extends StatelessWidget {
                               //elevation: 6.0,
                               child:  DecoratedBox (
                                   decoration: BoxDecoration(
+                                    /*
                                     boxShadow: [ BoxShadow(
                                         color: Colors.grey.withOpacity(0.5),
                                         spreadRadius: 5,
                                         blurRadius: 7,
                                         offset: Offset(0, 3), // changes position of shadow
                                       ), ],
+                                     */
                                     shape: BoxShape.rectangle,
                                     color: !me ? Colors.grey[100] : Colors.blue[50],
                                     borderRadius: BorderRadius.circular(10),

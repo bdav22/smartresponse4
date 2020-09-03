@@ -47,14 +47,15 @@ class CustomMarkers {
 
 
   Future<MarkerData> getCustomMarkers() async {
+    int size = 150;
     if(!loaded) {
-      BitmapDescriptor starOfLifeIcon =await getBitmapFromAsset('assets/car_icon.png', 150);
+      BitmapDescriptor starOfLifeIcon =await getBitmapFromAsset('assets/car_icon.png', size);
       MyMarker star = MyMarker(iconBitmap: starOfLifeIcon, image: Image.asset('assets/car_icon.png'), commonName: "Star of Life", shortName:  "star");
-      BitmapDescriptor hydrantIcon =await getBitmapFromAsset('assets/hydrant50.png',150);
+      BitmapDescriptor hydrantIcon =await getBitmapFromAsset('assets/hydrant50.png', size);
       MyMarker hydrant = MyMarker(iconBitmap: hydrantIcon, image: Image.asset('assets/hydrant50.png'), commonName: "Fire Hydrant", shortName:  "hydrant");
-      BitmapDescriptor fireTruckIcon = await getBitmapFromAsset('assets/firetruck50.png', 150);
+      BitmapDescriptor fireTruckIcon = await getBitmapFromAsset('assets/firetruck50.png', size);
       MyMarker truck = MyMarker(iconBitmap: fireTruckIcon, image: Image.asset('assets/firetruck50.png'), commonName: "Fire Engine", shortName:  "truck");
-      BitmapDescriptor fireIcon = await getBitmapFromAsset('assets/fire50.png', 150);
+      BitmapDescriptor fireIcon = await getBitmapFromAsset('assets/fire50.png', size);
       MyMarker fire = MyMarker(iconBitmap: fireIcon, image: Image(image: AssetImage('assets/fire50.png')), commonName: "Fire/Flames", shortName: "fire");
       myMarkerData =  MarkerData(star: star, truck: truck, fire: fire, hydrant: hydrant);
       loaded = true;

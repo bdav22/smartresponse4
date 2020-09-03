@@ -62,7 +62,7 @@ class _WrapperState extends State<Wrapper> {
                 builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot?.data?.data == null) { //no profile yet?
-                            return Text("Loading...");
+                            return Authenticate();
                           }
                           else {
                             p = fromSnapshot(snapshot.data);

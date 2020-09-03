@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/auth.dart';
+import 'package:smartresponse4/box_decoration.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,7 +33,8 @@ class _RegisterState extends State<Register> {
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
         elevation: 0.0,
-        title: Text('Sign Up to Smart Response'),
+        centerTitle: true,
+        title: Text('Sign Up'),
         actions: <Widget>[
           FlatButton.icon(
             icon: Icon(Icons.person),
@@ -44,10 +46,12 @@ class _RegisterState extends State<Register> {
         ],
       ),
       body: Container(
+        decoration: customBoxDecoration(),
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: Form(
           key: _formKey,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(height: 20.0,),
               TextFormField(

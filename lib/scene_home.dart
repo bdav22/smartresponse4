@@ -10,6 +10,7 @@ import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/scene_list.dart';
 import 'package:smartresponse4/scene_tile.dart';
+import 'package:smartresponse4/scene_tile_active.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/wrapper.dart';
 
@@ -58,7 +59,7 @@ class _SceneHomeState extends State<SceneHome> {
                 accountEmail: Column ( crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                       Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.rank), Text(p.profile.department + " ") ] ),
-                      Text("Depatment ID Code: " + p.profile.squadID),
+                      Text("Department ID Code: " + p.profile.squadID),
                   ]
                 ),
                 key: UniqueKey(),
@@ -85,6 +86,7 @@ class _SceneHomeState extends State<SceneHome> {
                 },
               ),
               Divider(),
+              /*
               ListTile(
                 leading: Icon(Icons.chat),
                 title: Text('Global Chat'),
@@ -93,6 +95,7 @@ class _SceneHomeState extends State<SceneHome> {
                 },
               ),
               Divider(),
+               */
               ListTile(
                 leading: Icon(Icons.map),
                 title: Text('Map'),
@@ -152,7 +155,7 @@ class _SceneHomeState extends State<SceneHome> {
                         builder: (context, ss) {
                           if(ss.hasData && ss?.data != null && snapshot.data['responding'] != "unbusy") {
                             print("scene_home.dart: to what am I responding scene responding data:" + snapshot.data['responding']);
-                            return SceneTile(scene: sceneFromSnapshot(ss?.data), respond: "Leave");
+                            return SceneTileActive(scene: sceneFromSnapshot(ss?.data), respond: "Leave");
                           }
                           else {
                             return SizedBox(height: 20); // Text("No Active Scene Loaded Just Yet");

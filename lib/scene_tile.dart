@@ -82,6 +82,8 @@ class _SceneTileState extends State<SceneTile> {
                 Flexible(child: Text( getShortDescription(scene?.desc ?? "--")) ),
               ] ),
         ),
+
+
       ButtonBar(
         children: <Widget> [
 

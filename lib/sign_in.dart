@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/auth.dart';
+import 'package:smartresponse4/box_decoration.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/loading.dart';
 
@@ -31,7 +32,8 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
         elevation: 0.0,
-        title: Text('Sign In to Smart Response'),
+        centerTitle: true,
+        title: Text('Sign In'),
         actions: <Widget>[
           FlatButton.icon(
             icon: Icon(Icons.person),
@@ -43,6 +45,7 @@ class _SignInState extends State<SignIn> {
         ],
       ),
       body: Container(
+        decoration: customBoxDecoration(),
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: Form(
           key: _formKey,

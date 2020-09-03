@@ -391,13 +391,14 @@ class _MyMapPageState extends State<MyMapPage> {
 
             children: [
               FloatingActionButton(
-              child: Icon(Icons.location_searching),
+              child: Icon(Icons.navigation),
               heroTag: null,
               backgroundColor: (_trackerOn ? Colors.blue : Colors.grey),
               onPressed: () {
                 getCurrentLocation();
               }),
               SizedBox(width: 20),
+              /*
               FloatingActionButton(
                   child: Icon(Icons.camera_alt),
                   heroTag: null,
@@ -406,8 +407,9 @@ class _MyMapPageState extends State<MyMapPage> {
                     toggleCameraTracking();
                   }),
               SizedBox(width: 20),
+               */
               FloatingActionButton(
-                  child: Icon(Icons.navigation),
+                  child: Icon(Icons.pin_drop),
                   heroTag: null,
                   backgroundColor: (_placeMarkerOn ? Colors.blue : Colors.grey),
                   onPressed: () async {
