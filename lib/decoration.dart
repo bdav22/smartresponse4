@@ -3,6 +3,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
+RaisedButton getMyButton(Color color, String text, Function f) {
+  return RaisedButton(
+    color: color,
+    elevation: 5.0,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    child: Text(text, style: TextStyle(color: Colors.white)),
+    onPressed: f
+  );
+}
+
+
+
+
 BoxDecoration customBoxDecoration() {
   return BoxDecoration (
     color: Colors.blue,

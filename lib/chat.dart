@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:smartresponse4/box_decoration.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/message.dart';
+import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
 
 
 class Chat extends StatefulWidget {
-  const Chat({Key key}) : super(key: key);
+  final Scene scene;
+  const Chat({this.scene, Key key}) : super(key: key);
 
   @override
   _ChatState createState() => _ChatState();
@@ -18,18 +20,21 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _firestore = Firestore.instance;
+  //final Firestore _firestore = Firestore.instance;
   final EmailStorage es = EmailStorage.instance;
 
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
+
+
+
 
   Future<void> sendMessageCallback() async {
     if (messageController.text.length > 0) {
       FirebaseUser user = await _auth.currentUser();
       //print("log this: "+  messageController.text + " " + user_email);
       await
-      _firestore.collection('messages').add({
+      widget.scene.ref.collection('messages').add({
         'text': messageController.text,
         'from': EmailStorage.instance.userData.name,
         'from-uid': user.uid,
@@ -48,6 +53,7 @@ class _ChatState extends State<Chat> {
   @override
   void initState() {
     super.initState();
+    print("chat.dart: " + (widget.scene?.ref?.documentID ?? " no reference found"));
    }
 
 
@@ -65,7 +71,7 @@ class _ChatState extends State<Chat> {
             children: <Widget>[
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: _firestore.collection('messages').orderBy('sent', descending: true).snapshots(),
+                  stream: widget.scene.ref.collection('messages').orderBy('sent', descending: true).snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData)
                       return Center(

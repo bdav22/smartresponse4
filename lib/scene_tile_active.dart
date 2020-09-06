@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
@@ -10,8 +11,8 @@ import 'package:smartresponse4/user.dart';
 class SceneTileActive extends StatelessWidget {
 
   final Scene scene;
-  final String respond;
-  SceneTileActive({ this.scene, this.respond ="Respond" });
+  final String respond = "Leave";
+  SceneTileActive({ this.scene });
 
   /*
   @override
@@ -88,76 +89,20 @@ class _SceneTileState extends State<SceneTile> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget> [
-            RaisedButton(
-              color: Colors.blue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: const Text('Chat', style: TextStyle(color: Colors.white)),
-              onPressed: () {
-                Navigator.pushNamed(context, '/Chat', arguments: scene);
-              },
-            ),
-            RaisedButton(
-              color: Colors.blue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: const Text('ICS', style: TextStyle(color: Colors.white)),
-              onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
-            ),
-            RaisedButton(
-              color: Colors.blue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: Text("Logistics", style: TextStyle(color: Colors.white)),
-              onPressed: () async {
-
-                //EmailStorage.instance.updateData();
-                //if(EmailStorage.instance.userData?.responding != widget.scene.ref.documentID) {
-                if(respond == "Respond") {
-                  String address = await scene.getAddress();
-                  await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-                    "responding": scene.ref.documentID
-                  });
-                  print("scene_tile.dart: Responding to this scene at: " + address);
-                  BackgroundLocationInterface().onStart(scene.ref.documentID);
-                  EmailStorage.instance.updateData();
-                } else {
-                  BackgroundLocationInterface().onStop();
-                  await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-                    "responding": "unbusy"
-                  });
-                  EmailStorage.instance.updateData();
-                }
-              },
-            ),
+                    getMyButton(Colors.blue, 'Chat',  () {Navigator.pushNamed(context, '/chat', arguments: scene);}),
+                    getMyButton(Colors.blue, "ICS", () {Navigator.of(context).pushNamed('/ICS', arguments: scene);}),
+                    getMyButton(Colors.blue, "Logistics", () {Navigator.of(context).pushNamed('/Logistics', arguments: scene);}),
             ]),
           Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget> [
-                RaisedButton(
-                  color: Colors.blue,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-//            borderSide: BorderSide(color: Colors.grey),
-                  child: const Text('More', style: TextStyle(color: Colors.white)),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);
-                  },
-              ),
-                RaisedButton(
-                  color: Colors.blue,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  child: const Text('Map', style: TextStyle(color: Colors.white)),
-                  onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
-                ),
+                getMyButton(Colors.blue, 'More',  () {Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);}),
+                getMyButton(Colors.blue, 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: scene);}),
+                getMyButton(Colors.blue, 'Drive',  () async {
+                  String address = await scene.getAddress();
+                  MapsLauncher.launchQuery(address);
+                }),
 
-          RaisedButton(
-              color: Colors.blue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: const Text('Drive', style: TextStyle(color: Colors.white)),
-               onPressed: () async {
-                //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
-                //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
-                 String address = await scene.getAddress();
-                 MapsLauncher.launchQuery(address);
-              }
-          ),
           ]),
           Container(
             padding: EdgeInsets.fromLTRB(10,0,10,0),

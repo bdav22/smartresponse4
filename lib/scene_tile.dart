@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
@@ -10,8 +11,8 @@ import 'package:smartresponse4/user.dart';
 class SceneTile extends StatelessWidget {
 
   final Scene scene;
-  final String respond;
-  SceneTile({ this.scene, this.respond ="Respond" });
+  final String respond="Respond";
+  SceneTile({ this.scene} );
 
   /*
   @override
@@ -31,6 +32,23 @@ class _SceneTileState extends State<SceneTile> {
     }
   }
 
+  void respondFunction() async {
+    if (respond == "Respond") {
+      String address = await scene.getAddress();
+      await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+        "responding": scene.ref.documentID
+      });
+      print("scene_tile.dart: Responding to this scene at: " + address);
+      BackgroundLocationInterface().onStart(scene.ref.documentID);
+      EmailStorage.instance.updateData();
+    } else {
+      BackgroundLocationInterface().onStop();
+      await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+        "responding": "unbusy"
+      });
+      EmailStorage.instance.updateData();
+    }
+  }
 
 
   @override
@@ -86,49 +104,13 @@ class _SceneTileState extends State<SceneTile> {
 
       ButtonBar(
         children: <Widget> [
-
-          OutlineButton(
-            child: const Text('More'),
-            onPressed: () {
-              Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);
-            },
-          ),
-          OutlineButton(
-            child: const Text('Map'),
-            onPressed: () { Navigator.of(context).pushNamed('/MyMapPage', arguments: scene);},
-          ),
-          OutlineButton(
-            child: Text(respond),
-            onPressed: () async {
-
-              //EmailStorage.instance.updateData();
-              //if(EmailStorage.instance.userData?.responding != widget.scene.ref.documentID) {
-              if(respond == "Respond") {
-                String address = await scene.getAddress();
-                await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-                  "responding": scene.ref.documentID
-                });
-                print("scene_tile.dart: Responding to this scene at: " + address);
-                BackgroundLocationInterface().onStart(scene.ref.documentID);
-                EmailStorage.instance.updateData();
-              } else {
-                BackgroundLocationInterface().onStop();
-                await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-                  "responding": "unbusy"
-                });
-                EmailStorage.instance.updateData();
-              }
-            },
-          ),
-          OutlineButton(
-              child: const Text('Drive'),
-               onPressed: () async {
-                //Scene navigationScene = Scene(location: scene.location, desc: scene.desc, turnOnNavigation: true, created: scene.created);
-                //Navigator.of(context).pushNamed('/MyMapPage', arguments: navigationScene);
-                 String address = await scene.getAddress();
-                 MapsLauncher.launchQuery(address);
-              }
-          )
+          getMyButton(Colors.green, "Respond", respondFunction),
+          getMyButton(Colors.blue, 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: scene);}),
+          getMyButton(Colors.blue, 'Drive',  () async {
+            String address = await scene.getAddress();
+            MapsLauncher.launchQuery(address);
+          }),
+          getMyButton(Colors.blue, "More",  () {Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);}),
         ]
       )
       ]

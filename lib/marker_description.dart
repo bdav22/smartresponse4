@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartresponse4/box_decoration.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/constants.dart';
 
 

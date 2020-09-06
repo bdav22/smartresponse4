@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:smartresponse4/box_decoration.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/map_location.dart';
@@ -155,7 +155,7 @@ class _SceneHomeState extends State<SceneHome> {
                         builder: (context, ss) {
                           if(ss.hasData && ss?.data != null && snapshot.data['responding'] != "unbusy") {
                             print("scene_home.dart: to what am I responding scene responding data:" + snapshot.data['responding']);
-                            return SceneTileActive(scene: sceneFromSnapshot(ss?.data), respond: "Leave");
+                            return SceneTileActive(scene: sceneFromSnapshot(ss?.data));
                           }
                           else {
                             return SizedBox(height: 20); // Text("No Active Scene Loaded Just Yet");

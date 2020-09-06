@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/auth.dart';
-import 'package:smartresponse4/box_decoration.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/loading.dart';
 

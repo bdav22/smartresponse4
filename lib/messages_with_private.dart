@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smartresponse4/box_decoration.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/message_list_private.dart';
 import 'package:smartresponse4/user.dart';
 

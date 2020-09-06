@@ -19,7 +19,14 @@ class RouteGenerator {
 
     switch (settings.name) {
       case '/chat':
-        return MaterialPageRoute(builder: (_) => Chat());
+        final Scene scene = settings?.arguments;
+        if(scene != null ) {
+          return MaterialPageRoute(builder: (_) => Chat(scene: scene));
+        }
+        else {
+          return MaterialPageRoute(builder: (_) => Text("?? Loading CHAT Error ?? "));
+        }
+        break;
 
       case '/dms':
         return MaterialPageRoute(builder: (_) => PrivateMessage());

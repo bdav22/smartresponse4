@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartresponse4/box_decoration.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/profile.dart';
@@ -103,6 +103,7 @@ class _SettingsState extends State<Settings> {
                                   responding: snapshot.data.responding
                               );
                               await DatabaseService(uid: user.uid).updateProfile(p);
+                              EmailStorage.instance.userData = p;
                               Navigator.pop(context);
                             }
                           }
