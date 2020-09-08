@@ -4,6 +4,7 @@ import 'package:smartresponse4/chat.dart';
 import 'package:smartresponse4/ICS.dart';
 import 'package:smartresponse4/google_map.dart';
 import 'package:smartresponse4/authenticate.dart';
+import 'package:smartresponse4/messages_compose.dart';
 import 'package:smartresponse4/profile_dept.dart';
 import 'package:smartresponse4/scene_logistic.dart';
 import 'package:smartresponse4/messages_with_private.dart';
@@ -34,6 +35,11 @@ class RouteGenerator {
       case '/Department':
         print("route_generator.dart: " + EmailStorage.instance.userData.squadID + " is my squadID");
         return MaterialPageRoute(builder: (_) => DepartmentProfileList(EmailStorage.instance.userData.squadID));
+        break;
+
+      case '/Compose':
+        return MaterialPageRoute(builder: (_) => ComposePrivateMessage(EmailStorage.instance.userData.squadID));
+        break;
 
       case '/Logistics':
         final Scene scene = settings?.arguments;
