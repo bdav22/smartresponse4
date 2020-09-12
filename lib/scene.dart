@@ -11,10 +11,12 @@ import 'package:smartresponse4/user.dart';
 class Scene {
   final GeoPoint location;
   final Timestamp created;
+  final String priority;
+  final int units;
   final String desc;
   final DocumentReference ref;
   Placemark placemark;
-  Scene ({this.location, this.created, this.desc, this.ref});
+  Scene ({this.location, this.created, this.desc, this.ref, this.priority, this.units});
 
   Future<String> getAddress() async {
     String address = "-loading address-";

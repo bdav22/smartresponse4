@@ -31,14 +31,14 @@ class _RegisterState extends State<Register> {
     return loading ? Loading() : Scaffold(
       backgroundColor: Colors.cyan[50],
       appBar: AppBar(
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: appColorMid,
         elevation: 0.0,
         centerTitle: true,
         title: Text('Sign Up'),
         actions: <Widget>[
           FlatButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('Sign In'),
+            icon: Icon(Icons.person, color: Colors.white),
+            label: Text('Sign In',  style: TextStyle(color: Colors.white)),
             onPressed: () {
               widget.toggleView();
             },

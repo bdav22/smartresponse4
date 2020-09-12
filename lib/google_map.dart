@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/google_route.dart';
 import 'package:smartresponse4/hydrant.dart';
 import 'package:smartresponse4/map_location.dart';
@@ -63,7 +64,8 @@ class _MyMapPageState extends State<MyMapPage> {
       initialLocation = CameraPosition(
         target: LatLng(widget.scene.location.latitude, widget.scene.location.longitude),  zoom: 18,  );
     } else {
-      initialLocation = CameraPosition(target: _currentLocation,  zoom: 10,    );
+//      getCurrentLocation();
+      initialLocation = CameraPosition(target: _currentLocation,  zoom: 5,    );
     }
     selectedPlacingMarker = null;
   }
@@ -291,6 +293,7 @@ class _MyMapPageState extends State<MyMapPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text("Map Tracker"),
+          backgroundColor: appColorMid,
         ),
         body: Stack(
           children: <Widget>[

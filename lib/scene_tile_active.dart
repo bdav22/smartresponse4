@@ -43,6 +43,7 @@ class _SceneTileState extends State<SceneTile> {
           margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
 
       child: Card(
+        color: appColorSuperBright,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(11.0),
           side: BorderSide(
@@ -61,7 +62,7 @@ class _SceneTileState extends State<SceneTile> {
             Padding (
               padding: EdgeInsets.fromLTRB(0,0,10,0),
               child: Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
-                  style: TextStyle(color: Colors.blue)
+                  style: TextStyle(color: appColorMidLight)
               ),
             ),
             FutureBuilder<String>(
@@ -89,16 +90,16 @@ class _SceneTileState extends State<SceneTile> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget> [
-                    getMyButton(Colors.blue, 'Chat',  () {Navigator.pushNamed(context, '/chat', arguments: scene);}),
-                    getMyButton(Colors.blue, "ICS", () {Navigator.of(context).pushNamed('/ICS', arguments: scene);}),
-                    getMyButton(Colors.blue, "Logistics", () {Navigator.of(context).pushNamed('/Logistics', arguments: scene);}),
+                    getMyButton( 'Chat',  () {Navigator.pushNamed(context, '/chat', arguments: scene);}),
+                    getMyButton( "ICS", () {Navigator.of(context).pushNamed('/ICS', arguments: scene);}),
+                    getMyButton( "Logistics", () {Navigator.of(context).pushNamed('/Logistics', arguments: scene);}),
             ]),
           Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget> [
-                getMyButton(Colors.blue, 'More',  () {Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);}),
-                getMyButton(Colors.blue, 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: scene);}),
-                getMyButton(Colors.blue, 'Drive',  () async {
+                getMyButton( 'More',  () {Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);}),
+                getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: scene);}),
+                getMyButton( 'Drive',  () async {
                   String address = await scene.getAddress();
                   MapsLauncher.launchQuery(address);
                 }),

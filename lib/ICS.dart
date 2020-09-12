@@ -30,6 +30,7 @@ class _ICSState extends State<ICS> {
     return Scaffold(
       appBar: AppBar(
         title: Text("ICS"),
+        backgroundColor: appColorMid,
       ),
       body: Container(
         width: double.infinity,
@@ -61,7 +62,7 @@ class _ICSState extends State<ICS> {
                                       RawMaterialButton(
                                         onPressed: () {
                                           Repository(Firestore.instance).removeCommandPosition(widget.scene.ref.documentID, cp.documentID);
-                                        }, elevation: 2.0, fillColor: Colors.green,
+                                        }, elevation: 2.0, fillColor: Colors.red,
                                         child: Icon(Icons.delete_outline, size: 25.0,),
                                         padding: EdgeInsets.all(5.0),
                                         shape: CircleBorder(),

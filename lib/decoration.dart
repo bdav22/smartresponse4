@@ -4,9 +4,56 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
-RaisedButton getMyButton(Color color, String text, Function f) {
+/*
+Color dark = Color.fromRGBO(0,33,2,1.0);
+Color middark = Color.fromRGBO(2,55,5,1.0);
+Color mid = Color.fromRGBO(10,60,10,1.0);
+Color midlight = Color.fromRGBO(0,90,6,1.0);
+Color light = Color.fromRGBO(0,132,9,1.0);
+Color bright = Color.fromRGBO(140,200,140,1.0);
+Color midbright = Color.fromRGBO(180,240,180,1.0);
+Color midbright2 = Color.fromRGBO(200,250,200,1.0);
+Color midbright3 = Color.fromRGBO(230,250,230,1.0);
+Color superbright = Color.fromRGBO(255,255,255,1.0);
+*/
+
+//odds/evens in scene_home control some of the look and feel of that menu - use appropriately.
+
+Color appColorDark = Colors.blue[900]; //text on text bars
+Color appColorMiddleDark = Colors.brown[900]; //gradient end
+Color appColorMid = Colors.blue[700];  //app bar bgcolor
+Color appColorMidLight = Colors.blue[600]; //text time/date on scenetiles
+Color appColorLight = Colors.brown[200];  //gradient start
+Color appColorBright = Colors.blue[400]; //responding
+Color appColorMidBright = Colors.blue[300];
+Color appColorMidBright2 = Colors.blue[200];
+Color appColorMidBright3 = Colors.blue[100]; //bg on text bars
+Color appColorSuperBright = Colors.blue[50]; //card bg colors
+
+Color appColorGo = Colors.green; //green buttons - "GO" buttons
+Color appColorButton = appColorMidLight; //blue buttons -- default button color
+Color appColorUnusableButton = Colors.white;
+
+
+Widget getMyButton(String text, Function f, {String color="default"}) {
+  Color usedColor = appColorButton;
+  switch(color) {
+    case "invisible":
+      usedColor = appColorUnusableButton;
+      break;
+    case "go":
+      usedColor = appColorGo;
+      break;
+    case "default":
+      break;
+    default:
+      break;
+  }
+  if(color == "invisible") {
+    return SizedBox(width: 86);
+  }
   return RaisedButton(
-    color: color,
+    color: usedColor,
     elevation: 5.0,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     child: Text(text, style: TextStyle(color: Colors.white)),
@@ -19,11 +66,11 @@ RaisedButton getMyButton(Color color, String text, Function f) {
 
 BoxDecoration customBoxDecoration() {
   return BoxDecoration (
-    color: Colors.blue,
     gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Colors.grey[700], Colors.blueAccent[400]]),
+        //colors: [Colors.grey[700], Colors.blueAccent[400]]),
+      colors: [appColorLight, appColorMiddleDark]),
   );
 }
 

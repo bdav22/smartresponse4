@@ -12,7 +12,8 @@ class ChooseMarker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Marker Chooser")
+          title: Text("Marker Chooser"),
+          backgroundColor: appColorMid,
         ),
         body: Container (
           decoration: customBoxDecoration(),

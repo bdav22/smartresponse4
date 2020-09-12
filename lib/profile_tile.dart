@@ -36,7 +36,7 @@ class ProfileTile extends StatelessWidget {
                     Text(profile.name, overflow: TextOverflow.ellipsis,),
                     Text(profile.email, overflow: TextOverflow.ellipsis),
                     profile.responding == "unbusy" ?
-                    Text("Ready",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red))   :
+                    Text("Ready",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green))   :
                     Text( "Responding", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
             ],
           ),

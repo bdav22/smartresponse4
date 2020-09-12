@@ -62,6 +62,7 @@ class _ChatState extends State<Chat> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat'),
+        backgroundColor: appColorMid,
       ),
       body: Container(
         decoration: customBoxDecoration(),

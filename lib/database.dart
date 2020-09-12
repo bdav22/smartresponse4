@@ -53,7 +53,7 @@ class Repository {
   }
 
   Stream<List<Profile> > getSquadProfiles(String squadID) {
-    return _firestore.collection('profiles').where("squadID", isEqualTo: squadID).snapshots().map(
+    return _firestore.collection('profiles').orderBy('rank', descending: false).where("squadID", isEqualTo: squadID).snapshots().map(
         (snapshot) {
           return snapshot.documents.map((doc) {
               return fromSnapshot(doc);
@@ -115,13 +115,13 @@ class DatabaseService {
   Future createDBProfile(String email) async {
     //FirebaseUser user = await FirebaseAuth.instance.currentUser();
     return await profileCollection.document(uid).setData({
-      'name': "New Name",
-      'rank': "New Rank",
-      'department': "New Department",
+      'name': "",
+      'rank': "",
+      'department': "",
       'email': email,
       'location': GeoPoint(0,0),
       'responding': "unbusy",
-      'squadID': "-"
+      'squadID': ""
     });
   }
 

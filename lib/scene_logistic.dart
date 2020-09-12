@@ -7,7 +7,7 @@ import 'package:smartresponse4/profile_tile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/scene_tile.dart';
-import 'package:smartresponse4/scene_tile_active.dart';
+import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/utility.dart';
 
 class Logistic extends StatefulWidget {
@@ -37,14 +37,17 @@ class _LogisticState extends State<Logistic> {
     return Scaffold(
         appBar: AppBar(
           title: Text("Scene Logistics"),
+          backgroundColor: appColorMid,
         ),
         body:   Container(
           decoration: customBoxDecoration(),
             child: Column(
             children: <Widget>[
-              Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Scene Information", textScaleFactor: 2.0,)))),
-              SceneTile(scene: widget.scene),
-              Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Responders and ETAs", textScaleFactor: 2.0,)))),
+              Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: appColorMidBright3,
+                  child: Center(child:Text("Scene Information", textScaleFactor: 2.0,  style: TextStyle(fontWeight: FontWeight.bold, color: appColorDark), )))),
+              SceneTile(widget.scene.ref.documentID != EmailStorage.instance.userData.responding, scene: widget.scene),
+              Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: appColorMidBright3,
+                  child: Center(child:Text("Responders and ETAs", textScaleFactor: 2.0,  style: TextStyle(fontWeight: FontWeight.bold, color: appColorDark))))),
               Expanded(
                 child:  StreamBuilder<List<Responder>>(
                   stream: _respondersStream,
@@ -64,7 +67,7 @@ class _LogisticState extends State<Logistic> {
                                   child: ListTile(
                                     title: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[Text(responder.profile?.name ?? "name broke?"),
                                      Text( "Responding",
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                        style: TextStyle(fontWeight: FontWeight.bold, color: appColorBright),
                                       )]),
                                     subtitle:
                                     FutureBuilder<double>(

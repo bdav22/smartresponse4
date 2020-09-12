@@ -19,6 +19,7 @@ class MarkerDescription extends StatelessWidget {
     return Scaffold(
       appBar: new AppBar(
         title: new Text('Marker Description'),
+        backgroundColor: appColorMid,
       ),
       body: Material(
         child: Container(

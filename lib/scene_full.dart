@@ -6,11 +6,54 @@ import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
 
-class FullSceneTile extends StatelessWidget {
+class FullSceneTile extends StatefulWidget {
 
   final Scene scene;
   final String respond = "Respond";
   FullSceneTile({this.scene});
+  _FullSceneTileState createState() => _FullSceneTileState();
+}
+
+
+class _FullSceneTileState extends State<FullSceneTile> {
+
+  bool displayRespond = true;
+  Widget respondButton;
+  Widget alreadyResponding = getMyButton("--", (){}, color: "invisible");
+  Widget actualWidgetRespond;
+  @override
+  void initState() {
+    super.initState();
+    displayRespond = EmailStorage.instance.userData.responding != widget.scene.ref.documentID;
+
+    actualWidgetRespond =         getMyButton("Respond", () async {
+        String address = await widget.scene.getAddress();
+        await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+          "responding": widget.scene.ref.documentID
+        });
+        print("scene_tile.dart: Responding to this scene at: " + address);
+        BackgroundLocationInterface().onStart(widget.scene.ref.documentID);
+        EmailStorage.instance.updateData();
+        Navigator.pop(context);
+        setState(() {
+          if(displayRespond) {
+            respondButton = actualWidgetRespond;
+          }
+          else {
+            respondButton = alreadyResponding;
+          }
+        });
+      }, color: "go");
+
+    if(displayRespond) {
+      respondButton = actualWidgetRespond;
+    }
+    else {
+      respondButton = alreadyResponding;
+    }
+
+
+  }
 
 
   String getShortDescription(String desc) {
@@ -24,7 +67,7 @@ class FullSceneTile extends StatelessWidget {
 
 
   void respondFunction(BuildContext context) async {
-    if (respond == "Respond") {
+    if (widget.respond == "Respond") {
 
     } else {
       BackgroundLocationInterface().onStop();
@@ -41,6 +84,7 @@ class FullSceneTile extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Full Scene Description"),
+        backgroundColor: appColorMid,
       ),
       backgroundColor: Colors.lightBlueAccent,
       body: Container(
@@ -58,12 +102,12 @@ class FullSceneTile extends StatelessWidget {
                       children: <Widget>[
                         Padding (
                           padding: EdgeInsets.fromLTRB(0,0,10,0),
-                          child: Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
-                            style: TextStyle(color: Colors.blue)
+                          child: Text(widget.scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
+                            style: TextStyle(color: appColorMidLight)
                           ),
                         ),
                         FutureBuilder<String>(
-                            future: scene.getLocality(),
+                            future: widget.scene.getLocality(),
                             builder: (context, snapshot) {
                               if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
                               if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting'); }
@@ -74,34 +118,27 @@ class FullSceneTile extends StatelessWidget {
                               }
                             })
                       ]),
-                  subtitle: Text('Lat: ${scene.location.latitude.toString()}, Long:${scene.location.longitude.toString()} '),
+                  subtitle: Text('Lat: ${widget.scene.location.latitude.toString()}, Long:${widget.scene.location.longitude.toString()} '),
                 ),
-                FutureBuilder<String>( future: scene.getLocality( version: 1), builder: (context, snapshot) { if(snapshot.hasData) { return(Flexible(child: Text(snapshot.data))); } else { return Text("full loc"); }}),
-                Padding( padding: EdgeInsets.all(18.0), child: Text(scene?.desc ?? "---")),
-
+                FutureBuilder<String>( future: widget.scene.getLocality( version: 1), builder: (context, snapshot) { if(snapshot.hasData) { return(Flexible(child: Text(snapshot.data))); } else { return Text("full loc"); }}),
+                Padding( padding: EdgeInsets.all(18.0), child: Text(widget.scene?.desc ?? "---")),
+                Flexible( child: SizedBox(height: 550) ),
                 Row(
+
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget> [
-                      getMyButton(Colors.blue, 'Chat',  () {Navigator.pushNamed(context, '/chat', arguments: scene);}),
-                      getMyButton(Colors.blue, "ICS", () {Navigator.of(context).pushNamed('/ICS', arguments: scene);}),
-                      getMyButton(Colors.blue, "Logistics", () {Navigator.of(context).pushNamed('/Logistics', arguments: scene);}),
+                      getMyButton( 'Chat',  () {Navigator.pushNamed(context, '/chat', arguments: widget.scene);}),
+                      getMyButton("ICS", () {Navigator.of(context).pushNamed('/ICS', arguments: widget.scene);}),
+                      getMyButton( "Logistics", () {Navigator.of(context).pushNamed('/Logistics', arguments: widget.scene);}),
                     ]),
                 Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget> [
-                      getMyButton(Colors.green, "Respond", () async {
-                        String address = await scene.getAddress();
-                        await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-                          "responding": scene.ref.documentID
-                        });
-                        print("scene_tile.dart: Responding to this scene at: " + address);
-                        BackgroundLocationInterface().onStart(scene.ref.documentID);
-                        EmailStorage.instance.updateData();
-                        Navigator.pop(context);
-                      }),
-                      getMyButton(Colors.blue, 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: scene);}),
-                      getMyButton(Colors.blue, 'Drive',  () async {
-                        String address = await scene.getAddress();
+                      respondButton,
+                      getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: widget.scene);}),
+                      getMyButton( 'Drive',  () async {
+                        String address = await widget.scene.getAddress();
                         MapsLauncher.launchQuery(address);
                       }),
 

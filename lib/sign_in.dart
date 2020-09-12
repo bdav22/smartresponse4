@@ -30,14 +30,14 @@ class _SignInState extends State<SignIn> {
     return loading ? Loading() : Scaffold(
       backgroundColor: Colors.cyan[50],
       appBar: AppBar(
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: appColorMid,
         elevation: 0.0,
         centerTitle: true,
         title: Text('Sign In'),
         actions: <Widget>[
           FlatButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('Register'),
+            icon: Icon(Icons.person, color: Colors.white),
+            label: Text('Register',  style: TextStyle(color: Colors.white)),
             onPressed: () {
               widget.toggleView();
             },

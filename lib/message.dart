@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/profile_tile.dart';
 
@@ -76,7 +77,7 @@ class Message extends StatelessWidget {
                                       ), ],
                                      */
                                     shape: BoxShape.rectangle,
-                                    color: !me ? Colors.grey[100] : Colors.blue[50],
+                                    color: !me ? Colors.grey[100] : appColorMidBright,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 child:  Padding( padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),

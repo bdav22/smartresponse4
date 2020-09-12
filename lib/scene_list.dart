@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/scene_tile.dart';
+import 'package:smartresponse4/user.dart';
 
 class SceneList extends StatefulWidget {
   @override
@@ -15,7 +16,7 @@ class _SceneListState extends State<SceneList> {
     return ListView.builder(
       itemCount: scenes.length,
       itemBuilder: (context, index) {
-        return SceneTile(scene: scenes[index]);
+        return SceneTile(scenes[index].ref.documentID != EmailStorage.instance.userData.responding, scene: scenes[index]);
       },
     );
   }

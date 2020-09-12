@@ -35,7 +35,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
     return Scaffold (
       appBar: AppBar(
           title: Text('Smart Response'),
-          backgroundColor: Colors.lightBlue,
+          backgroundColor: appColorMid,
           elevation: 0.0,
       ),
       body: Container(
@@ -61,10 +61,16 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                           title: Column(
                             children: <Widget>[
                               Row( mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                                Text(responder.name),
+                                Text(responder.name + " "),
+                                Container(
+                                    child: Flexible( child: Text("[" + responder.rank + "]",
+                                      style: TextStyle(fontSize: 14.0),
+                                      overflow: TextOverflow.ellipsis,),)),
+
+
                                 responder.responding == "unbusy" ?
-                                        Text("Ready",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red))   :
-                                Text( "Responding", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green), )
+                                        Text("Ready",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green))   :
+                                Text( "Responding", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange[500]), )
                               ]),
                               responder.responding == "unbusy" ? Text("") :
                               StreamBuilder<DocumentSnapshot>(
@@ -79,7 +85,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                                           if(address.hasError) { return Text('Error: ${address.error}');    }
                                           if(address.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting2'); }
                                           if(address.hasData)
-                                            return Text(address?.data ?? "-Address Loading-", overflow: TextOverflow.ellipsis);
+                                            return Text(address?.data ?? "-Address Loading-", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13.0),);
                                           else
                                             return Text("-address Loading-");
                                         }

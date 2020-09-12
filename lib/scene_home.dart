@@ -9,7 +9,6 @@ import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/scene_list.dart';
-import 'package:smartresponse4/scene_tile.dart';
 import 'package:smartresponse4/scene_tile_active.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/wrapper.dart';
@@ -24,7 +23,8 @@ class SceneHome extends StatefulWidget {
 
 
 class _SceneHomeState extends State<SceneHome> {
-
+  final Color odds = Colors.blue[100];
+  final Color evens = Colors.blue[300];
   final AuthService _auth = AuthService();
   Profile userData;
   EmailStorage _es;
@@ -48,99 +48,125 @@ class _SceneHomeState extends State<SceneHome> {
       value: DatabaseService().scenes,
       child: Scaffold(
         drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              UserAccountsDrawerHeader(
-
-                accountName:
-                  Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.name), Text(p.profile.email + " ") ] ),
-            //Text(EmailStorage.instance.userData.name),
-                accountEmail: Column ( crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                      Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.rank), Text(p.profile.department + " ") ] ),
-                      Text("Department ID Code: " + p.profile.squadID),
-                  ]
+          child: Container(
+            decoration: customBoxDecoration(),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  decoration: customBoxDecoration(),
+                  accountName:
+                    Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.name), Text(p.profile.email + " ") ] ),
+              //Text(EmailStorage.instance.userData.name),
+                  accountEmail: Column ( crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                        Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                          Flexible(child: Text(p.profile.rank,  overflow: TextOverflow.ellipsis)),
+                          Flexible(child: Text(p.profile.department + " ", overflow: TextOverflow.ellipsis))
+                        ] ),
+                        Text("Department ID Code: " + p.profile.squadID),
+                    ]
+                  ),
+                  key: UniqueKey(),
+                  //Text(EmailStorage.instance.email),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: Theme.of(context).platform == TargetPlatform.iOS ?Colors.white: null,
+                    child: Text(p.profile.name.length > 0 ? p.profile.name[0] : "D"),
+                  ),
                 ),
-                key: UniqueKey(),
-                //Text(EmailStorage.instance.email),
-                currentAccountPicture: CircleAvatar(
-                  backgroundColor: Theme.of(context).platform == TargetPlatform.iOS ?Colors.white: null,
-                  child: Text(p.profile.name.length > 0 ? p.profile.name[0] : "D"),
+                Divider(),
+                Container(
+                  color: odds,
+                  child: ListTile(
+                    leading: Icon(Icons.people), // Icon.map when using this for map
+                    title: Text('Department'),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/Department');  //used to be map
+                    },
+                  ),
+                ),
+                Divider(),
+                Container(
+                  color: evens,
+                  child: ListTile(
+                    leading: Icon(Icons.search),
+                    title: Text('New Private Message'),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/Compose', arguments: 'hello');
+                    },
+                  ),
+                ),
+                Divider(),
+          Container(
+            color: odds,
+            child:ListTile(
+                  leading: Icon(Icons.chat),
+                  title: Text('Private Messages'),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/dms', arguments: 'hello');
+                  },
+                ),
+          ),
+                Divider(),
+                /*
+                ListTile(
+                  leading: Icon(Icons.chat),
+                  title: Text('Global Chat'),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/chat', arguments: 'hello');
+                  },
+                ),
+                Divider(),
+                 */
+          Container(
+            color: evens,
+            child:
+                ListTile(
+                  leading: Icon(Icons.map),
+                  title: Text('Map'),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/MyMapPage', arguments: Scene(location: p.profile.location));
+                  },
+
                 ),
               ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.people), // Icon.map when using this for map
-                title: Text('Department'),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/Department');  //used to be map
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.search),
-                title: Text('New Private Message'),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/Compose', arguments: 'hello');
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.chat),
-                title: Text('Private Messages'),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/dms', arguments: 'hello');
-                },
-              ),
-              Divider(),
-              /*
-              ListTile(
-                leading: Icon(Icons.chat),
-                title: Text('Global Chat'),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/chat', arguments: 'hello');
-                },
-              ),
-              Divider(),
-               */
-              ListTile(
-                leading: Icon(Icons.map),
-                title: Text('Map'),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/MyMapPage', arguments: Scene(location: p.profile.location));
-                },
 
-              ),
-
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Settings'),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/Settings', arguments: 'Hello');
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.cancel),
-                title: Text('Cancel'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+                Divider(),
+          Container(
+            color: odds,
+            child:
+                ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text('Settings'),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/Settings', arguments: 'Hello');
+                  },
+                ),
+          ),
+                Divider(),
+          Container(
+            color: evens,
+            child: ListTile(
+                  leading: Icon(Icons.cancel),
+                  title: Text('Cancel'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+          ),
+              ],
+            ),
           ),
         ),
         backgroundColor: Colors.white,
         appBar: AppBar(
             title: Text('Smart Response'),
-            backgroundColor: Colors.lightBlue,
+            backgroundColor: appColorMid,
             elevation: 0.0,
             actions: <Widget>[
               FlatButton.icon(
-                icon: Icon(Icons.person),
-                label: Text('logout'),
+                icon: Icon(Icons.person, color: Colors.white),
+                label: Text('logout', style: TextStyle(color: Colors.white)),
                 onPressed: () async {
                   await _auth.signOut();
                   EmailStorage.instance.clearData();
@@ -153,7 +179,8 @@ class _SceneHomeState extends State<SceneHome> {
             decoration: customBoxDecoration(),
             child: Column(
               children: <Widget>[
-                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("Active Scene", textScaleFactor: 2.0,)))),
+                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: appColorMidBright3,
+                    child: Center(child:Text("Active Scene", textScaleFactor: 2.0,)))),
                 StreamBuilder(
                   stream: Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).snapshots(),
                   builder: (context, snapshot) {
@@ -176,7 +203,8 @@ class _SceneHomeState extends State<SceneHome> {
                     }
                   }
                 ),
-                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: Colors.blueGrey[50],  child: Center(child:Text("All Scenes", textScaleFactor: 2.0,)))),
+                Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: appColorMidBright3,
+                    child: Center(child:Text("All Scenes", textScaleFactor: 2.0,)))),
                 Expanded(child: SceneList()),
               ],
             )),

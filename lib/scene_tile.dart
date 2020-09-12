@@ -12,7 +12,10 @@ class SceneTile extends StatelessWidget {
 
   final Scene scene;
   final String respond="Respond";
-  SceneTile({ this.scene} );
+  final bool displayRespond;
+  SceneTile( this.displayRespond, { this.scene} );
+
+
 
   /*
   @override
@@ -54,12 +57,16 @@ class _SceneTileState extends State<SceneTile> {
   @override
   Widget build(BuildContext context) {
 
+    Widget respondButton;
+    print("scene_tile.dart:" + scene.ref.documentID + " " + EmailStorage.instance.userData.responding + " " + this.displayRespond.toString());
+    if(this.displayRespond) respondButton = getMyButton( "Respond", respondFunction, color: "go");
     return Padding(
       padding: EdgeInsets.only(top: 4.0, bottom: 4.0),
         child: Container(
           margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
 
       child: Card(
+        color: appColorSuperBright,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(11.0),
           side: BorderSide(
@@ -78,7 +85,7 @@ class _SceneTileState extends State<SceneTile> {
             Padding (
               padding: EdgeInsets.fromLTRB(0,0,10,0),
               child: Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
-                  style: TextStyle(color: Colors.blue)
+                  style: TextStyle(color: appColorMidLight)
               ),
             ),
             FutureBuilder<String>(
@@ -104,13 +111,13 @@ class _SceneTileState extends State<SceneTile> {
 
       ButtonBar(
         children: <Widget> [
-          getMyButton(Colors.green, "Respond", respondFunction),
-          getMyButton(Colors.blue, 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: scene);}),
-          getMyButton(Colors.blue, 'Drive',  () async {
+          respondButton,
+          getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: scene);}),
+          getMyButton('Drive',  () async {
             String address = await scene.getAddress();
             MapsLauncher.launchQuery(address);
           }),
-          getMyButton(Colors.blue, "More",  () {Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);}),
+          getMyButton( "More",  () {Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);}),
         ]
       )
       ]
