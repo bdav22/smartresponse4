@@ -5,6 +5,7 @@ import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smartresponse4/database.dart';
+import 'package:smartresponse4/user.dart';
 
 class Register extends StatefulWidget {
 
@@ -91,6 +92,7 @@ class _RegisterState extends State<Register> {
                     }
                     else {
                       await DatabaseService(uid: user.uid).createDBProfile(user.email);
+                      EmailStorage.instance.updateData();
                       print("register.dart: Pushing to firebase - new profile");
                     }
                   }

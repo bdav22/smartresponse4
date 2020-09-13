@@ -125,6 +125,7 @@ class _SceneHomeState extends State<SceneHome> {
                   leading: Icon(Icons.map),
                   title: Text('Map'),
                   onTap: () {
+
                     Navigator.of(context).pushNamed('/MyMapPage', arguments: Scene(location: p.profile.location));
                   },
 
@@ -184,7 +185,8 @@ class _SceneHomeState extends State<SceneHome> {
                 StreamBuilder(
                   stream: Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).snapshots(),
                   builder: (context, snapshot) {
-                    if(snapshot.hasData && snapshot?.data != null) {
+                    if(snapshot.hasData && snapshot?.data != null &&
+                        snapshot?.data["responding"] != null && snapshot.data["responding"] != "unbusy") {
                       return StreamBuilder(
                         stream: Firestore.instance.collection("scenes").document(snapshot?.data['responding'] ?? "-").snapshots(),
                         builder: (context, ss) {
@@ -199,7 +201,7 @@ class _SceneHomeState extends State<SceneHome> {
                       );
                     }
                     else {
-                      return Text("loading user profile data");
+                      return Text("No active scenes at this time");
                     }
                   }
                 ),

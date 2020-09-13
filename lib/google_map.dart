@@ -292,7 +292,7 @@ class _MyMapPageState extends State<MyMapPage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("Map Tracker"),
+          title: Text(""),
           backgroundColor: appColorMid,
         ),
         body: Stack(
@@ -388,7 +388,8 @@ class _MyMapPageState extends State<MyMapPage> {
                 ),
 
                 ],
-                ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         floatingActionButton: Row(
             mainAxisAlignment: MainAxisAlignment.center,
 
@@ -396,7 +397,7 @@ class _MyMapPageState extends State<MyMapPage> {
               FloatingActionButton(
               child: Icon(Icons.navigation),
               heroTag: null,
-              backgroundColor: (_trackerOn ? Colors.blue : Colors.grey),
+              backgroundColor: (_trackerOn ? Colors.blue : Colors.brown),
               onPressed: () {
                 getCurrentLocation();
               }),
@@ -414,7 +415,7 @@ class _MyMapPageState extends State<MyMapPage> {
               FloatingActionButton(
                   child: Icon(Icons.pin_drop),
                   heroTag: null,
-                  backgroundColor: (_placeMarkerOn ? Colors.blue : Colors.grey),
+                  backgroundColor: (_placeMarkerOn ? Colors.blue :  Colors.brown),
                   onPressed: () async {
 
                     if(!_placeMarkerOn) { // it is about to be toggled on
@@ -436,7 +437,7 @@ class _MyMapPageState extends State<MyMapPage> {
               FloatingActionButton(
                   child: Icon(Icons.account_balance),
                   heroTag: null,
-                  backgroundColor: (_hydrantsOn ? Colors.blue : Colors.grey),
+                  backgroundColor: (_hydrantsOn ? Colors.blue :  Colors.brown),
                   onPressed: () async {
                     toggleHydrants();
                     //toggleBGLocation();

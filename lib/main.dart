@@ -31,8 +31,6 @@ class _MyAppState extends State<MyApp> {
         value: AuthService().user,
         child: MaterialApp(
           home: Wrapper(),
-          initialRoute: '/',
-          onGenerateRoute: RouteGenerator.generateRoute,
         ),
       ),
     )

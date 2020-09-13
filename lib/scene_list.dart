@@ -16,7 +16,7 @@ class _SceneListState extends State<SceneList> {
     return ListView.builder(
       itemCount: scenes.length,
       itemBuilder: (context, index) {
-        return SceneTile(scenes[index].ref.documentID != EmailStorage.instance.userData.responding, scene: scenes[index]);
+        return SceneTile(scene: scenes[index]);
       },
     );
   }

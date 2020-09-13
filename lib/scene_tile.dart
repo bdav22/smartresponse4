@@ -6,24 +6,20 @@ import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
+import 'package:smartresponse4/wrapper.dart';
 
 
-class SceneTile extends StatelessWidget {
+class SceneTile extends StatefulWidget {
 
   final Scene scene;
   final String respond="Respond";
-  final bool displayRespond;
-  SceneTile( this.displayRespond, { this.scene} );
-
-
-
-  /*
+  SceneTile({ this.scene} );
   @override
   _SceneTileState createState() => _SceneTileState();
 }
 
 class _SceneTileState extends State<SceneTile> {
-   */
+  bool displayRespond = true;
 
   String getShortDescription(String desc) {
     final length = 85;
@@ -36,13 +32,13 @@ class _SceneTileState extends State<SceneTile> {
   }
 
   void respondFunction() async {
-    if (respond == "Respond") {
-      String address = await scene.getAddress();
+    if (widget.respond == "Respond") {
+      String address = await widget.scene.getAddress();
       await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-        "responding": scene.ref.documentID
+        "responding": widget.scene.ref.documentID
       });
       print("scene_tile.dart: Responding to this scene at: " + address);
-      BackgroundLocationInterface().onStart(scene.ref.documentID);
+      BackgroundLocationInterface().onStart(widget.scene.ref.documentID);
       EmailStorage.instance.updateData();
     } else {
       BackgroundLocationInterface().onStop();
@@ -56,10 +52,10 @@ class _SceneTileState extends State<SceneTile> {
 
   @override
   Widget build(BuildContext context) {
-
+    final p = ProfileInfo.of(context);
     Widget respondButton;
-    print("scene_tile.dart:" + scene.ref.documentID + " " + EmailStorage.instance.userData.responding + " " + this.displayRespond.toString());
-    if(this.displayRespond) respondButton = getMyButton( "Respond", respondFunction, color: "go");
+    //print("scene_tile.dart:" + scene.ref.documentID + " " + EmailStorage.instance.userData.responding + " " + this.displayRespond.toString());
+    respondButton = getMyButton( "Respond", respondFunction, color: "go");
     return Padding(
       padding: EdgeInsets.only(top: 4.0, bottom: 4.0),
         child: Container(
@@ -84,12 +80,12 @@ class _SceneTileState extends State<SceneTile> {
           title: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
             Padding (
               padding: EdgeInsets.fromLTRB(0,0,10,0),
-              child: Text(scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
+              child: Text(widget.scene?.created?.toDate()?.toLocal()?.toString()?.substring(5, 16) ?? "---",
                   style: TextStyle(color: appColorMidLight)
               ),
             ),
             FutureBuilder<String>(
-              future: scene.getLocality(),
+              future: widget.scene.getLocality(),
               builder: (context, snapshot) {
                 if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
                 if(snapshot.connectionState == ConnectionState.waiting) { return Text(""); }
@@ -101,23 +97,33 @@ class _SceneTileState extends State<SceneTile> {
               }
             )
           ]),
-          subtitle: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-               // Text(' ${scene.location.latitude.toString()}, ${scene.location.longitude.toString()} '),
-                Flexible(child: Text( getShortDescription(scene?.desc ?? "--")) ),
-              ] ),
+          subtitle: Column(
+            children: <Widget>[
+              Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text( 'Priority: ${widget.scene?.priority ?? 2} '),
+                    Text( 'Units: ${widget.scene?.units ?? 8} '),
+                    ]
+              ),
+              Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                   // Text(' ${scene.location.latitude.toString()}, ${scene.location.longitude.toString()} '),
+                    Flexible(child: Text( getShortDescription(widget.scene?.desc ?? "--")) ),
+                  ] ),
+            ],
+          ),
         ),
 
 
       ButtonBar(
         children: <Widget> [
-          respondButton,
-          getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: scene);}),
+          p.profile.responding != widget.scene.ref.documentID ? respondButton : SizedBox(),
+          getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: widget.scene);}),
           getMyButton('Drive',  () async {
-            String address = await scene.getAddress();
+            String address = await widget.scene.getAddress();
             MapsLauncher.launchQuery(address);
           }),
-          getMyButton( "More",  () {Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);}),
+          getMyButton( "More",  () {Navigator.pushNamed(context, '/FullSceneTile', arguments: widget.scene);}),
         ]
       )
       ]

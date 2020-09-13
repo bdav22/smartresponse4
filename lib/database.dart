@@ -94,7 +94,9 @@ Scene sceneFromSnapshot(DocumentSnapshot doc) {
   return Scene(
     location: doc.data['location'] ?? '',
     created: doc.data['created'] ?? '',
-    desc: doc.data['desc'],
+    desc: doc.data['desc'] ?? ' ',
+    units: doc.data['units'] ?? 8,
+    priority: doc.data['priority'] ?? 3,
     ref: doc.reference,
   );
 }
@@ -119,7 +121,7 @@ class DatabaseService {
       'rank': "",
       'department': "",
       'email': email,
-      'location': GeoPoint(0,0),
+      'location': GeoPoint(40.6892,-74.0445),
       'responding': "unbusy",
       'squadID': ""
     });

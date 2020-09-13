@@ -45,7 +45,7 @@ class _LogisticState extends State<Logistic> {
             children: <Widget>[
               Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: appColorMidBright3,
                   child: Center(child:Text("Scene Information", textScaleFactor: 2.0,  style: TextStyle(fontWeight: FontWeight.bold, color: appColorDark), )))),
-              SceneTile(widget.scene.ref.documentID != EmailStorage.instance.userData.responding, scene: widget.scene),
+              SceneTile(scene: widget.scene),
               Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: appColorMidBright3,
                   child: Center(child:Text("Responders and ETAs", textScaleFactor: 2.0,  style: TextStyle(fontWeight: FontWeight.bold, color: appColorDark))))),
               Expanded(

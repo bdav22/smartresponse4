@@ -5,6 +5,7 @@ import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
+import 'package:smartresponse4/wrapper.dart';
 
 class FullSceneTile extends StatefulWidget {
 
@@ -81,6 +82,7 @@ class _FullSceneTileState extends State<FullSceneTile> {
 
   @override
   Widget build(BuildContext context) {
+    final p = ProfileInfo.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Full Scene Description"),
@@ -135,7 +137,7 @@ class _FullSceneTileState extends State<FullSceneTile> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget> [
-                      respondButton,
+                      p.profile.responding != widget.scene.ref.documentID ? respondButton : SizedBox(),
                       getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: widget.scene);}),
                       getMyButton( 'Drive',  () async {
                         String address = await widget.scene.getAddress();

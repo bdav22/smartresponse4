@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/authenticate.dart';
+import 'package:smartresponse4/route_generator.dart';
 import 'package:smartresponse4/scene_home.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/user.dart';
@@ -26,15 +27,12 @@ Future<ProfileInfo> getProfileInfo(String inUid, Widget child) async  {
 
 
 class Wrapper extends StatefulWidget {
-
   const Wrapper({Key key}) : super(key: key);
   @override
   _WrapperState createState() => _WrapperState();
 }
 
 class _WrapperState extends State<Wrapper> {
-
-
     @override
     void initState() {
       super.initState();
@@ -68,14 +66,18 @@ class _WrapperState extends State<Wrapper> {
                             p = fromSnapshot(snapshot.data);
                           }
                           return ProfileInfo(profile: p,
-                              child: SceneHome()); //snapshot.data tihs snapshot data is actually a profileinfo fully filled in
+                              child: MaterialApp (
+                                initialRoute: '/',
+                                onGenerateRoute: RouteGenerator.generateRoute,
+                                home: SceneHome()
+                              )
+                          ); //snapshot.data tihs snapshot data is actually a profileinfo fully filled in
                         }
                         else {
                           return Loading();
                         }
                       }
               );
-
           } else {
             return Scaffold(
               body: Center (
@@ -85,16 +87,5 @@ class _WrapperState extends State<Wrapper> {
           }
         }
       );
-
-        /*
-    final user = Provider.of<User>(context);
-
-    //return either Home or Authenticate widget
-    if (user == null) {
-      return Authenticate();
-    } else {
-      return Home();
-    }
-         */
   }
 }

@@ -78,11 +78,21 @@ class _SceneTileState extends State<SceneTile> {
               }
             )
           ]),
-          subtitle: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-               // Text(' ${scene.location.latitude.toString()}, ${scene.location.longitude.toString()} '),
-                Flexible(child: Text( getShortDescription(scene?.desc ?? "--")) ),
-              ] ),
+          subtitle: Column(
+            children: <Widget>[
+              Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text( 'Priority: ${scene?.priority ?? 2} '),
+                    Text( 'Units: ${scene?.units ?? 8} '),
+                  ]
+              ),
+              Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    // Text(' ${scene.location.latitude.toString()}, ${scene.location.longitude.toString()} '),
+                    Flexible(child: Text( getShortDescription(scene?.desc ?? "--")) ),
+                  ] ),
+            ],
+          ),
         ),
 
       Column(
