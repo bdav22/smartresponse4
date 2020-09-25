@@ -19,16 +19,22 @@ Color superbright = Color.fromRGBO(255,255,255,1.0);
 
 //odds/evens in scene_home control some of the look and feel of that menu - use appropriately.
 
-Color appColorDark = Colors.blue[900]; //text on text bars
-Color appColorMiddleDark = Colors.brown[900]; //gradient end
-Color appColorMid = Colors.blue[700];  //app bar bgcolor
+//Color appColorLight = Colors.blue[600];  //gradient start
+Color appColorLight = Color.fromRGBO(6,123,194,1.0);
+//Color appColorMiddleDark = Colors.blue[900]; //gradient end
+Color appColorMiddleDark = Color.fromRGBO(49,63,77,1.0);
+//Color appColorMid = Colors.blue[700];  //app bar bgcolor
+Color appColorMid = Color.fromRGBO(27,38,79,1.0);
 Color appColorMidLight = Colors.blue[600]; //text time/date on scenetiles
-Color appColorLight = Colors.brown[200];  //gradient start
+Color appColorDark = Colors.blue[900]; //text on text bars
+
 Color appColorBright = Colors.blue[400]; //responding
+
+Color appColorMidBright3 = Colors.white; //Colors.blue[100]; //bg on text bars
+Color appColorSuperBright = Colors.white; //card bg colors
+
 Color appColorMidBright = Colors.blue[300];
 Color appColorMidBright2 = Colors.blue[200];
-Color appColorMidBright3 = Colors.blue[100]; //bg on text bars
-Color appColorSuperBright = Colors.blue[50]; //card bg colors
 
 Color appColorGo = Colors.green; //green buttons - "GO" buttons
 Color appColorButton = appColorMidLight; //blue buttons -- default button color
@@ -64,13 +70,13 @@ Widget getMyButton(String text, Function f, {String color="default"}) {
 
 
 
-BoxDecoration customBoxDecoration() {
+BoxDecoration customBoxDecoration({bool inverted=false}) {
   return BoxDecoration (
     gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         //colors: [Colors.grey[700], Colors.blueAccent[400]]),
-      colors: [appColorLight, appColorMiddleDark]),
+      colors: inverted ? [appColorMiddleDark, appColorLight] : [appColorLight, appColorMiddleDark]),
   );
 }
 

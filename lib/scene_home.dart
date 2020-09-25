@@ -23,8 +23,8 @@ class SceneHome extends StatefulWidget {
 
 
 class _SceneHomeState extends State<SceneHome> {
-  final Color odds = Colors.blue[100];
-  final Color evens = Colors.blue[300];
+  final Color evens = Colors.white;//[100];
+  final Color odds = Colors.white; //e[100]; //Colors.blue[300];
   final AuthService _auth = AuthService();
   Profile userData;
   EmailStorage _es;
@@ -54,7 +54,7 @@ class _SceneHomeState extends State<SceneHome> {
               padding: EdgeInsets.zero,
               children: <Widget>[
                 UserAccountsDrawerHeader(
-                  decoration: customBoxDecoration(),
+                  //decoration: customBoxDecoration(),
                   accountName:
                     Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.name), Text(p.profile.email + " ") ] ),
               //Text(EmailStorage.instance.userData.name),
@@ -201,7 +201,7 @@ class _SceneHomeState extends State<SceneHome> {
                       );
                     }
                     else {
-                      return Text("No active scenes at this time");
+                      return Text("You are not responding at this time", style: TextStyle(color: Colors.white));
                     }
                   }
                 ),
