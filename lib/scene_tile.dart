@@ -34,15 +34,15 @@ class _SceneTileState extends State<SceneTile> {
   void respondFunction() async {
     if (widget.respond == "Respond") {
       String address = await widget.scene.getAddress();
-      await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-        "responding": widget.scene.ref.documentID
+      await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
+        "responding": widget.scene.ref.id
       });
       print("scene_tile.dart: Responding to this scene at: " + address);
-      BackgroundLocationInterface().onStart(widget.scene.ref.documentID);
+      BackgroundLocationInterface().onStart(widget.scene.ref.id);
       EmailStorage.instance.updateData();
     } else {
       BackgroundLocationInterface().onStop();
-      await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+      await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
         "responding": "unbusy"
       });
       EmailStorage.instance.updateData();
@@ -87,12 +87,15 @@ class _SceneTileState extends State<SceneTile> {
             FutureBuilder<String>(
               future: widget.scene.getLocality(),
               builder: (context, snapshot) {
-                if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
+                if(snapshot.hasError) {
+                    print('scene_tile.dart -- ${snapshot.error}');
+                    return Flexible(child: Text('--', overflow: TextOverflow.ellipsis));
+                }
                 if(snapshot.connectionState == ConnectionState.waiting) { return Text(""); }
                 if(snapshot.hasData) {
                   return Text(snapshot?.data ?? "location*", overflow: TextOverflow.ellipsis);
                 } else {
-                  return Text("Data Missing - Report");
+                  return Text("---");
                 }
               }
             )
@@ -117,7 +120,7 @@ class _SceneTileState extends State<SceneTile> {
 
       ButtonBar(
         children: <Widget> [
-          p.profile.responding != widget.scene.ref.documentID ? respondButton : SizedBox(),
+          p.profile.responding != widget.scene.ref.id ? respondButton : SizedBox(),
           getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: widget.scene);}),
           getMyButton('Drive',  () async {
             String address = await widget.scene.getAddress();

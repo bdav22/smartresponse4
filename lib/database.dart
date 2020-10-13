@@ -31,13 +31,13 @@ class Responder {
 }
 
 class Repository {
-  final Firestore _firestore;
+  final FirebaseFirestore _firestore;
 
   Repository(this._firestore) : assert(_firestore != null);
 
   Stream<List<CommandPosition>> getCommandPositions(String sceneIDIn) {
     return _firestore.collection("scenes/" + sceneIDIn + "/ICS").snapshots().map( (snapshot) {
-      return snapshot.documents.map(commandPositionFromSnapshot).toList();
+      return snapshot.docs.map(commandPositionFromSnapshot).toList();
     });
   }
 
@@ -45,7 +45,7 @@ class Repository {
   Stream<List<Responder>> getResponders(String sceneIDIn) {
     return _firestore.collection('profiles').where("responding",isEqualTo: sceneIDIn).snapshots().map(
         (snapshot) {
-          return snapshot.documents.map((doc) {
+          return snapshot.docs.map((doc) {
             return Responder(sceneIDIn, fromSnapshot(doc));
           }).toList();
         }
@@ -55,7 +55,7 @@ class Repository {
   Stream<List<Profile> > getSquadProfiles(String squadID) {
     return _firestore.collection('profiles').orderBy('rank', descending: false).where("squadID", isEqualTo: squadID).snapshots().map(
         (snapshot) {
-          return snapshot.documents.map((doc) {
+          return snapshot.docs.map((doc) {
               return fromSnapshot(doc);
           }).toList();
         }
@@ -72,17 +72,17 @@ class Repository {
   }
 
   void removeCommandPosition(String sceneID, String docID)  {
-    _firestore.document("scenes/" + sceneID +"/ICS/"+docID).delete();
+    _firestore.doc("scenes/" + sceneID +"/ICS/"+docID).delete();
   }
 
 }
 
 CommandPosition commandPositionFromSnapshot(DocumentSnapshot doc) {
-  String name = doc['name'];
-  String position = doc['position'];
-  bool goodUID = doc['validuid'];
-  String uid = doc['uid'];
-  String documentID = doc.documentID;
+  String name = doc.data()['name'];
+  String position = doc.data()['position'];
+  bool goodUID = doc.data()['validuid'];
+  String uid = doc.data()['uid'];
+  String documentID = doc.id;
 
   return CommandPosition(name, position, goodUID, uid: uid, documentID: documentID);
 
@@ -92,11 +92,11 @@ CommandPosition commandPositionFromSnapshot(DocumentSnapshot doc) {
 Scene sceneFromSnapshot(DocumentSnapshot doc) {
   if(doc == null) return null;
   return Scene(
-    location: doc.data['location'] ?? '',
-    created: doc.data['created'] ?? '',
-    desc: doc.data['desc'] ?? ' ',
-    units: doc.data['units'] ?? 8,
-    priority: doc.data['priority'] ?? 3,
+    location: doc.data()['location'] ?? '',
+    created: doc.data()['created'] ?? '',
+    desc: doc.data()['desc'] ?? ' ',
+    units: doc.data()['units'] ?? 8,
+    priority: doc.data()['priority'] ?? 3,
     ref: doc.reference,
   );
 }
@@ -109,14 +109,14 @@ class DatabaseService {
   DatabaseService({ this.uid });
 
   // collection reference
-  final CollectionReference profileCollection = Firestore.instance.collection('profiles');
-  final CollectionReference sceneCollection = Firestore.instance.collection('scenes');
-  final CollectionReference markerCollection = Firestore.instance.collection('markers');
+  final CollectionReference profileCollection = FirebaseFirestore.instance.collection('profiles');
+  final CollectionReference sceneCollection = FirebaseFirestore.instance.collection('scenes');
+  final CollectionReference markerCollection = FirebaseFirestore.instance.collection('markers');
 
 
   Future createDBProfile(String email) async {
     //FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    return await profileCollection.document(uid).setData({
+    return await profileCollection.doc(uid).set({
       'name': "",
       'rank': "",
       'department': "",
@@ -140,7 +140,7 @@ class DatabaseService {
   }
 
   Future updateProfile(Profile p) async {
-    return await profileCollection.document(uid).updateData({
+    return await profileCollection.doc(uid).update({
       'name': p.name,
       'rank': p.rank,
       'department': p.department,
@@ -155,7 +155,7 @@ class DatabaseService {
 
   // profile list from snapshot
   List<Profile> _profileListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc){
+    return snapshot.docs.map((doc){
       return fromSnapshot(doc);
     }).toList();
   }
@@ -164,10 +164,10 @@ class DatabaseService {
 
   List<Marker> _markersFromSnapshot(QuerySnapshot snapshot) {
 
-    return snapshot.documents.map((doc) {
-      LatLng pos = LatLng(doc?.data['loc']?.latitude ?? 0.0, doc?.data['loc']?.longitude ?? 0.0);
+    return snapshot.docs.map((doc) {
+      LatLng pos = LatLng(doc?.data()['loc']?.latitude ?? 0.0, doc?.data()['loc']?.longitude ?? 0.0);
       BitmapDescriptor myIcon = myMarkers.fire.iconBitmap;
-      switch(doc?.data['icon'] ?? "fire") {
+      switch(doc?.data()['icon'] ?? "fire") {
         case 'truck':
           myIcon = myMarkers.truck.iconBitmap;
           break;
@@ -176,7 +176,7 @@ class DatabaseService {
           break;
       }
       return Marker (
-              markerId: MarkerId(doc.documentID),
+              markerId: MarkerId(doc.id),
               position: pos,
               rotation: 0, //newLocalData.heading,
               draggable: false,
@@ -184,8 +184,8 @@ class DatabaseService {
               anchor: Offset(0.5, 0.5),
               icon: myIcon,
               infoWindow: InfoWindow(
-                title: doc?.data['desc'] ?? "Description Empty",
-                snippet: "placed By: " + (doc?.data['placedby'] ?? "Unknown"),
+                title: doc?.data()['desc'] ?? "Description Empty",
+                snippet: "placed By: " + (doc?.data()['placedby'] ?? "Unknown"),
               )
       );
     }).toList();
@@ -194,7 +194,7 @@ class DatabaseService {
 
 
   List<Scene> _sceneListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc){
+    return snapshot.docs.map((doc){
         return sceneFromSnapshot(doc);
     }).toList();
   }
@@ -215,7 +215,7 @@ class DatabaseService {
   }
 
  Stream<Profile> get profile {
-    return profileCollection.document(uid).snapshots().map(fromSnapshot);
+    return profileCollection.doc(uid).snapshots().map(fromSnapshot);
  }
 
 

@@ -21,21 +21,21 @@ class Scene {
   Future<String> getAddress() async {
     String address = "-loading address-";
     if(placemark == null) {
-      placemark = await EmailStorage.instance.getPlacemark(this.ref.documentID, this.location);
+      placemark = await EmailStorage.instance.getPlacemark(this.ref.id, this.location);
     }
 
     if(placemark != null) {
       address = placemark.name + " " + placemark.thoroughfare + " " + placemark.administrativeArea + " " +
           placemark.postalCode;
     }
-    print("scene.dart: returning this address " + address + " for scene " + ref.documentID);
+    print("scene.dart: returning this address " + address + " for scene " + ref.id);
     return address;
   }
 
   Future<String> getLocality({int version=0}) async {
 //    return "1234567890abcefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz";
     if(placemark == null) {
-      placemark = await EmailStorage.instance.getPlacemark(this.ref.documentID, this.location);
+      placemark = await EmailStorage.instance.getPlacemark(this.ref.id, this.location);
     }
     if(placemark == null) return "-loading place-";
 
@@ -45,13 +45,16 @@ class Scene {
     if (stateShortcut.containsKey(placemark.administrativeArea)) {
       shortName = ", " + stateShortcut[placemark.administrativeArea];
     }
+    else {
+      print("scene.dart: error - shortname not found for " + placemark.administrativeArea);
+    }
 
     switch(version){
       case 0:
         return placemark.locality + shortName;
         break;
       case 1:
-        return "[" +placemark.name +  " " + placemark.thoroughfare + "] " + placemark.locality + ", " + placemark.administrativeArea +" " +  " " + placemark.postalCode;
+        return "[" + placemark.name +  " " + placemark.thoroughfare + "] " + placemark.locality + ", " + placemark.administrativeArea +" " +  " " + placemark.postalCode;
         break;
       default:
         return placemark.locality + shortName;

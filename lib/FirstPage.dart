@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:smartresponse4/decoration.dart';
 
 class FirstPage extends StatefulWidget {
   @override
@@ -22,6 +23,7 @@ class _FirstPageState extends State<FirstPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Map'),
+        backgroundColor: appColorMid,
       ),
       body: GoogleMap(
         onMapCreated: _onMapCreated,

@@ -24,16 +24,17 @@ class EmailStorage {
 
   Future<Placemark> getPlacemark(String sceneIdentifier, GeoPoint location) async {
     if(placemarks.containsKey(sceneIdentifier)) {
-      print("user.dart: --retrieved dynamically the location for scene " + sceneIdentifier);
+     // print("user.dart: --retrieved dynamically the location for scene " + sceneIdentifier);
+     // print(" this one's name is : " + placemarks[sceneIdentifier].name);
       return placemarks[sceneIdentifier];
     }
     else {
       try {
-        print("user.dart: ---------- retrieving location from Geolocator for scene " + sceneIdentifier);
+       // print("user.dart: ---------- retrieving location from Geolocator for scene " + sceneIdentifier);
         List<Placemark> places = await Geolocator().placemarkFromCoordinates(
             location.latitude, location.longitude);
         placemarks[sceneIdentifier] = places[0];
-        print("user.dart:  -- retrieved");
+        // print("user.dart:  -- retrieved");
         return places[0];
       }
       catch (e) {
@@ -51,7 +52,7 @@ class EmailStorage {
 
 
   void updateData() async {
-    final data = await Firestore.instance.collection('profiles').document(uid).get();
+    final data = await FirebaseFirestore.instance.collection('profiles').doc(uid).get();
     if(data.data != null) {
       userData = fromSnapshot(data);
     }

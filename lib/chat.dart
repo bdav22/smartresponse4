@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -19,7 +19,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
   //final Firestore _firestore = Firestore.instance;
   final EmailStorage es = EmailStorage.instance;
 
@@ -31,7 +31,7 @@ class _ChatState extends State<Chat> {
 
   Future<void> sendMessageCallback() async {
     if (messageController.text.length > 0) {
-      FirebaseUser user = await _auth.currentUser();
+      auth.User user = _auth.currentUser;
       //print("log this: "+  messageController.text + " " + user_email);
       await
       widget.scene.ref.collection('messages').add({
@@ -53,7 +53,7 @@ class _ChatState extends State<Chat> {
   @override
   void initState() {
     super.initState();
-    print("chat.dart: " + (widget.scene?.ref?.documentID ?? " no reference found"));
+    print("chat.dart: " + (widget.scene?.ref?.id ?? " no reference found"));
    }
 
 
@@ -79,15 +79,15 @@ class _ChatState extends State<Chat> {
                         child: CircularProgressIndicator(),
                       );
 
-                    List<DocumentSnapshot> docs = snapshot.data.documents;
+                    List<DocumentSnapshot> docs = snapshot.data.docs;
 
                     List<Widget> messages = docs
                         .map((doc) => Message(
-                      from: doc.data['from'],
-                      text: doc.data['text'],
-                      sent: doc.data['sent'],
-                      uid: doc.data['from-uid'],
-                      me: doc.data['from-uid'] == es.uid,
+                      from: doc.data()['from'],
+                      text: doc.data()['text'],
+                      sent: doc.data()['sent'],
+                      uid: doc.data()['from-uid'],
+                      me: doc.data()['from-uid'] == es.uid,
                     ))
                         .toList();
 

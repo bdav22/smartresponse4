@@ -25,7 +25,7 @@ class _PrivateMessageState extends State<PrivateMessage> {
         decoration: customBoxDecoration(),
         child: SafeArea(
           child:StreamBuilder<QuerySnapshot>(
-                  stream: Firestore.instance.collection("profiles/"+myuid+"/private_messages").snapshots(),
+                  stream: FirebaseFirestore.instance.collection("profiles/"+myuid+"/private_messages").snapshots(),
                   builder: (context, snapshot) {
                       if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
                       if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...'); }
@@ -34,15 +34,16 @@ class _PrivateMessageState extends State<PrivateMessage> {
                       return Center ( child: CircularProgressIndicator() );
                     }
                     else {
-                      List<Widget> messages = snapshot.data.documents.map((doc) =>
+                      List<Widget> messages = snapshot.data.docs.map((doc) =>
                         GestureDetector(
                           onTap: () {
                             Navigator.push(context,  MaterialPageRoute(builder: (context) =>
                                 Scaffold(
                                     appBar: AppBar(
-                                      title: Text('DMs with: ' + (doc['otheruser'] ?? "unknown")),
+                                      title: Text('DMs with: ' + (doc.data()['otheruser'] ?? "unknown")),
+                                      backgroundColor: appColorMid,
                                     ),
-                                    body: PrivateMessageList(doc['dms'])),
+                                    body: PrivateMessageList(doc.data()['dms'])),
                                     //Text("List to be updated here with " + (doc['otheruser'] ?? "unknown"))),
                             ));
                           },
@@ -51,7 +52,7 @@ class _PrivateMessageState extends State<PrivateMessage> {
                                   child: Card(
                                     child: Padding(
                                       padding: EdgeInsets.only(top: 20.0, bottom: 20.0, left: 20.0, right: 20.0),
-                                      child: Text("Messages with: " + (doc['otheruser'] ?? "unknown")),
+                                      child: Text("Messages with: " + (doc.data()['otheruser'] ?? "unknown")),
                                   ),
                                 ),
                             )

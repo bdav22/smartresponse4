@@ -68,12 +68,15 @@ class _SceneTileState extends State<SceneTile> {
             FutureBuilder<String>(
               future: scene.getLocality(),
               builder: (context, snapshot) {
-                if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
-                if(snapshot.connectionState == ConnectionState.waiting) { return Text(""); }
+                if(snapshot.hasError) {
+                  print('scene_tile.dart -- ${snapshot.error}');
+                  return Flexible(child: Text('-', overflow: TextOverflow.ellipsis));
+                }
+                if(snapshot.connectionState == ConnectionState.waiting) { return Text("-"); }
                 if(snapshot.hasData) {
-                  return Text(snapshot?.data ?? "location*", overflow: TextOverflow.ellipsis);
+                  return Flexible( child:Text(snapshot?.data ?? "location*", overflow: TextOverflow.ellipsis) );
                 } else {
-                  return Text("Data Missing - Report");
+                  return Flexible( child: Text("----", overflow: TextOverflow.ellipsis) );
                 }
               }
             )
@@ -127,15 +130,15 @@ class _SceneTileState extends State<SceneTile> {
                     //if(EmailStorage.instance.userData?.responding != widget.scene.ref.documentID) {
                     if(respond == "Respond") {
                       String address = await scene.getAddress();
-                      await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-                        "responding": scene.ref.documentID
+                      await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
+                        "responding": scene.ref.id
                       });
                       print("scene_tile.dart: Responding to this scene at: " + address);
-                      BackgroundLocationInterface().onStart(scene.ref.documentID);
+                      BackgroundLocationInterface().onStart(scene.ref.id);
                       EmailStorage.instance.updateData();
                     } else {
                       BackgroundLocationInterface().onStop();
-                      await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+                      await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
                         "responding": "unbusy"
                       });
                       EmailStorage.instance.updateData();

@@ -308,20 +308,20 @@ class _MyMapPageState extends State<MyMapPage> {
                     value: DatabaseService().scenes,  //get all the scenes for markers
                     updateShouldNotify: (_, __) => true,
                     child: StreamBuilder<QuerySnapshot>(
-                        stream: Firestore.instance.collection("profiles").snapshots(), //get all the people with the app for the moment
+                        stream: FirebaseFirestore.instance.collection("profiles").snapshots(), //get all the people with the app for the moment
                         builder: (context, snapshot) {
                           final scenes = Provider.of<List<Scene>>(context) ?? [];
                           final markersDB = Provider.of<List<Marker>>(context) ?? [];
                           if (snapshot.hasData) {
-                            List<DocumentSnapshot> docs = snapshot.data.documents;
+                            List<DocumentSnapshot> docs = snapshot.data.docs;
                             //IF YOU WANT TO REMOVE PERSONS OWN instance you can use this, but I don't recmomend
                             //docs.removeWhere( (DocumentSnapshot doc) => doc['email'] == EmailStorage.instance.email);
                             List<Marker> markers = docs.map(
                                     (doc) => Marker(
-                                  markerId: MarkerId(doc.documentID),
-                                  position: LatLng(doc['location']?.latitude ?? 0.0, doc['location']?.longitude ?? 0.0),
+                                  markerId: MarkerId(doc.id),
+                                  position: LatLng(doc.data()['location']?.latitude ?? 0.0, doc.data()['location']?.longitude ?? 0.0),
                                   icon: customMarkersData.data.truck.iconBitmap, //TODO: map this to whatever is stored in profiles
-                                  infoWindow: InfoWindow(title: doc['name'], snippet: doc['department'],
+                                  infoWindow: InfoWindow(title: doc.data()['name'], snippet: doc.data()['department'],
                                   onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: fromSnapshot(doc))));
 /*                                      fromProfile(name: doc['name'],

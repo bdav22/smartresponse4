@@ -7,7 +7,6 @@ import 'package:smartresponse4/profile_tile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:provider/provider.dart';
 import 'package:smartresponse4/scene_tile.dart';
-import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/utility.dart';
 
 class Logistic extends StatefulWidget {
@@ -28,7 +27,7 @@ class _LogisticState extends State<Logistic> {
   @override
   void initState() {
     super.initState();
-    _respondersStream = context.read<Repository>().getResponders(widget.scene.ref.documentID); //, widget.scene.location);
+    _respondersStream = context.read<Repository>().getResponders(widget.scene.ref.id); //, widget.scene.location);
   }
 
 

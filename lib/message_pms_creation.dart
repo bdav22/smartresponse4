@@ -6,28 +6,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smartresponse4/user.dart';
 
 Future<DocumentReference> privateMessageGetOrCreate(String myUID, String theirUID, String theirName)  async {
-    QuerySnapshot docs = await Firestore.instance.collection("profiles/" + myUID + "/private_messages").where("otheruid",isEqualTo: theirUID).limit(10).getDocuments();
+    QuerySnapshot docs = await FirebaseFirestore.instance.collection("profiles/" + myUID + "/private_messages").where("otheruid",isEqualTo: theirUID).limit(10).get();
 
-    if(docs.documents.length > 0) {
-      print("message_pms_creation.dart: " + docs.documents.length.toString() + " "  + docs.documents[0].documentID);
-      return docs.documents[0]['dms'];
+    if(docs.docs.length > 0) {
+      print("message_pms_creation.dart: " + docs.docs.length.toString() + " "  + docs.docs[0].id);
+      return docs.docs[0].data()['dms'];
     }
     print("message_pms_creation.dart: " + "setting up private messages");
 
-    DocumentReference newDoc = await Firestore.instance.collection("private_messages").add({
+    DocumentReference newDoc = await FirebaseFirestore.instance.collection("private_messages").add({
       'user1': EmailStorage.instance.userData.name,
       'user1uid': myUID,
       'user2': theirName,
       'user2uid': theirUID
     });
 
-    Firestore.instance.collection("profiles").document(myUID).collection("private_messages").add({
+    FirebaseFirestore.instance.collection("profiles").doc(myUID).collection("private_messages").add({
       'dms': newDoc,
       'otheruser': theirName,
       'otheruid': theirUID
     });
 
-    Firestore.instance.collection("profiles").document(theirUID).collection("private_messages").add({
+    FirebaseFirestore.instance.collection("profiles").doc(theirUID).collection("private_messages").add({
       'dms': newDoc,
       'otheruser': EmailStorage.instance.userData.name,
       'otheruid': myUID

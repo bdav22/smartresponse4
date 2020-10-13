@@ -18,7 +18,8 @@ class ProfileTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        title: Text('Chat'),
+          title: Text('Chat'),
+          backgroundColor: appColorMid,
     ),body: Container(
     decoration: customBoxDecoration(),
     child: Padding(
@@ -55,7 +56,8 @@ class ProfileTile extends StatelessWidget {
                         Navigator.push(context,  MaterialPageRoute(builder: (context) =>
                              Scaffold(
                                appBar: AppBar(
-                                title: Text('DMs with: ' + profile.name),
+                                 title: Text('DMs with: ' + profile.name),
+                                 backgroundColor: appColorMid,
                               ),
                               body: PrivateMessageList(ref)),
                            //Text("List to be updated here with " + (doc['otheruser'] ?? "unknown"))),
@@ -76,7 +78,7 @@ class ProfileTile extends StatelessWidget {
                   children: <Widget> [
                   getMyButton(profile.responding == "unbusy" ? "No Scene Info" : "Scene Info", () async {
                     if(profile.responding =="unbusy") return;
-                    DocumentReference ref = Firestore.instance.collection("scenes").document(profile.responding);
+                    DocumentReference ref = FirebaseFirestore.instance.collection("scenes").doc(profile.responding);
                     DocumentSnapshot doc = await ref.get();
                     Scene scene = sceneFromSnapshot(doc);
                     Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);

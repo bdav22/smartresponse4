@@ -29,14 +29,14 @@ Profile defaultProfile() {
 
 Profile fromSnapshot(DocumentSnapshot doc) {
   if(doc?.data != null) {
-    return Profile(uid: doc.documentID,
-        name:  doc.data['name'] ?? '',
-        rank: doc.data['rank'] ?? '',
-        department: doc.data['department'] ?? '',
-        email: doc.data['email'] ?? '',
-        location: doc.data['location'] ?? GeoPoint(0.0, 0.0),
-        responding:  doc.data['responding'] ?? "",
-        squadID: doc.data['squadID'] ?? ""
+    return Profile(uid: doc.id,
+        name:  doc.data()['name'] ?? '',
+        rank: doc.data()['rank'] ?? '',
+        department: doc.data()['department'] ?? '',
+        email: doc.data()['email'] ?? '',
+        location: doc.data()['location'] ?? GeoPoint(0.0, 0.0),
+        responding:  doc.data()['responding'] ?? "",
+        squadID: doc.data()['squadID'] ?? ""
         );
   }
   else {
@@ -46,7 +46,7 @@ Profile fromSnapshot(DocumentSnapshot doc) {
 
 
 Future<Profile> getProfile(String inUid) async  {
-  final doc = await Firestore.instance.collection('profiles').document(inUid).get();
+  final doc = await FirebaseFirestore.instance.collection('profiles').doc(inUid).get();
   Profile p = fromSnapshot(doc);
   return p;
 }

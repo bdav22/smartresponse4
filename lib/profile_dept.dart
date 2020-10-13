@@ -74,7 +74,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                               ]),
                               responder.responding == "unbusy" ? Text("") :
                               StreamBuilder<DocumentSnapshot>(
-                                stream: Firestore.instance.collection("scenes").document(responder.responding).snapshots(),
+                                stream: FirebaseFirestore.instance.collection("scenes").doc(responder.responding).snapshots(),
                                 builder: (context, snapshot) {
                                     if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
                                     if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting'); }

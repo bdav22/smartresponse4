@@ -2,7 +2,7 @@
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/decoration.dart';
@@ -33,7 +33,7 @@ class _PrivateMessageListState extends State<PrivateMessageList> {
 
   Future<void> sendMessageCallback() async {
     if (messageController.text.length > 0) {
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      auth.User user = auth.FirebaseAuth.instance.currentUser;
       //print("log this: "+  messageController.text + " " + user_email);
       await widget.pmsRef.collection('messages').add({
         'text': messageController.text,
@@ -68,15 +68,15 @@ class _PrivateMessageListState extends State<PrivateMessageList> {
                       child: CircularProgressIndicator(),
                     );
 
-                  List<DocumentSnapshot> docs = snapshot.data.documents;
+                  List<DocumentSnapshot> docs = snapshot.data.docs;
 
                   List<Widget> messages = docs
                       .map((doc) => Message(
-                    from: doc.data['from'],
-                    text: doc.data['text'],
-                    sent: doc.data['sent'],
-                    uid: doc.data['from-uid'],
-                    me: doc.data['from-uid'] == EmailStorage.instance.uid,
+                    from: doc.data()['from'],
+                    text: doc.data()['text'],
+                    sent: doc.data()['sent'],
+                    uid: doc.data()['from-uid'],
+                    me: doc.data()['from-uid'] == EmailStorage.instance.uid,
                   ))
                       .toList();
 

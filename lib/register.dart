@@ -3,7 +3,7 @@ import 'package:smartresponse4/auth.dart';
 import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/loading.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/user.dart';
 
@@ -83,7 +83,7 @@ class _RegisterState extends State<Register> {
                   if (_formKey.currentState.validate()) {
                     setState(() => loading = true);
                     await _auth.registerWithEmailAndPassword(email, password);
-                    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+                    auth.User user = auth.FirebaseAuth.instance.currentUser;
                     if(user == null) {
                       setState(() {
                         error = 'Please supply valid credentials.';

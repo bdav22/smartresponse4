@@ -25,15 +25,15 @@ class _FullSceneTileState extends State<FullSceneTile> {
   @override
   void initState() {
     super.initState();
-    displayRespond = EmailStorage.instance.userData.responding != widget.scene.ref.documentID;
+    displayRespond = EmailStorage.instance.userData.responding != widget.scene.ref.id;
 
     actualWidgetRespond =         getMyButton("Respond", () async {
         String address = await widget.scene.getAddress();
-        await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
-          "responding": widget.scene.ref.documentID
+        await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
+          "responding": widget.scene.ref.id
         });
         print("scene_tile.dart: Responding to this scene at: " + address);
-        BackgroundLocationInterface().onStart(widget.scene.ref.documentID);
+        BackgroundLocationInterface().onStart(widget.scene.ref.id);
         EmailStorage.instance.updateData();
         Navigator.pop(context);
         setState(() {
@@ -72,7 +72,7 @@ class _FullSceneTileState extends State<FullSceneTile> {
 
     } else {
       BackgroundLocationInterface().onStop();
-      await Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).updateData({
+      await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
         "responding": "unbusy"
       });
       EmailStorage.instance.updateData();
@@ -137,7 +137,7 @@ class _FullSceneTileState extends State<FullSceneTile> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget> [
-                      p.profile.responding != widget.scene.ref.documentID ? respondButton : SizedBox(),
+                      p.profile.responding != widget.scene.ref.id ? respondButton : SizedBox(),
                       getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: widget.scene);}),
                       getMyButton( 'Drive',  () async {
                         String address = await widget.scene.getAddress();

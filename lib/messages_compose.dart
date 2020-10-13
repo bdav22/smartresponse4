@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/chat.dart';
@@ -37,7 +37,7 @@ class _ComposePrivateMessageState extends State<ComposePrivateMessage> {
     }
     DocumentReference pmsRef = await privateMessageGetOrCreate(EmailStorage.instance.uid, _profile.uid, _profile.name);
     if (messageController.text.length > 0) {
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      auth.User user = auth.FirebaseAuth.instance.currentUser;
       //print("log this: "+  messageController.text + " " + user_email);
       await pmsRef.collection('messages').add({
         'text': messageController.text,

@@ -22,7 +22,7 @@ class _ICSState extends State<ICS> {
   @override
   void initState() {
     super.initState();
-    _commandStream = context.read<Repository>().getCommandPositions(widget.scene.ref.documentID);
+    _commandStream = context.read<Repository>().getCommandPositions(widget.scene.ref.id);
   }
 
   @override
@@ -61,7 +61,7 @@ class _ICSState extends State<ICS> {
                                 ),
                                       RawMaterialButton(
                                         onPressed: () {
-                                          Repository(Firestore.instance).removeCommandPosition(widget.scene.ref.documentID, cp.documentID);
+                                          Repository(FirebaseFirestore.instance).removeCommandPosition(widget.scene.ref.id, cp.documentID);
                                         }, elevation: 2.0, fillColor: Colors.red,
                                         child: Icon(Icons.delete_outline, size: 25.0,),
                                         padding: EdgeInsets.all(5.0),

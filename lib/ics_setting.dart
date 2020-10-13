@@ -63,7 +63,7 @@ class _SettingsState extends State<ICSSettings> {
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               CommandPosition p = CommandPosition(_currentName, _currentPosition, false);
-                              Repository(Firestore.instance).updateICS(widget.scene.ref.documentID, p);
+                              Repository(FirebaseFirestore.instance).updateICS(widget.scene.ref.id, p);
                               Navigator.pop(context);
                             }
                           }

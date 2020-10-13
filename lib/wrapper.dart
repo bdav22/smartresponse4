@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:smartresponse4/authenticate.dart';
 import 'package:smartresponse4/route_generator.dart';
@@ -41,11 +41,11 @@ class _WrapperState extends State<Wrapper> {
   @override
   Widget build(BuildContext context) {
 
-      return StreamBuilder<FirebaseUser>(
-        stream: FirebaseAuth.instance.onAuthStateChanged,
+      return StreamBuilder<auth.User>(
+        stream: auth.FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active ) {
-            FirebaseUser user = snapshot.data;
+            auth.User user = snapshot.data;
             if (user == null) {
               return Authenticate();
             }
@@ -56,7 +56,7 @@ class _WrapperState extends State<Wrapper> {
             Profile p = Profile(email: user.email, uid: user.uid, name: "def", rank: "def2", department: "def3", responding: "-", squadID: "-");
             return
               StreamBuilder<DocumentSnapshot> (
-                stream: Firestore.instance.collection("profiles").document(user.uid).snapshots(),
+                stream: FirebaseFirestore.instance.collection("profiles").doc(user.uid).snapshots(),
                 builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot?.data?.data == null) { //no profile yet?

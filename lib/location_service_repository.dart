@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:background_locator/location_dto.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'file_manager.dart';
 
@@ -71,8 +72,10 @@ class LocationServiceRepository {
     final SendPort send = IsolateNameServer.lookupPortByName(isolateName);
 
     GeoPoint geoPoint = GeoPoint(locationDto.latitude, locationDto.longitude);
-    print("location_service_repository.dart: pushing to firestore: " + _uid + " with scene id: " + _sceneid + " and name:" + _name);
-    await Firestore.instance.collection("profiles").document(_uid).updateData({'location': geoPoint});
+    print("location_service_repository.dart: pushing to firestore: " + _uid + " with scene id: " + _sceneid + " and name: " + _name);
+    await Firebase.initializeApp();
+    print("firebase app initialized");
+    await FirebaseFirestore.instance.collection("profiles").doc(_uid).update({'location': geoPoint});
     //---- scenes get this info from the profile instead - only one push needed so no need to do this old: push to the scene instead
     //await Firestore.instance.collection("scenes/" + _sceneid + "/responders").document(_uid).setData({'location': geoPoint, 'uid': _uid, 'name': _name},merge: false);
 

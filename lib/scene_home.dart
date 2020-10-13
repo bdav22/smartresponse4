@@ -182,16 +182,16 @@ class _SceneHomeState extends State<SceneHome> {
               children: <Widget>[
                 Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: appColorMidBright3,
                     child: Center(child:Text("Active Scene", textScaleFactor: 2.0,)))),
-                StreamBuilder(
-                  stream: Firestore.instance.collection("profiles").document(EmailStorage.instance.uid).snapshots(),
+                StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).snapshots(),
                   builder: (context, snapshot) {
                     if(snapshot.hasData && snapshot?.data != null &&
-                        snapshot?.data["responding"] != null && snapshot.data["responding"] != "unbusy") {
+                        snapshot?.data?.data()["responding"] != null && snapshot?.data?.data()["responding"] != "unbusy") {
                       return StreamBuilder(
-                        stream: Firestore.instance.collection("scenes").document(snapshot?.data['responding'] ?? "-").snapshots(),
+                        stream: FirebaseFirestore.instance.collection("scenes").doc(snapshot?.data?.data()['responding'] ?? "-").snapshots(),
                         builder: (context, ss) {
-                          if(ss.hasData && ss?.data != null && snapshot.data['responding'] != "unbusy") {
-                            print("scene_home.dart: to what am I responding scene responding data:" + snapshot.data['responding']);
+                          if(ss.hasData && ss?.data != null && snapshot.data?.data()['responding'] != "unbusy") {
+                            print("scene_home.dart: to what am I responding scene responding data:" + snapshot.data?.data()['responding']);
                             return SceneTileActive(scene: sceneFromSnapshot(ss?.data));
                           }
                           else {
