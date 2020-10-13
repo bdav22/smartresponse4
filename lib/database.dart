@@ -167,13 +167,18 @@ class DatabaseService {
     return snapshot.docs.map((doc) {
       LatLng pos = LatLng(doc?.data()['loc']?.latitude ?? 0.0, doc?.data()['loc']?.longitude ?? 0.0);
       BitmapDescriptor myIcon = myMarkers.fire.iconBitmap;
-      switch(doc?.data()['icon'] ?? "fire") {
-        case 'truck':
-          myIcon = myMarkers.truck.iconBitmap;
-          break;
-        case 'star':
-          myIcon = myMarkers.star.iconBitmap;
-          break;
+      String documentString = doc?.data()['icon'] ?? "fire";
+      if(myMarkers.myMarkerMap.containsKey(documentString)) {
+        myIcon = myMarkers.myMarkerMap[documentString].iconBitmap;
+      } else {
+        switch (doc?.data()['icon'] ?? "fire") {
+          case 'truck':
+            myIcon = myMarkers.truck.iconBitmap;
+            break;
+          case 'star':
+            myIcon = myMarkers.star.iconBitmap;
+            break;
+        }
       }
       return Marker (
               markerId: MarkerId(doc.id),
