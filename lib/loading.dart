@@ -9,6 +9,7 @@ class Loading extends StatelessWidget {
       decoration: myBoxDecoration(),
       //color: Colors.cyan[100],
       child: Directionality(
+        textDirection: TextDirection.ltr,
       child: Center(
         child: SpinKitFadingCube(
           color: Colors.brown,

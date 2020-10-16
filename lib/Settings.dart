@@ -36,6 +36,15 @@ class _SettingsState extends State<Settings> {
         child: StreamBuilder<Profile>(
             stream: DatabaseService(uid: user.uid).profile,
             builder: (context, snapshot) {
+              if(snapshot.hasError) {
+                print('Settings.dart -- ${snapshot.error}');
+                return Flexible(child: Text('--', overflow: TextOverflow.ellipsis));
+            }
+             if(snapshot.connectionState == ConnectionState.waiting) {
+               print("Settings.dart: connection stream is waiting right now");
+               return Text("()");
+             }
+
               if(snapshot.hasData) {
                 print("Settings.dart: in database service user.uid is " + user.uid);
                 Profile userData = snapshot.data;
@@ -123,6 +132,7 @@ class _SettingsState extends State<Settings> {
                 );
               }
                 else {
+                  print("Settings.dart - hasData was null, waiting on that");
                   //DatabaseService(uid: user.uid).createDBProfile();
                   return Loading();
                 }
