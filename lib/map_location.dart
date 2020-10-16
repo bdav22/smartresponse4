@@ -15,12 +15,12 @@ class BackgroundLocationInterface{
   BackgroundLocationInterface();
 
   Future<void> initPlatformState() async {
-    print('location_service_repository.dart: Initializing background locator ...');
+    print('map_location.dart: Initializing background locator ...');
     await BackgroundLocator.initialize();
     // final logStr = await FileManager.readLogFile();   print(logStr);
-    print('location_service_repository.dart: Initialization done');
+    print('map_location.dart: Initialization done');
     final _isRunning = await BackgroundLocator.isRegisterLocationUpdate();
-    print('location_service_repository.dart: Running ${_isRunning.toString()}');
+    print('map_location.dart: Running ${_isRunning.toString()}');
   }
 
 Future<bool> _checkLocationPermission() async {

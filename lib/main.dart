@@ -10,8 +10,6 @@ import 'package:smartresponse4/push_notifications.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/wrapper.dart';
 
-
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -25,44 +23,42 @@ class _MyAppState extends State<MyApp> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
-  void initState () {
+  void initState() {
     pushNotificationsManager = new PushNotificationsManager();
     pushNotificationsManager.init();
-    //super.initState();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return FutureBuilder(
-      future: _initialization,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text("Cannot connect to services at this time");
-        }
-        if(snapshot.connectionState == ConnectionState.waiting) {
-          print("main.dart: Connectionstate is waiting in initialization of the app");
-          return Text("Loading..");
-        }
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Provider<Repository>(
-              create: (_) => Repository(FirebaseFirestore.instance),
-              child: StreamProvider.value(
-                value: AuthService().user,
-                child: StreamProvider<User>.value(
+    return Directionality(
+        textDirection: TextDirection.ltr,
+        child: FutureBuilder(
+        future: _initialization,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text("Cannot connect to services at this time");
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            print("main.dart: Connectionstate is waiting in initialization of the app");
+            return Text("Loading..");
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Provider<Repository>(
+                create: (_) => Repository(FirebaseFirestore.instance),
+                child: StreamProvider.value(
                   value: AuthService().user,
-                  child: MaterialApp(
-                    home: Wrapper(),
+                  child: StreamProvider<User>.value(
+                    value: AuthService().user,
+                    child: MaterialApp(
+                      home: Wrapper(),
+                    ),
                   ),
-                ),
-              )
-          );
-        }
-        // Otherwise, show something whilst waiting for initialization to complete
-        return Loading();
-      }
+                ));
+          }
+          // Otherwise, show something whilst waiting for initialization to complete
+          return Loading();
+        }),
     );
   }
 }
-
-

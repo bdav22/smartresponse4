@@ -313,6 +313,7 @@ class _MyMapPageState extends State<MyMapPage> {
                           final scenes = Provider.of<List<Scene>>(context) ?? [];
                           final markersDB = Provider.of<List<Marker>>(context) ?? [];
                           if (snapshot.hasData) {
+
                             List<DocumentSnapshot> docs = snapshot.data.docs;
                             //IF YOU WANT TO REMOVE PERSONS OWN instance you can use this, but I don't recmomend
                             //docs.removeWhere( (DocumentSnapshot doc) => doc['email'] == EmailStorage.instance.email);
@@ -320,6 +321,7 @@ class _MyMapPageState extends State<MyMapPage> {
                                     (doc) => Marker(
                                   markerId: MarkerId(doc.id),
                                   position: LatLng(doc.data()['location']?.latitude ?? 0.0, doc.data()['location']?.longitude ?? 0.0),
+                                  rotation: doc.data()['heading'] != null ? doc.data()['heading']*1.0 : 0.0,
                                   icon: customMarkersData.data.truck.iconBitmap, //TODO: map this to whatever is stored in profiles
                                   infoWindow: InfoWindow(title: doc.data()['name'], snippet: doc.data()['department'],
                                   onTap: () {

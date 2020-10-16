@@ -75,7 +75,7 @@ class LocationServiceRepository {
     print("location_service_repository.dart: pushing to firestore: " + _uid + " with scene id: " + _sceneid + " and name: " + _name);
     await Firebase.initializeApp();
     print("firebase app initialized");
-    await FirebaseFirestore.instance.collection("profiles").doc(_uid).update({'location': geoPoint});
+    await FirebaseFirestore.instance.collection("profiles").doc(_uid).update({'location': geoPoint, 'heading': locationDto.heading.toInt()});
     //---- scenes get this info from the profile instead - only one push needed so no need to do this old: push to the scene instead
     //await Firestore.instance.collection("scenes/" + _sceneid + "/responders").document(_uid).setData({'location': geoPoint, 'uid': _uid, 'name': _name},merge: false);
 

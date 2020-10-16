@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smartresponse4/authenticate.dart';
 import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/database.dart';
@@ -32,7 +31,7 @@ class _SettingsState extends State<Settings> {
     User user = Provider.of<User>(context); //TODO: research and move this to a consumer model - throws an error on first use otherwise
     if(user == null) {
       print("Settings.dart: why are we here? shouldn't someone have taken us away from here before now");
-      return Authenticate();
+      return Loading();
     }
     return Material(
       child: Container(

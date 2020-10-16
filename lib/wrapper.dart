@@ -59,6 +59,7 @@ class _WrapperState extends State<Wrapper> {
                 stream: FirebaseFirestore.instance.collection("profiles").doc(user.uid).snapshots(),
                 builder: (context, snapshot) {
                         if (snapshot.hasData) {
+
                           if (snapshot?.data?.data == null) { //no profile yet?
                             return Authenticate();
                           }
