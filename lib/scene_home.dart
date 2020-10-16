@@ -185,10 +185,12 @@ class _SceneHomeState extends State<SceneHome> {
                 StreamBuilder<DocumentSnapshot>(
                   stream: FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).snapshots(),
                   builder: (context, snapshot) {
+                    //String respondingBit = (snapshot?.data?.data()['responding'] ?? "");
                     if(snapshot.hasData && snapshot?.data != null &&
-                        snapshot?.data?.data()["responding"] != null && snapshot?.data?.data()["responding"] != "unbusy") {
+                        snapshot?.data?.data()["responding"] != null && snapshot?.data?.data()["responding"] != "unbusy" &&
+                        snapshot?.data?.data()["responding"] != ""  ) {
                       return StreamBuilder(
-                        stream: FirebaseFirestore.instance.collection("scenes").doc(snapshot?.data?.data()['responding'] ?? "-").snapshots(),
+                        stream: FirebaseFirestore.instance.collection("scenes").doc((snapshot?.data?.data()['responding'] ?? "")).snapshots(),
                         builder: (context, ss) {
                           if(ss.hasData && ss?.data != null && snapshot.data?.data()['responding'] != "unbusy") {
                             print("scene_home.dart: to what am I responding scene responding data:" + snapshot.data?.data()['responding']);

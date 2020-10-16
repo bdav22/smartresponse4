@@ -10,7 +10,7 @@ import 'package:smartresponse4/profile_tile.dart';
 class DepartmentProfileList extends StatefulWidget {
   final String squadID;
   DepartmentProfileList(this.squadID) {
-   // print("Created with " + squadID);
+    print("profile_dept.dart: Department Profile Created with " + squadID);
   }
 
   @override
@@ -52,7 +52,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
               default:
                 return ListView(
                   children: snapshot.data.map((Profile responder) {
-                   // print("I am a squadmate of squad: " + responder.squadID + " - " + responder.name);
+                    print("I am a squadmate of squad: " + responder.squadID + " - " + responder.name);
                     return Card(
                       shape: cardShape(),
                       elevation: 15,
@@ -72,32 +72,39 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                                         Text("Ready",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green))   :
                                 Text( "Responding", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange[500]), )
                               ]),
-                              responder.responding == "unbusy" ? Text("") :
+
+                              responder.responding == "unbusy" || responder.responding == "" ? Text("") :
                               StreamBuilder<DocumentSnapshot>(
-                                stream: FirebaseFirestore.instance.collection("scenes").doc(responder.responding).snapshots(),
-                                builder: (context, snapshot) {
+                                  stream: FirebaseFirestore.instance.collection("scenes").doc(responder.responding).snapshots(),
+                                  builder: (context, snapshot) {
                                     if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
                                     if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting'); }
                                     if(snapshot.hasData) {
                                       return FutureBuilder<String>(
-                                        future: sceneFromSnapshot(snapshot.data).getAddress(),
-                                        builder: (context, address) {
-                                          if(address.hasError) { return Text('Error: ${address.error}');    }
-                                          if(address.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting2'); }
-                                          if(address.hasData)
-                                            return Text(address?.data ?? "-Address Loading-", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13.0),);
-                                          else
-                                            return Text("-address Loading-");
-                                        }
+                                          future: sceneFromSnapshot(snapshot.data).getAddress(),
+                                          builder: (context, address) {
+                                            if(address.hasError) { return Text('Error: ${address.error}');    }
+                                            if(address.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting2'); }
+                                            if(address.hasData)
+                                              return Text(address?.data ?? "-Address Loading-", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13.0),);
+                                            else
+                                              return Text("-address Loading-");
+                                          }
 
                                       );
                                     }
                                     else {
                                       return Text("b");
                                     }
-                                }
+                                  }
 
                               )
+
+
+
+
+
+
                             ],
                           ),
                           /*subtitle:

@@ -28,6 +28,7 @@ class _MyAppState extends State<MyApp> {
   void initState () {
     pushNotificationsManager = new PushNotificationsManager();
     pushNotificationsManager.init();
+    //super.initState();
   }
 
   @override
