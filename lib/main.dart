@@ -40,6 +40,10 @@ class _MyAppState extends State<MyApp> {
         if (snapshot.hasError) {
           return Text("Cannot connect to services at this time");
         }
+        if(snapshot.connectionState == ConnectionState.waiting) {
+          print("main.dart: Connectionstate is waiting in initialization of the app");
+          return Text("Loading..");
+        }
         if (snapshot.connectionState == ConnectionState.done) {
           return Provider<Repository>(
               create: (_) => Repository(FirebaseFirestore.instance),
