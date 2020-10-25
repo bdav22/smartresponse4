@@ -60,7 +60,7 @@ class _MyMapPageState extends State<MyMapPage> {
   @override
   void initState() {
     super.initState();
-    if(widget.scene != null) {
+    if(widget?.scene?.location != null) {
       initialLocation = CameraPosition(
         target: LatLng(widget.scene.location.latitude, widget.scene.location.longitude),  zoom: 18,  );
     } else {
@@ -89,8 +89,9 @@ class _MyMapPageState extends State<MyMapPage> {
 
   void updateMarkerAndCircle(LocationData newLocalData) {
     LatLng latLng = LatLng(newLocalData.latitude, newLocalData.longitude);
-    var rotation = _cameraTrackerOn  ? 0.0 : newLocalData.heading;
+    //var rotation = _cameraTrackerOn  ? 0.0 : newLocalData.heading;
     this.setState(() {
+      /*
       _marker = Marker(
           markerId: MarkerId("home"),
           position: latLng,
@@ -101,6 +102,7 @@ class _MyMapPageState extends State<MyMapPage> {
           icon: CustomMarkers.instance.myMarkerData.truck.iconBitmap,
           infoWindow: InfoWindow(title: "This is Me", snippet: EmailStorage.instance.userData.name),
       );
+      */
       _circle = Circle(
           circleId: CircleId("car"),
           radius: newLocalData.accuracy,
@@ -318,22 +320,28 @@ class _MyMapPageState extends State<MyMapPage> {
                             //IF YOU WANT TO REMOVE PERSONS OWN instance you can use this, but I don't recmomend
                             //docs.removeWhere( (DocumentSnapshot doc) => doc['email'] == EmailStorage.instance.email);
                             List<Marker> markers = docs.map(
-                                    (doc) => Marker(
-                                  markerId: MarkerId(doc.id),
-                                  position: LatLng(doc.data()['location']?.latitude ?? 0.0, doc.data()['location']?.longitude ?? 0.0),
-                                  rotation: doc.data()['heading'] != null ? doc.data()['heading']*1.0 : 0.0,
-                                  icon: customMarkersData.data.truck.iconBitmap, //TODO: map this to whatever is stored in profiles
-                                  infoWindow: InfoWindow(title: doc.data()['name'], snippet: doc.data()['department'],
-                                  onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileTile(profile: fromSnapshot(doc))));
+                                    (doc) {
+
+                                      return Marker(
+                                        markerId: MarkerId(doc.id),
+                                        position: LatLng(doc.data()['location']?.latitude ?? 0.0,
+                                            doc.data()['location']?.longitude ?? 0.0),
+                                        rotation: doc.data()['heading'] != null ? doc.data()['heading'] * 1.0 : 0.0,
+                                        icon:  getIconFromString(customMarkersData.data, doc?.data()['icon']),
+                                        infoWindow: InfoWindow(
+                                          title: doc.data()['name'], snippet: doc.data()['department'],
+                                          onTap: () {
+                                            Navigator.push(context, MaterialPageRoute(
+                                                builder: (context) => ProfileTile(profile: fromSnapshot(doc))));
 /*                                      fromProfile(name: doc['name'],
                                       rank: doc['rank'], department:  doc['department'], email: doc['email'], uid: doc.documentID, location: doc['location'],
                                       responding: doc['responding'], squadID: doc['squadID']))));
 
  */
-                                  },
-                                  ),
-                                )
+                                          },
+                                        ),
+                                      );
+                                    }
                             ).toList();
 
                             List<Marker> sceneMarkers = [];
@@ -424,7 +432,7 @@ class _MyMapPageState extends State<MyMapPage> {
                       selectedPlacingMarker = await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) =>
-                            ChooseMarker(markers: CustomMarkers.instance.myMarkerData)),
+                            ChooseMarker(markers: CustomMarkers.instance.myMarkerData, getMoreInfo: true,)),
                       );
                       print("google_map.dart - User selected the following marker: " +
                           (selectedPlacingMarker?.commonName??"None selected") + " -- " +

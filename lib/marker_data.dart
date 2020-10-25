@@ -63,7 +63,8 @@ class CustomMarkers {
     if(!loaded) {
       print("marker_data.dart: custom markers not loaded");
       List <String>  icons = [];
-      List<String> preloadString =  [ "emstruck279.png", "EMS Vehicle", "ems",
+      List<String> preloadString =  [
+        "emstruck279.png", "EMS Vehicle", "ems",
         //"hydrant279.png", "Hydrant", "hydrant",
         "firehat279.png", "Helmet", "helmet",
         "markerblue279.png", "Blue Marker", "mb",

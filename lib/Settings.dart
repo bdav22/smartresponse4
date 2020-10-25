@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter/services.dart';
 import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/database.dart';
+import 'package:smartresponse4/marker_chooser.dart';
+import 'package:smartresponse4/marker_data.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:provider/provider.dart';
@@ -18,19 +21,25 @@ class _SettingsState extends State<Settings> {
 
   final _formKey = GlobalKey<FormState>();
 
+  @override
+  void initState() {
+    super.initState();
+    selectedPlacingMarker = MyMarker(shortName: "truck");
+  }
 
   // form values
   String _currentName;
   String _currentRank;
   String _currentDepartment;
   String _currentSquadID;
+  MyMarker selectedPlacingMarker;
 
   @override
   Widget build(BuildContext context) {
 
-    User user = Provider.of<User>(context); //TODO: research and move this to a consumer model - throws an error on first use otherwise
+    User user = Provider.of<User>(context);
     if(user == null) {
-      print("Settings.dart: why are we here? shouldn't someone have taken us away from here before now");
+      print("Settings.dart: user is null and is currently loading - please hold");
       return Loading();
     }
     return Material(
@@ -97,6 +106,24 @@ class _SettingsState extends State<Settings> {
                         //validator: (val) => val.isEmpty ? 'Please enter a departmental code' : null,
                         onChanged: (val) => setState(() => _currentSquadID = val),
                       ),
+                      SizedBox(height: 10.0),
+                      RaisedButton(
+                        color: Colors.blue[400],
+                        child: Text( 'Choose a Marker', style: TextStyle(color: Colors.white)),
+                        onPressed: () async {
+                          await CustomMarkers.instance.getCustomMarkers();
+                          selectedPlacingMarker = await Navigator.push(context,
+                            MaterialPageRoute(builder: (context) =>
+                                ChooseMarker(markers: CustomMarkers.instance.myMarkerData, getMoreInfo: false)
+                            ),
+                          );
+                          selectedPlacingMarker.desc =  EmailStorage.instance.email;
+                          print("Settings.dart - User selected the following marker: " +
+                              (selectedPlacingMarker?.commonName ?? "None selected") + " -- " +
+                              (selectedPlacingMarker?.desc ?? "No Description")
+                          );
+                        }
+                      ),
                       SizedBox(height: 40.0),
                       RaisedButton(
                           color: Colors.blue[400],
@@ -112,7 +139,8 @@ class _SettingsState extends State<Settings> {
                                   squadID: _currentSquadID ?? snapshot.data.squadID,
                                   email: EmailStorage.instance.email,
                                   uid: user.uid,
-                                  responding: snapshot.data.responding
+                                  responding: snapshot.data.responding,
+                                  icon: selectedPlacingMarker.shortName,
                               );
                               await DatabaseService(uid: user.uid).updateProfile(p);
                               EmailStorage.instance.userData = p;

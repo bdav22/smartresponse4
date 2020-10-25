@@ -102,6 +102,25 @@ Scene sceneFromSnapshot(DocumentSnapshot doc) {
 }
 
 
+BitmapDescriptor getIconFromString(MarkerData myMarkers, String name) {
+  BitmapDescriptor myIcon = myMarkers.fire.iconBitmap;
+  String documentString = name ?? "fire";
+  if (myMarkers.myMarkerMap.containsKey(documentString)) {
+    myIcon = myMarkers.myMarkerMap[documentString].iconBitmap;
+  } else {
+    switch (name ?? "fire") {
+      case 'truck':
+        myIcon = myMarkers.truck.iconBitmap;
+        break;
+      case 'star':
+        myIcon = myMarkers.star.iconBitmap;
+        break;
+    }
+  }
+  return myIcon;
+}
+
+
 class DatabaseService {
 
   MarkerData myMarkers;
@@ -123,7 +142,8 @@ class DatabaseService {
       'email': email,
       'location': GeoPoint(40.6892,-74.0445),
       'responding': "unbusy",
-      'squadID': ""
+      'squadID': "",
+      'icon': "",
     });
   }
 
@@ -147,6 +167,7 @@ class DatabaseService {
       'responding': p.responding,
       'squadID': p.squadID,
       'location': p.location,
+      'icon': p?.icon ?? "truck",
     });
   }
 
@@ -166,6 +187,8 @@ class DatabaseService {
 
     return snapshot.docs.map((doc) {
       LatLng pos = LatLng(doc?.data()['loc']?.latitude ?? 0.0, doc?.data()['loc']?.longitude ?? 0.0);
+      BitmapDescriptor myIcon = getIconFromString(myMarkers, doc?.data()['icon']);
+      /*
       BitmapDescriptor myIcon = myMarkers.fire.iconBitmap;
       String documentString = doc?.data()['icon'] ?? "fire";
       if(myMarkers.myMarkerMap.containsKey(documentString)) {
@@ -180,6 +203,7 @@ class DatabaseService {
             break;
         }
       }
+      */
       return Marker (
               markerId: MarkerId(doc.id),
               position: pos,

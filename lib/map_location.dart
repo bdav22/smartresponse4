@@ -15,13 +15,15 @@ class BackgroundLocationInterface{
   BackgroundLocationInterface();
 
   Future<void> initPlatformState() async {
-    return; // TODO FIX ON IOS
+    //return; // TODO FIX ON IOS
+
     print('map_location.dart: Initializing background locator ...');
     await BackgroundLocator.initialize();
     // final logStr = await FileManager.readLogFile();   print(logStr);
     print('map_location.dart: Initialization done');
     final _isRunning = await BackgroundLocator.isRegisterLocationUpdate();
     print('map_location.dart: Running ${_isRunning.toString()}');
+
   }
 
 Future<bool> _checkLocationPermission() async {
@@ -54,7 +56,7 @@ void onStop() {
 
 void onStart(String sceneID) async {
   if (await _checkLocationPermission()) {
-    onStop();
+    //onStop(); Leave first? - remove active on app boot-up
     _startLocator(sceneID);
   } else {
     // show error

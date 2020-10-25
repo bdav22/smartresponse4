@@ -6,7 +6,8 @@ import 'package:smartresponse4/marker_description.dart';
 
 class ChooseMarker extends StatelessWidget {
   final MarkerData markers;
-  ChooseMarker({this.markers});
+  final bool getMoreInfo;
+  ChooseMarker({this.markers, this.getMoreInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +26,14 @@ class ChooseMarker extends StatelessWidget {
                 leading: markers.markerList[index].image,
                 title: Text(markers.markerList[index].commonName),
                     onTap: () async {
-                       String desc = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) =>
-                           MarkerDescription()),
-                      );
-                        markers.markerList[index].desc = desc;
+                        if(getMoreInfo) {
+                          String desc = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) =>
+                                MarkerDescription()),
+                          );
+                          markers.markerList[index].desc = desc;
+                        }
                         Navigator.pop(context, markers.markerList[index]);
                       },
               )

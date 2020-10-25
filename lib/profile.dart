@@ -10,8 +10,9 @@ class Profile {
   final GeoPoint location;
   final String responding;
   final String squadID;
+  final String icon;
 
-  Profile({ this.name, this.rank, this.department, this.email, this.uid, this.location, this.responding, this.squadID });
+  Profile({ this.name, this.rank, this.department, this.email, this.uid, this.location, this.responding, this.squadID, this.icon });
 }
 
 Profile defaultProfile() {
@@ -23,7 +24,8 @@ Profile defaultProfile() {
     uid:"ERROR",
     location: GeoPoint(0,0),
     responding: "No",
-    squadID: "No"
+    squadID: "No",
+    icon: "truck",
   );
 }
 
@@ -36,7 +38,8 @@ Profile fromSnapshot(DocumentSnapshot doc) {
         email: doc.data()['email'] ?? '',
         location: doc.data()['location'] ?? GeoPoint(0.0, 0.0),
         responding:  doc.data()['responding'] ?? "",
-        squadID: doc.data()['squadID'] ?? ""
+        squadID: doc.data()['squadID'] ?? "",
+        icon: doc.data()['icon'] ?? "truck",
         );
   }
   else {
