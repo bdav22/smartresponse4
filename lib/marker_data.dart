@@ -40,6 +40,31 @@ class MarkerData {
 }
 
 
+String assetFromString(String name) {
+  print("marker_data.dart: assetFromString("+name+")");
+  List<String> preloadString =  [
+    "emstruck279.png", "EMS Vehicle", "ems",
+    //"hydrant279.png", "Hydrant", "hydrant",
+    "firehat279.png", "Helmet", "helmet",
+    "markerblue279.png", "Blue Marker", "mb",
+    "markerred279.png", "Red Marker", "mr",
+    "markergreen279.png", "Green Marker", "mg",
+    "markermaroon279.png", "Maroon Marker", "mm",
+    "hydrant279.png", "Hydrant", "hydrant",
+    "firetruck279.png", "Fire", "truck"
+    "car_icon.png","Star of Life","star",
+    "fire50.png","Fire", "fire",
+  ];
+  String chosen = "firetruck279.png";
+  for(int i = 2; i < preloadString.length; i = i + 3) {
+    if(name == preloadString[i]) {
+        chosen = preloadString[i-2];
+    }
+  }
+  print("marker_data.dart: assetFromString = " + chosen);
+  return chosen;
+}
+
 
 class CustomMarkers {
   CustomMarkers._privateConstructor();
@@ -71,7 +96,7 @@ class CustomMarkers {
         "markerred279.png", "Red Marker", "mr",
         "markergreen279.png", "Green Marker", "mg",
         "markermaroon279.png", "Maroon Marker", "mm",
-                                  ];
+      ];
       icons.addAll(preloadString);
 
       List <MyMarker> inlist = [];

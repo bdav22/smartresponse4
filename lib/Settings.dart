@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/constants.dart';
 import 'package:smartresponse4/database.dart';
+import 'package:smartresponse4/equipment.dart';
+import 'package:smartresponse4/equipment_chooser.dart';
 import 'package:smartresponse4/marker_chooser.dart';
 import 'package:smartresponse4/marker_data.dart';
 import 'package:smartresponse4/profile.dart';
@@ -25,6 +26,8 @@ class _SettingsState extends State<Settings> {
   void initState() {
     super.initState();
     selectedPlacingMarker = MyMarker(shortName: "truck");
+    _currentIcon = "unset";
+    _currentEquipment = "unset";
   }
 
   // form values
@@ -32,7 +35,11 @@ class _SettingsState extends State<Settings> {
   String _currentRank;
   String _currentDepartment;
   String _currentSquadID;
+  String _currentIcon;
+  String _currentEquipment;
   MyMarker selectedPlacingMarker;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +63,21 @@ class _SettingsState extends State<Settings> {
                print("Settings.dart: connection stream is waiting right now");
                return Text("()");
              }
-
               if(snapshot.hasData) {
                 print("Settings.dart: in database service user.uid is " + user.uid);
                 Profile userData = snapshot.data;
+
+                if(_currentIcon == "unset") {
+                  _currentIcon = userData.icon;
+                  print("Settings.dart - CurrentIcon is = " + _currentIcon);
+                }
+                else {
+                  print("Settings.dart - CurrentIcon is = " + _currentIcon);
+                }
+                if(_currentEquipment == "unset") {
+                  _currentEquipment = userData.equipment;
+                }
+                selectedPlacingMarker = MyMarker(shortName: userData.icon);
                 //snapshot.hasData ? snapshot.data : UserData(name: "", rank: "", department: "");
                 return Form(
                   key: _formKey,
@@ -109,7 +127,13 @@ class _SettingsState extends State<Settings> {
                       SizedBox(height: 10.0),
                       RaisedButton(
                         color: Colors.blue[400],
-                        child: Text( 'Choose a Marker', style: TextStyle(color: Colors.white)),
+                        child: Row(
+                          children: <Widget>[
+                            Text( 'Choose Your Marker ', style: TextStyle(color: Colors.white)),
+                            Text( '  Currently Using:', style: TextStyle(color: Colors.blue[100])),
+                            Image( image: AssetImage("assets/" + assetFromString(_currentIcon)), height: 40 ),
+                          ],
+                        ),
                         onPressed: () async {
                           await CustomMarkers.instance.getCustomMarkers();
                           selectedPlacingMarker = await Navigator.push(context,
@@ -117,12 +141,33 @@ class _SettingsState extends State<Settings> {
                                 ChooseMarker(markers: CustomMarkers.instance.myMarkerData, getMoreInfo: false)
                             ),
                           );
-                          selectedPlacingMarker.desc =  EmailStorage.instance.email;
+                          selectedPlacingMarker.desc =  EmailStorage.instance.email; //b/c every marker needs a unique descriptor
+                          setState(() { _currentIcon =  selectedPlacingMarker?.shortName;});
+                          print("Settings.dart - CurrentIcon is = " + _currentIcon);
                           print("Settings.dart - User selected the following marker: " +
                               (selectedPlacingMarker?.commonName ?? "None selected") + " -- " +
-                              (selectedPlacingMarker?.desc ?? "No Description")
+                              (selectedPlacingMarker?.desc ?? "No Description") //also largely for the debugs^
                           );
                         }
+                      ),
+                      SizedBox(height: 10.0),
+                      RaisedButton(
+                          color: Colors.blue[400],
+                          child:  Row(
+                              children: <Widget>[
+                                Text( 'Put Yourself on Equipment', style: TextStyle(color: Colors.white)),
+                                Text( '   Currently: ' + _currentEquipment, style: TextStyle(color: Colors.blue[100])),
+                                //Image( image: AssetImage("assets/" + assetFromString(_currentEquipmentIcon)), height: 40 ),
+                              ]),
+                          onPressed: () async {
+                            // userData is the profile already loaded
+                            Equipment eq = await Navigator.push(context,
+                              MaterialPageRoute(builder: (context) =>
+                                  ChooseEquipment(profile: userData),
+                            ));
+                            setState(() { _currentEquipment = eq.equipmentName; });
+                            print("Settings.dart: selected equipment: " + _currentEquipment);
+                          }
                       ),
                       SizedBox(height: 40.0),
                       RaisedButton(
@@ -140,7 +185,8 @@ class _SettingsState extends State<Settings> {
                                   email: EmailStorage.instance.email,
                                   uid: user.uid,
                                   responding: snapshot.data.responding,
-                                  icon: selectedPlacingMarker.shortName,
+                                  icon: _currentIcon ?? "truck",
+                                  equipment: _currentEquipment,
                               );
                               await DatabaseService(uid: user.uid).updateProfile(p);
                               EmailStorage.instance.userData = p;
