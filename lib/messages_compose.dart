@@ -15,7 +15,6 @@ class ComposePrivateMessage extends StatefulWidget {
   final String squadID;
   const ComposePrivateMessage(this.squadID, {Key key}) : super(key: key);
 
-
   @override
   _ComposePrivateMessageState createState() => _ComposePrivateMessageState();
 }
@@ -26,13 +25,13 @@ class _ComposePrivateMessageState extends State<ComposePrivateMessage> {
 
   TextEditingController messageController = TextEditingController();
 
-
-
-
   Future<void> sendMessageCallback() async {
-    if(_profile == null) {
+    if (_profile == null) {
       //error here
-      print("messages_compose.dart: ERROR in messages_compose _uid=" + (_profile?.uid ?? "uid null") + "  _name=" + (_profile?.name ?? "name null"));
+      print("messages_compose.dart: ERROR in messages_compose _uid=" +
+          (_profile?.uid ?? "uid null") +
+          "  _name=" +
+          (_profile?.name ?? "name null"));
       return;
     }
     DocumentReference pmsRef = await privateMessageGetOrCreate(EmailStorage.instance.uid, _profile.uid, _profile.name);
@@ -49,17 +48,19 @@ class _ComposePrivateMessageState extends State<ComposePrivateMessage> {
     }
     Navigator.pop(context);
 
-    Navigator.push(context,  MaterialPageRoute(builder: (context) =>
-        Scaffold(
-            appBar: AppBar(
-              title: Text('DMs with: ' + (_profile?.name ?? "unknown")),
-              backgroundColor: appColorMid,
-            ),
-            body: PrivateMessageList(pmsRef),)
-      //Text("List to be updated here with " + (doc['otheruser'] ?? "unknown"))),
-    ));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Scaffold(
+                  appBar: AppBar(
+                    title: Text('DMs with: ' + (_profile?.name ?? "unknown")),
+                    backgroundColor: appColorMid,
+                  ),
+                  body: PrivateMessageList(pmsRef),
+                )
+            //Text("List to be updated here with " + (doc['otheruser'] ?? "unknown"))),
+            ));
   }
-
 
   @override
   void initState() {
@@ -67,37 +68,34 @@ class _ComposePrivateMessageState extends State<ComposePrivateMessage> {
     _squadStream = context.read<Repository>().getSquadProfiles(widget.squadID);
   }
 
-
-
-
   @override
-  Widget build(BuildContext context) {    return Scaffold (
-    appBar: AppBar(
-      title: Text('Smart Response'),
-      backgroundColor: appColorMid,
-      elevation: 0.0,
-    ),
-    body: Container(
-      decoration: customBoxDecoration(),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Container(
-            child: StreamBuilder<List<Profile>>(
-                stream: _squadStream,
-                builder: (BuildContext builder, AsyncSnapshot<List<Profile>> snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  }
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return Text('Loading...');
-                    default:
-                      if(!snapshot.hasData) return Text("Loading..No data");
-                      return Row(
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Smart Response'),
+        backgroundColor: appColorMid,
+        elevation: 0.0,
+      ),
+      body: Container(
+        decoration: customBoxDecoration(),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Container(
+              child: StreamBuilder<List<Profile>>(
+                  stream: _squadStream,
+                  builder: (BuildContext builder, AsyncSnapshot<List<Profile>> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Text('Loading...');
+                      default:
+                        if (!snapshot.hasData) return Text("Loading..No data");
+                        return Row(
                           children: <Widget>[
-                            Card(child:
-                            Container(padding: EdgeInsets.all(15), child: Text("To: ")) ),
+                            Card(child: Container(padding: EdgeInsets.all(15), child: Text("To: "))),
                             Expanded(
                               child: Card(
                                 child: InputDecorator(
@@ -114,61 +112,71 @@ class _ComposePrivateMessageState extends State<ComposePrivateMessage> {
                                       contentPadding: EdgeInsets.all(10),
                                     ),
                                     isEmpty: _profile == null,
-                                    child:
-                                          DropdownButton<Profile>(
-                                          value: _profile,
-                                          isDense: true,
-                                          onChanged: (Profile newValue) {
-                                            setState(() {
-                                              _profile = newValue;
-                                              print("messages_compose.dart:" + ( _profile?.name ?? " null - " ) + " was selected");
-                                            });
-                                          },
-                                          items: snapshot.data.map((Profile p) {
-                                            return new DropdownMenuItem<Profile>(
+                                    child: Theme(
+                                      data: Theme.of(context).copyWith(
+                                        canvasColor: appColorMidLight,
+                                      ),
+                                      child: DropdownButton<Profile>(
+                                        isExpanded: true,
+                                        value: _profile,
+                                        isDense: false,
+                                        onChanged: (Profile newValue) {
+                                          setState(() {
+                                            _profile = newValue;
+                                            print("messages_compose.dart:" +
+                                                (_profile?.name ?? " null - ") +
+                                                " was selected");
+                                          });
+                                        },
+                                        items: snapshot.data.map((Profile p) {
+                                          return DropdownMenuItem<Profile>(
                                               value: p,
-                                              child: new Container( decoration: myBoxDecoration(), padding: EdgeInsets.fromLTRB(10,2,10,0),
-                                                                  child: Text(p.name))
-                                            );
-                                          }).toList(),
-                                        )
-                                ),
+                                              child: Container(
+                                                  decoration: dropDownBoxDecoration(),
+                                                  padding: EdgeInsets.fromLTRB(10, 7, 10, 7),
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Text(p.name , overflow: TextOverflow.ellipsis),
+                                                      Flexible(child: Text(" - " + p.rank, overflow: TextOverflow.ellipsis),),
+                                                    ],
+                                                  ),
+                                              ),
+                                              );
+                                        }).toList(),
+                                      ),
+                                    )),
                               ),
                             ),
                           ],
                         );
-
-                  }
-                }
+                    }
+                  }),
             ),
-          ),
-          Expanded(child: Text("-")),
-          Container(
-            decoration: BoxDecoration(color: Colors.white),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    onSubmitted: (value) => sendMessageCallback(),
-                    decoration: InputDecoration(
-                      hintText: "Enter a Message...",
-                      border: const OutlineInputBorder(),
+            Expanded(child: Text("-")),
+            Container(
+              decoration: BoxDecoration(color: Colors.white),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      onSubmitted: (value) => sendMessageCallback(),
+                      decoration: InputDecoration(
+                        hintText: "Enter a Message...",
+                        border: const OutlineInputBorder(),
+                      ),
+                      controller: messageController,
                     ),
-                    controller: messageController,
                   ),
-                ),
-                SendButton(
-                  text: "Send",
-                  callback: sendMessageCallback,
-                )
-              ],
+                  SendButton(
+                    text: "Send",
+                    callback: sendMessageCallback,
+                  )
+                ],
+              ),
             ),
-          ),
-
-
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 }

@@ -55,6 +55,7 @@ class _SceneHomeState extends State<SceneHome> {
               children: <Widget>[
                 UserAccountsDrawerHeader(
                   //decoration: customBoxDecoration(),
+                  decoration: BoxDecoration(color: appColorMid),
                   accountName:
                     Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ Text(p.profile.name), Text(p.profile.email + " ") ] ),
               //Text(EmailStorage.instance.userData.name),

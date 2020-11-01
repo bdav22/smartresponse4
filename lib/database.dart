@@ -11,9 +11,9 @@ class CommandPosition {
   final String name;
   final String position;
   final String uid;
+  final String sceneID;
   final String documentID;
-  final bool validUID;
-  CommandPosition(this.name, this.position, this.validUID, {this.uid, this.documentID});
+  CommandPosition(this.name, this.position, this.uid, this.sceneID, this.documentID);
 }
 
 class Responder {
@@ -81,8 +81,8 @@ class Repository {
     await _firestore.collection("scenes/" + sceneID + "/ICS").add({
       "name": cp.name,
       "position": cp.position,
-      "validuid": cp.validUID,
       "uid": cp.uid,
+      "sceneID": cp.sceneID,
     });
   }
 
@@ -93,12 +93,12 @@ class Repository {
 
 CommandPosition commandPositionFromSnapshot(DocumentSnapshot doc) {
   String name = doc.data()['name'];
+  String sceneID = doc.data()['sceneID'];
   String position = doc.data()['position'];
-  bool goodUID = doc.data()['validuid'];
   String uid = doc.data()['uid'];
   String documentID = doc.id;
 
-  return CommandPosition(name, position, goodUID, uid: uid, documentID: documentID);
+  return CommandPosition(name, position, uid, sceneID, documentID);
 }
 
 Scene sceneFromSnapshot(DocumentSnapshot doc) {
@@ -109,6 +109,7 @@ Scene sceneFromSnapshot(DocumentSnapshot doc) {
     desc: doc.data()['desc'] ?? ' ',
     units: doc.data()['units'] ?? 8,
     priority: doc.data()['priority'] ?? 3,
+    squad: doc.data()['squad'] ?? '',
     ref: doc.reference,
   );
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/database.dart';
 import 'package:smartresponse4/ics_setting.dart';
+import 'package:smartresponse4/profile.dart';
+import 'package:smartresponse4/profile_tile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:provider/provider.dart';
 
@@ -17,12 +19,13 @@ class ICS extends StatefulWidget {
 class _ICSState extends State<ICS> {
 
   Stream< List<CommandPosition> > _commandStream;
-
+  Stream<List<Profile>> _squadStream;
 
   @override
   void initState() {
     super.initState();
     _commandStream = context.read<Repository>().getCommandPositions(widget.scene.ref.id);
+    _squadStream = context.read<Repository>().getSquadProfiles(widget.scene.squad);
   }
 
   @override
@@ -56,7 +59,15 @@ class _ICSState extends State<ICS> {
                                     shadowColor: Colors.black, child:
                                           Container (
                                             padding: EdgeInsets.all(10),
-                                              child: Text((cp?.position ?? "--") + "  -  " + (cp?.name ?? "-"))),
+                                              child: InkWell(
+                                                  child: Text((cp?.position ?? "--") + "  -  " + (cp?.name ?? "-")),
+                                                  onTap: () async {
+                                                    Profile p = await getProfile(cp?.uid ?? "-");
+                                                    Navigator.push(context, MaterialPageRoute(
+                                                        builder: (context) => ProfileTile(profile: p)));
+                                                  }
+                                              ),
+                                          ),
                                   ),
                                 ),
                                       RawMaterialButton(

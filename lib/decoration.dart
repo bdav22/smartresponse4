@@ -80,6 +80,17 @@ BoxDecoration customBoxDecoration({bool inverted=false}) {
   );
 }
 
+BoxDecoration dropDownBoxDecoration() {
+  return BoxDecoration(
+    border: Border.all(
+        width: 2.0
+    ),
+    borderRadius: BorderRadius.all(
+        Radius.circular(10.0) //         <--- border radius here
+    ),
+    color: Colors.white,
+  );
+}
 
 BoxDecoration myBoxDecoration() {
   return BoxDecoration(

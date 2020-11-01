@@ -15,8 +15,9 @@ class Scene {
   final int units;
   final String desc;
   final DocumentReference ref;
+  final String squad;
   Placemark placemark;
-  Scene ({this.location, this.created, this.desc, this.ref, this.priority, this.units});
+  Scene ({this.location, this.created, this.desc, this.ref, this.priority, this.units, this.squad});
 
   Future<String> getAddress() async {
     String address = "-loading address-";

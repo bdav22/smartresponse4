@@ -15,6 +15,7 @@ class BackgroundLocationInterface{
   BackgroundLocationInterface();
 
   Future<void> initPlatformState() async {
+    print("MAP_LOCATION.DART: initPlatformState");
     return; // TODO FIX ON IOS
 
     print('map_location.dart: Initializing background locator ...');
