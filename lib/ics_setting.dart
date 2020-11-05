@@ -65,22 +65,22 @@ class _SettingsState extends State<ICSSettings> {
                                       Expanded(
                                         child: Card(
                                           child: InputDecorator(
-                                              decoration: const InputDecoration(
+                                              decoration: const InputDecoration.collapsed(
                                                 //labelText: 'Activity',
-                                                hintText: '   Select',
+                                                hintText: ' Select Person ',
                                                 hintStyle: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16.0,
                                                   fontFamily: "OpenSans",
                                                   fontWeight: FontWeight.normal,
                                                 ),
-                                                helperText: "Select Message Recipient",
-                                                contentPadding: EdgeInsets.all(10),
+//                                                helperText: "Select Person",
+                                                //contentPadding: EdgeInsets.all(10),
                                               ),
                                               isEmpty: _profile == null,
                                               child: Theme(
                                                 data: Theme.of(context).copyWith(
-                                                  canvasColor: appColorMidLight,
+                                                  canvasColor: appGradientBack,
                                                 ),
                                                 child: DropdownButton<Profile>(
                                                   isExpanded: true,

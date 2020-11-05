@@ -64,6 +64,11 @@ class Repository {
     });
   }
 
+  //TODO: use this to puplate a list of profiles when clicking on equipment
+  Stream<List<Profile>> getEquipmentProfiles(String squadID, String equipmentName) {
+
+  }
+
   Stream<List<Profile>> getSquadProfiles(String squadID) {
     return _firestore
         .collection('profiles')

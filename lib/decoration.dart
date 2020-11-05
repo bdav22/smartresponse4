@@ -19,6 +19,8 @@ Color superbright = Color.fromRGBO(255,255,255,1.0);
 
 //odds/evens in scene_home control some of the look and feel of that menu - use appropriately.
 
+Color appGradientBack = Color.fromRGBO(27, 95, 135, 1.0); //color for back of selects half between Light and MiddleDark
+
 //Color appColorLight = Colors.blue[600];  //gradient start
 Color appColorLight = Color.fromRGBO(6,123,194,1.0);
 //Color appColorMiddleDark = Colors.blue[900]; //gradient end

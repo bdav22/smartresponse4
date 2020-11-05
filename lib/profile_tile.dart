@@ -16,9 +16,10 @@ class ProfileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Building with profile: " + profile?.equipment ?? "--");
     return Scaffold(
         appBar: AppBar(
-          title: Text('Chat'),
+          title: Text('Profile'),
           backgroundColor: appColorMid,
     ),body: Container(
     decoration: customBoxDecoration(),
@@ -28,11 +29,7 @@ class ProfileTile extends StatelessWidget {
         margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
         child: Column(
           children: <Widget>[ListTile(
-          leading: CircleAvatar(
-            radius: 25.0,
-            backgroundColor: Colors.green,
-           //backgroundImage: AssetImage('assets/StarOfLife.jpg'),
-          ),
+//          leading: CircleAvatar(radius: 25.0, backgroundColor: Colors.green,),
           title:  Column(
             children: <Widget>[
                     Text(profile.name, overflow: TextOverflow.ellipsis,),
@@ -47,6 +44,7 @@ class ProfileTile extends StatelessWidget {
             Text(profile.department) 
           ] ),
         ),
+          profile?.equipment != "unset" && profile?.equipment != "" ? Text("On Equipment: " + profile.equipment) : Text("Not On Equipment"),
           Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget> [
