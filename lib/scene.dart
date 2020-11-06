@@ -33,6 +33,10 @@ class Scene {
     return address;
   }
 
+  //check if the lat/long shows up in the db
+  //if it does not, populate it
+  //if it does, then grab those details instead of populating from the getPlacemark
+
   Future<String> getLocality({int version=0}) async {
 //    return "1234567890abcefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz";
     if(placemark == null) {

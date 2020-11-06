@@ -132,7 +132,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                                                       future: sceneFromSnapshot(snapshot.data).getAddress(),
                                                       builder: (context, address) {
                                                         if (address.hasError) {
-                                                          return Text('Error: ${address.error}');
+                                                          return Text('-, MD'); //Error: ${address.error}');
                                                         }
                                                         if (address.connectionState == ConnectionState.waiting) {
                                                           return Text('Loading...Connection Waiting2');
