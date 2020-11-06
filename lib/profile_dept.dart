@@ -23,7 +23,7 @@ class DepartmentProfileList extends StatefulWidget {
 class _DepartmentProfileListState extends State<DepartmentProfileList> {
   Stream<List<Profile>> _squadStream;
   Stream<List<Equipment>> _eqStream;
-  List<bool> _selections = List.generate(3, (_) => true);
+  List<bool> _selections = List.generate(3, (_) => false);
 
   @override
   void initState() {
@@ -31,6 +31,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
   //  print("initState with " + widget.squadID);
     _squadStream = context.read<Repository>().getSquadProfiles(widget.squadID);
     _eqStream = context.read<Repository>().getEquipment(widget.squadID);
+    _selections[0] = true;
   }
 
 
@@ -60,7 +61,10 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
               isSelected: _selections,
               onPressed: (int index) {
                 setState(() {
-                  _selections[index] = ! _selections[index];
+                  _selections[index] = true;// = ! _selections[index];
+                  for(int i = 0; i < _selections.length - 1; i++) {
+                    _selections[ (index + i + 1) % _selections.length] = false;
+                  }
                 });
               }
             ),

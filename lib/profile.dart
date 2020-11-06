@@ -41,7 +41,7 @@ Profile fromSnapshot(DocumentSnapshot doc) {
         location: doc.data()['location'] ?? GeoPoint(0.0, 0.0),
         responding:  doc.data()['responding'] ?? "",
         squadID: doc.data()['squadID'] ?? "",
-        icon: doc.data()['icon'] ?? "truck",
+        icon: doc.data()['icon'] ?? "helmet",
         equipment: doc.data()['equipment'] ?? "unset",
         );
   }
