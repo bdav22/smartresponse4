@@ -52,6 +52,7 @@ class EmailStorage {
 
 
   void updateData() async {
+    print("user.dart: Updating data of EmailStorage using a get from the db");
     final data = await FirebaseFirestore.instance.collection('profiles').doc(uid).get();
     if(data.data != null) {
       userData = fromSnapshot(data);

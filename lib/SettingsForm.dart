@@ -61,7 +61,7 @@ class _SettingsFormState extends State<SettingsForm> {
                   child: Row(
                     children: <Widget>[
                       Text('Choose Your Marker ', style: TextStyle(color: Colors.white)),
-                      Text('  Currently Using:', style: TextStyle(color: Colors.blue[100])),
+                      Text('  Using:', style: TextStyle(color: Colors.blue[100])),
                       Image(image: AssetImage("assets/" + assetFromString(_currentIcon)), height: 40),
                     ],
                   ),
@@ -89,8 +89,8 @@ class _SettingsFormState extends State<SettingsForm> {
                   color: Colors.blue[400],
                   child: Row(
                       children: <Widget>[
-                        Text('Put Yourself on Equipment', style: TextStyle(color: Colors.white)),
-                        Text('   Currently: ' + _currentEquipment, style: TextStyle(color: Colors.blue[100])),
+                        Text('Change Equipment', style: TextStyle(color: Colors.white)),
+                        Flexible(child: Text( ' On: ' + _currentEquipment, style: TextStyle(color: Colors.blue[100]), overflow: TextOverflow.ellipsis,)),
                         //Image( image: AssetImage("assets/" + assetFromString(_currentEquipmentIcon)), height: 40 ),
                       ]),
                   onPressed: () async {

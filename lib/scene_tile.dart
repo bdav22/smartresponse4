@@ -1,4 +1,5 @@
 
+import 'package:background_locator/background_locator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
@@ -38,6 +39,13 @@ class _SceneTileState extends State<SceneTile> {
         "responding": widget.scene.ref.id
       });
       print("scene_tile.dart: Responding to this scene at: " + address);
+      /*TODO: cancel service to start the new one?
+      if(await BackgroundLocator.isServiceRunning()) {
+        print("scene_tile.dart: + " + (await BackgroundLocator.isServiceRunning()).toString());
+        await BackgroundLocator.unRegisterLocationUpdate(); //this is an on stop
+      }
+       */
+      print("okay about to start the service then ************************************************");
       BackgroundLocationInterface().onStart(widget.scene.ref.id);
       EmailStorage.instance.updateData();
     } else {
