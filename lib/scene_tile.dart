@@ -39,12 +39,7 @@ class _SceneTileState extends State<SceneTile> {
         "responding": widget.scene.ref.id
       });
       print("scene_tile.dart: Responding to this scene at: " + address);
-      /*TODO: cancel service to start the new one?
-      if(await BackgroundLocator.isServiceRunning()) {
-        print("scene_tile.dart: + " + (await BackgroundLocator.isServiceRunning()).toString());
-        await BackgroundLocator.unRegisterLocationUpdate(); //this is an on stop
-      }
-       */
+      /*disposing old bglocator not needed - while it looks like we're using the scene, we aren't. it's all good */
       print("okay about to start the service then ************************************************");
       BackgroundLocationInterface().onStart(widget.scene.ref.id);
       EmailStorage.instance.updateData();
