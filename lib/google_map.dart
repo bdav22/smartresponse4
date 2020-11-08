@@ -304,22 +304,25 @@ class _MyMapPageState extends State<MyMapPage> {
               builder: (BuildContext context, AsyncSnapshot<MarkerData> customMarkersData) {
                 if(customMarkersData.hasData) {
                  return StreamProvider<List<Marker>>.value(
-                  value: DatabaseService().markers(customMarkersData.data),   //get all the assets loaded up
+                   /******* CUSTOM MARKERS BY USERS *************************************************** **********/
+                  value: DatabaseService().markers(context, customMarkersData.data),   //GET CUSTOM MARKERs
                   updateShouldNotify: (_, __) => true,
                   child: StreamProvider<List<Scene>>.value(
                     value: DatabaseService().scenes,  //get all the scenes for markers
                     updateShouldNotify: (_, __) => true,
                     child: StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance.collection("profiles").snapshots(), //get all the people with the app for the moment
+                        stream: FirebaseFirestore.instance.collection("profiles").where("squadID", isEqualTo: EmailStorage.instance.userData.squadID).snapshots(), //get all the people with the app for the moment
                         builder: (context, snapshot) {
                           final scenes = Provider.of<List<Scene>>(context) ?? [];
                           final markersDB = Provider.of<List<Marker>>(context) ?? [];
                           if (snapshot.hasData) {
 
+
+                            /********************************** MARKERS FOR PROFILES *******************************/
                             List<DocumentSnapshot> docs = snapshot.data.docs;
-                            //IF YOU WANT TO REMOVE PERSONS OWN instance you can use this, but I don't recmomend
+                            //IF YOU WANT TO REMOVE PERSONS OWN instance you can use this, but I don't recommend atm
                             //docs.removeWhere( (DocumentSnapshot doc) => doc['email'] == EmailStorage.instance.email);
-                            List<Marker> markers = docs.map(
+                            List<Marker> markers = docs.map( //these docs are the list of profiles - we're turning into markers
                                     (doc) {
 
                                       return Marker(
@@ -327,7 +330,7 @@ class _MyMapPageState extends State<MyMapPage> {
                                         position: LatLng(doc.data()['location']?.latitude ?? 0.0,
                                             doc.data()['location']?.longitude ?? 0.0),
                                         rotation: doc.data()['heading'] != null ? doc.data()['heading'] * 1.0 : 0.0,
-                                        icon:  getIconFromString(customMarkersData.data, doc?.data()['icon']),
+                                        icon:  getIconFromString(customMarkersData.data, doc?.data()['icon'] ?? "helmet"),
                                         infoWindow: InfoWindow(
                                           title: doc.data()['name'], snippet: doc.data()['department'],
                                           onTap: () {
@@ -344,6 +347,7 @@ class _MyMapPageState extends State<MyMapPage> {
                                     }
                             ).toList();
 
+                            /********************************** MARKERS FOR SCENES *******************************************************/
                             List<Marker> sceneMarkers = [];
                             for ( Scene scene in scenes ){
                               sceneMarkers.add(Marker(
@@ -360,6 +364,7 @@ class _MyMapPageState extends State<MyMapPage> {
                               );
                             }
 
+                            /********************************** MARKERS FOR HYDRANTS *******************************************************/
                             if(_hydrantsOn == true ) {
                               markers.addAll(_hydrantMarkers);
                             }
@@ -423,7 +428,7 @@ class _MyMapPageState extends State<MyMapPage> {
               SizedBox(width: 20),
                */
               FloatingActionButton(
-                  child: Icon(Icons.pin_drop),
+                  child:  Image.asset("assets/markergreen279.png"),//Icon(Icons.pin_drop),
                   heroTag: null,
                   backgroundColor: (_placeMarkerOn ? Colors.blue :  Colors.brown),
                   onPressed: () async {
@@ -445,7 +450,7 @@ class _MyMapPageState extends State<MyMapPage> {
                   }),
               SizedBox(width: 20),
               FloatingActionButton(
-                  child: Icon(Icons.account_balance),
+                  child: Image.asset("assets/hydrant279.png"), //Icon(Icons.account_balance),
                   heroTag: null,
                   backgroundColor: (_hydrantsOn ? Colors.blue :  Colors.brown),
                   onPressed: () async {

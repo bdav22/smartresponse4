@@ -19,13 +19,13 @@ class ICS extends StatefulWidget {
 class _ICSState extends State<ICS> {
 
   Stream< List<CommandPosition> > _commandStream;
-  Stream<List<Profile>> _squadStream;
+  //Stream<List<Profile>> _squadStream;
 
   @override
   void initState() {
     super.initState();
     _commandStream = context.read<Repository>().getCommandPositions(widget.scene.ref.id);
-    _squadStream = context.read<Repository>().getSquadProfiles(widget.scene.squad);
+    //_squadStream = context.read<Repository>().getSquadProfiles(widget.scene.squad);
   }
 
   @override

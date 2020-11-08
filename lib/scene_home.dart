@@ -45,7 +45,7 @@ class _SceneHomeState extends State<SceneHome> {
     final p = ProfileInfo.of(context);
 
     return StreamProvider<List<Scene>>.value(
-      value: DatabaseService().scenes,
+      value: DatabaseService().scenes, //getSquadScenes(p.profile.squadID),
       child: Scaffold(
         drawer: Drawer(
           child: Container(
@@ -181,6 +181,9 @@ class _SceneHomeState extends State<SceneHome> {
             decoration: customBoxDecoration(),
             child: Column(
               children: <Widget>[
+
+                /******************************************* ACTIVE SCENE **************************************/
+
                 Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: appColorMidBright3,
                     child: Center(child:Text("Active Scene", textScaleFactor: 2.0,)))),
                 StreamBuilder<DocumentSnapshot>(
@@ -208,6 +211,8 @@ class _SceneHomeState extends State<SceneHome> {
                     }
                   }
                 ),
+
+                /********************************* ALL SCENES BEGINS *********************************************/
                 Card( child: Container( width: double.infinity, padding: EdgeInsets.all(5), color: appColorMidBright3,
                     child: Center(child:Text("All Scenes", textScaleFactor: 2.0,)))),
                 Expanded(child: SceneList()),

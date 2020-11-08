@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartresponse4/equipment.dart';
 import 'package:smartresponse4/marker_data.dart';
+import 'package:smartresponse4/marker_info.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/scene.dart';
 
@@ -64,9 +65,9 @@ class Repository {
     });
   }
 
-  //TODO: use this to puplate a list of profiles when clicking on equipment
   Stream<List<Profile>> getEquipmentProfiles(String squadID, String equipmentName) {
-
+    return _firestore.collection('profiles').where("equipment", isEqualTo: equipmentName).snapshots().map(
+        _profileListFromSnapshot);
   }
 
   Stream<List<Profile>> getSquadProfiles(String squadID) {
@@ -120,8 +121,9 @@ Scene sceneFromSnapshot(DocumentSnapshot doc) {
 }
 
 BitmapDescriptor getIconFromString(MarkerData myMarkers, String name) {
+  print("db.dart: getIconFromString called with name = " + (name ?? "was null"));
   BitmapDescriptor myIcon = myMarkers.fire.iconBitmap;
-  String documentString = name ?? "fire";
+  String documentString = name ?? "helmet";
   if (myMarkers.myMarkerMap.containsKey(documentString)) {
     myIcon = myMarkers.myMarkerMap[documentString].iconBitmap;
   } else {
@@ -136,6 +138,14 @@ BitmapDescriptor getIconFromString(MarkerData myMarkers, String name) {
   }
   return myIcon;
 }
+
+// profile list from snapshot
+List<Profile> _profileListFromSnapshot(QuerySnapshot snapshot) {
+  return snapshot.docs.map((doc) {
+    return fromSnapshot(doc);
+  }).toList();
+}
+
 
 class DatabaseService {
   MarkerData myMarkers;
@@ -179,7 +189,6 @@ class DatabaseService {
         'name': p.name,
         'rank': p.rank,
         'department': p.department,
-        'responding': p.responding,
         'squadID': p.squadID,
         'icon': p?.icon ?? "truck",
         'equipment': p?.equipment ?? "unset",
@@ -198,34 +207,15 @@ class DatabaseService {
     });
   }
 
-  // profile list from snapshot
-  List<Profile> _profileListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      return fromSnapshot(doc);
-    }).toList();
-  }
+
 
   List<Marker> _markersFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       LatLng pos = LatLng(doc?.data()['loc']?.latitude ?? 0.0, doc?.data()['loc']?.longitude ?? 0.0);
       BitmapDescriptor myIcon = getIconFromString(myMarkers, doc?.data()['icon']);
-      /*
-      BitmapDescriptor myIcon = myMarkers.fire.iconBitmap;
-      String documentString = doc?.data()['icon'] ?? "fire";
-      if(myMarkers.myMarkerMap.containsKey(documentString)) {
-        myIcon = myMarkers.myMarkerMap[documentString].iconBitmap;
-      } else {
-        switch (doc?.data()['icon'] ?? "fire") {
-          case 'truck':
-            myIcon = myMarkers.truck.iconBitmap;
-            break;
-          case 'star':
-            myIcon = myMarkers.star.iconBitmap;
-            break;
-        }
-      }
-      */
-      return Marker(
+      String title = doc?.data()['desc'] ?? "Description Empty";
+      String snippet = "placed By: " + (doc?.data()['placedby'] ?? "Unknown");
+      Marker m = Marker(
           markerId: MarkerId(doc.id),
           position: pos,
           rotation: 0, //newLocalData.heading,
@@ -234,9 +224,11 @@ class DatabaseService {
           anchor: Offset(0.5, 0.5),
           icon: myIcon,
           infoWindow: InfoWindow(
-            title: doc?.data()['desc'] ?? "Description Empty",
-            snippet: "placed By: " + (doc?.data()['placedby'] ?? "Unknown"),
-          ));
+            title: title,
+            snippet: snippet,
+          )
+      );
+      return m;
     }).toList();
   }
 
@@ -246,9 +238,35 @@ class DatabaseService {
     }).toList();
   }
 
-  Stream<List<Marker>> markers(MarkerData myMarkers) {
+  Stream<List<Marker>> markers(BuildContext context, MarkerData myMarkers) {
     this.myMarkers = myMarkers;
-    return markerCollection.snapshots().map(_markersFromSnapshot);
+    return markerCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        LatLng pos = LatLng(doc?.data()['loc']?.latitude ?? 0.0, doc?.data()['loc']?.longitude ?? 0.0);
+        BitmapDescriptor myIcon = getIconFromString(myMarkers, doc?.data()['icon']);
+        String title = doc?.data()['desc'] ?? "Description Empty";
+        String snippet = "placed By: " + (doc?.data()['placedby'] ?? "Unknown");
+        Marker m = Marker(
+            markerId: MarkerId(doc.id),
+            position: pos,
+            rotation: 0, //newLocalData.heading,
+            draggable: false,
+            zIndex: 2,
+            anchor: Offset(0.5, 0.5),
+            icon: myIcon,
+            infoWindow: InfoWindow(
+                title: title,
+                snippet: snippet,
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => MarkerInfo(doc.reference, title, snippet, doc?.data()['icon'] ?? "mg")
+                  ));
+                }
+            )
+        );
+        return m;
+      }).toList();
+    });
   }
 
   //get profiles stream
@@ -256,8 +274,13 @@ class DatabaseService {
     return profileCollection.snapshots().map(_profileListFromSnapshot);
   }
 
+  Stream<List<Scene>> getSquadScenes(String squadID) {
+    return sceneCollection.where("squad", isEqualTo: squadID).orderBy('created', descending: true).snapshots().map(_sceneListFromSnapshot);
+  }
+
+  //explicitly link demos to zebra ... see scene_home
   Stream<List<Scene>> get scenes {
-    return sceneCollection.orderBy('created', descending: true).snapshots().map(_sceneListFromSnapshot);
+    return sceneCollection.where("squad", isEqualTo: "zebra").orderBy('created', descending: true).snapshots().map(_sceneListFromSnapshot);
   }
 
   Stream<Profile> get profile {

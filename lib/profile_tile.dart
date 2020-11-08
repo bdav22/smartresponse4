@@ -28,7 +28,9 @@ class ProfileTile extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.fromLTRB(20.0, 6, 20, 0.0),
         child: Column(
-          children: <Widget>[ListTile(
+          children: <Widget>[
+
+            ListTile(
 //          leading: CircleAvatar(radius: 25.0, backgroundColor: Colors.green,),
           title:  Column(
             children: <Widget>[
@@ -39,9 +41,9 @@ class ProfileTile extends StatelessWidget {
                     Text( "Responding", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
             ],
           ),
-          subtitle: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[ 
+          subtitle: Row (mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
             Flexible(child: Text(' ${profile.rank} ', overflow: TextOverflow.ellipsis)),
-            Text(profile.department) 
+            Text(profile.department)
           ] ),
         ),
           profile?.equipment != "unset" && profile?.equipment != "" ? Text("On Equipment: " + profile.equipment) : Text("Not On Equipment"),

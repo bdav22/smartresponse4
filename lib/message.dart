@@ -59,7 +59,6 @@ class Message extends StatelessWidget {
                                 ]
                             ),
                             Container (
-                              //TODO: decide if we want these next two lines in or not
                               //color: Colors.red,
                               //width: double.infinity, //CHANGE THIS TO SEE WHICH WE LIKE BETTER
 

@@ -85,7 +85,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                           return ListView(
                               children: snapshot.data.map((Profile responder) {
                                 print("profile_dept.dart: I am a squadmate of squad: " + responder.squadID + " - " + responder.name);
-                                print("profile_dept.dart: I'm displayed as eq=" + responder.icon);
+                                print("profile_dept.dart: I'm displayed as icon=" + responder.icon);
                                 if( !((_selections[0] && responder.icon =="helmet") ||
                                     (_selections[1] && responder.icon =="truck") ||
                                     (_selections[2] && responder.icon =="ems"))
@@ -184,12 +184,12 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
 
             Container (
                 width: double.infinity,
-                color: Colors.blue[500],
+                color: Colors.blue[200],
                 alignment: Alignment.center,
-                child: Text("TEMPORARY EQ LIST")
+                child: Text(" EQ LIST")
             ),
             Container (
-              height: 200,
+              height: _selections[0] ? 100 : 400,
               width: double.infinity,
               decoration: customBoxDecoration(),
               child: StreamBuilder<List<Equipment>> (
@@ -213,13 +213,11 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                               shadowColor: Colors.black,
                               child: ListTile(
                                 title: Text(eq.equipmentName),
-                                  onTap: () async {
+                                  onTap: ()  {
                                     print("profile_dept.dart: Tap to string is " + eq.equipmentName.toString());
-                                    //get the list of profiles that are on this equipment
-                                    //display them in this other page.
-                                    List<Profile> riders = null;
+                                    //get the list of profiles that are on this equipment on the next page
                                     Navigator.push(
-                                        context, MaterialPageRoute(builder: (context) => EquipmentRiders(riders, eq)));
+                                        context, MaterialPageRoute(builder: (context) => EquipmentRiders(widget.squadID, eq)));
                                   }
                               ),
                             );
