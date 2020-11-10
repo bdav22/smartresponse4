@@ -67,6 +67,7 @@ void onStart(String sceneID) async {
 
   void _startLocator(String sceneID) {
     Map<String, dynamic> data = {'countInit': 1, 'uid': EmailStorage.instance.uid, 'sceneID': sceneID, 'name': EmailStorage.instance.userData.name};
+    print("map_location.dart: _startLocator");
     BackgroundLocator.registerLocationUpdate(
       LocationCallbackHandler.callback,
       initCallback: LocationCallbackHandler.initCallback,

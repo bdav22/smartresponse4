@@ -40,11 +40,13 @@ class _SceneTileState extends State<SceneTile> {
       });
       print("scene_tile.dart: Responding to this scene at: " + address);
       /*disposing old bglocator not needed - while it looks like we're using the scene, we aren't. it's all good */
-      print("okay about to start the service then ************************************************");
-      BackgroundLocationInterface().onStart(widget.scene.ref.id);
+      print("scene_tile.dart: okay about to start the service then ************************************************");
+      //TODO: FIX FOR IOS
+      // BackgroundLocationInterface().onStart(widget.scene.ref.id);
       EmailStorage.instance.updateData();
     } else {
-      BackgroundLocationInterface().onStop();
+      //TODO: fix for ios
+     //BackgroundLocationInterface().onStop();
       await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
         "responding": "unbusy"
       });
