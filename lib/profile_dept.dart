@@ -68,7 +68,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                 });
               }
             ),
-            Expanded(
+            _selections[0] == true ? Expanded(
               child:   Container(
                 width: double.infinity,
                 decoration: customBoxDecoration(),
@@ -86,13 +86,14 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                               children: snapshot.data.map((Profile responder) {
                                 print("profile_dept.dart: I am a squadmate of squad: " + responder.squadID + " - " + responder.name);
                                 print("profile_dept.dart: I'm displayed as icon=" + responder.icon);
-                                if( !((_selections[0] && responder.icon =="helmet") ||
+                               /* if( !((_selections[0] && responder.icon =="helmet") ||
                                     (_selections[1] && responder.icon =="truck") ||
                                     (_selections[2] && responder.icon =="ems"))
                                 ) {
                                   print("profile_dept.dart: returning null");
                                   return SizedBox();
                                 }
+                                */
                                 return Card(
                                   shape: cardShape(),
                                   elevation: 15,
@@ -180,15 +181,15 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                     }
                 ),
               ),
-            ),
-
+            ) : SizedBox(),
+            _selections[0] == false ?
             Container (
                 width: double.infinity,
                 color: Colors.blue[200],
                 alignment: Alignment.center,
                 child: Text(" EQ LIST")
-            ),
-            Container (
+            ) : SizedBox(),
+            _selections[0] == false ? Expanded(child: Container (
               height: _selections[0] ? 100 : 400,
               width: double.infinity,
               decoration: customBoxDecoration(),
@@ -229,7 +230,7 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                     }
                   }
               ),
-            ),
+            )) : SizedBox(),
           ],
         );
       }
