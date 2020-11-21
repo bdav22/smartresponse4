@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:background_locator/background_locator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -42,11 +44,15 @@ class _SceneTileState extends State<SceneTile> {
       /*disposing old bglocator not needed - while it looks like we're using the scene, we aren't. it's all good */
       print("scene_tile.dart: okay about to start the service then ************************************************");
       //TODO: FIX FOR IOS
-      // BackgroundLocationInterface().onStart(widget.scene.ref.id);
+      if(Platform.isAndroid) {
+        BackgroundLocationInterface().onStart(widget.scene.ref.id);
+      }
       EmailStorage.instance.updateData();
     } else {
       //TODO: fix for ios
-     //BackgroundLocationInterface().onStop();
+      if(Platform.isAndroid) {
+        BackgroundLocationInterface().onStop();
+      }
       await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
         "responding": "unbusy"
       });

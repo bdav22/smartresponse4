@@ -54,32 +54,36 @@ class LocationServiceRepository {
     }
     print("location_service_repository.dart: $_count, $_uid, $_sceneid");
     //await setLogLabel("start");
-    final SendPort send = IsolateNameServer.lookupPortByName(isolateName);
-    send?.send(null);
+    //final SendPort send = IsolateNameServer.lookupPortByName(isolateName);
+    //send?.send(null);
   }
 
   Future<void> dispose() async {
     print("location_service_repository.dart: ***********Dispose callback handler");
     print("location_service_repository.dart: $_count");
     //await setLogLabel("end");
-    final SendPort send = IsolateNameServer.lookupPortByName(isolateName);
-    send?.send(null);
+    //final SendPort send = IsolateNameServer.lookupPortByName(isolateName);
+    //send?.send(null);
   }
 
   Future<void> callback(LocationDto locationDto) async {
     print('location_service_repository.dart: $_count location in dart: ${locationDto.toString()}');
     // await setLogPosition(_count, locationDto); //push into the log file
-    final SendPort send = IsolateNameServer.lookupPortByName(isolateName);
+    //final SendPort send = IsolateNameServer.lookupPortByName(isolateName);
 
-    GeoPoint geoPoint = GeoPoint(locationDto.latitude, locationDto.longitude);
-    print("location_service_repository.dart: pushing to firestore: " + _uid + " with scene id: " + _sceneid + " and name: " + _name);
-    await Firebase.initializeApp();
-    print("firebase app initialized");
-    await FirebaseFirestore.instance.collection("profiles").doc(_uid).update({'location': geoPoint, 'heading': locationDto.heading.toInt()});
+
+    if(_count%10 == 0) {
+      GeoPoint geoPoint = GeoPoint(locationDto.latitude, locationDto.longitude);
+      print("location_service_repository.dart: pushing to firestore: " + _uid + " with scene id: " + _sceneid + " and name: " + _name);
+      await Firebase.initializeApp();
+      print("firebase app initialized");
+      await FirebaseFirestore.instance.collection("profiles").doc(_uid).update(
+          {'location': geoPoint, 'heading': locationDto.heading.toInt()});
+    }
     //---- scenes get this info from the profile instead - only one push needed so no need to do this old: push to the scene instead
     //await Firestore.instance.collection("scenes/" + _sceneid + "/responders").document(_uid).setData({'location': geoPoint, 'uid': _uid, 'name': _name},merge: false);
 
-    send?.send(locationDto);
+    //send?.send(locationDto);
     _count++;
   }
 

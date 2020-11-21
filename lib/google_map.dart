@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smartresponse4/decoration.dart';
 import 'package:smartresponse4/google_route.dart';
 import 'package:smartresponse4/hydrant.dart';
@@ -18,6 +19,7 @@ import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/profile_tile.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
+import 'package:smartresponse4/utility.dart';
 
 
 class MyMapPage extends StatefulWidget {
@@ -43,6 +45,13 @@ class _MyMapPageState extends State<MyMapPage> {
   bool _placeMarkerOn = false;
   bool _hydrantsOn = false;
   bool _hydrantsFirst = true;
+  bool _markersOn = true; // display the markers on the map or not?
+  Marker _starterMarker;
+  Marker _enderMarker;
+
+  bool _startDistance = false;
+  LatLng _lastTouch = LatLng(0.0, 0.0);
+
   MyMarker selectedPlacingMarker;
   List<Marker> individualMarkers = [];
   List<Marker> _hydrantMarkers = [];
@@ -125,6 +134,12 @@ class _MyMapPageState extends State<MyMapPage> {
               tilt: 0,
               zoom: 14.00)));
     }
+  }
+
+  void toggleMarkers() async {
+    setState( () {
+      _markersOn = !_markersOn;
+    });
   }
 
   void toggleHydrants() async {
@@ -368,10 +383,17 @@ class _MyMapPageState extends State<MyMapPage> {
                             if(_hydrantsOn == true ) {
                               markers.addAll(_hydrantMarkers);
                             }
-
-                            markers.addAll(markersDB);
-                            markers.addAll(sceneMarkers);
-                            markers.addAll(individualMarkers);
+                            if(_markersOn == true) {
+                              markers.addAll(markersDB);
+                              markers.addAll(sceneMarkers);
+                              markers.addAll(individualMarkers);
+                            }
+                            if(_starterMarker != null) {
+                              markers.add(_starterMarker);
+                            }
+                            if(_enderMarker != null) {
+                              markers.add(_enderMarker);
+                            }
 
 
                             return Container(
@@ -380,10 +402,66 @@ class _MyMapPageState extends State<MyMapPage> {
                                 initialCameraPosition: initialLocation,
                                 markers: markers?.toSet() ?? Set.of([_marker]),
                                 circles: Set.of((_circle != null) ? [_circle] : []),
-                                onTap: (latlng) {
+                                onTap: (latlng) async {
                                   if (_placeMarkerOn) {
                                     addMarker(latlng);
                                     print('google_map.dart - marker placed at ${latlng.latitude}, ${latlng.longitude}');
+                                  }
+                                  else {
+                                    if(!_startDistance) {
+                                      Fluttertoast.showToast(
+                                          msg: "Touch another location to find the distance",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Colors.blue,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0
+                                      );
+                                      setState(() {
+                                        _enderMarker = null;
+                                        _starterMarker = Marker(
+                                          markerId: MarkerId("touchedMarkerLocation-starter"),
+                                          position: latlng,
+                                          icon: CustomMarkers.instance.myMarkerData.inlist[5].iconBitmap,
+                                        );
+                                        _lastTouch = latlng;
+                                      });
+                                    }
+                                    else {
+                                      Fluttertoast.cancel();
+                                      double distance = await distanceBetween(_lastTouch, latlng);
+                                      distance = distance*3.28084; //meters to feet
+                                      int fractional = ((distance - distance.toInt())*12 + 0.5).toInt();
+                                      String distanceString = "";
+                                      if(distance.toInt() != 0) {
+                                        distanceString = distanceString + distance.toInt().toString() + " ft ";
+                                      }
+                                      if(fractional != 0 && distance.toInt() < 100) {
+                                        distanceString = distanceString + fractional.toString() + " in";
+                                      }
+                                      if(distance.toInt() == 0 && fractional == 0) {
+                                        distanceString = distanceString + " - same spot - 0 ft 0 in";
+                                      }
+
+                                      Fluttertoast.showToast(
+                                          msg: "Distance: " + distanceString,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Colors.blue,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0
+                                      );
+                                    }
+                                    setState(() {
+                                      _enderMarker = Marker(
+                                        markerId: MarkerId("touchedMarkerLocation-ender"),
+                                        position: latlng,
+                                        icon: CustomMarkers.instance.myMarkerData.inlist[5].iconBitmap,
+                                      );
+                                      _startDistance = !_startDistance;
+                                    });
                                   }
                                 },
                                 onMapCreated: _onMapCreated,
@@ -455,6 +533,15 @@ class _MyMapPageState extends State<MyMapPage> {
                   backgroundColor: (_hydrantsOn ? Colors.blue :  Colors.brown),
                   onPressed: () async {
                     toggleHydrants();
+                    //toggleBGLocation();
+                  }),
+              SizedBox(width: 20),
+              FloatingActionButton(
+                  child: Icon(Icons.not_interested),
+                  heroTag: null,
+                  backgroundColor: (_markersOn ? Colors.blue :  Colors.brown),
+                  onPressed: () async {
+                    toggleMarkers();
                     //toggleBGLocation();
                   }),
         ]),

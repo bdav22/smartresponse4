@@ -28,6 +28,7 @@ dependencies:
   flutter_launcher_icons: ^0.8.0 #MIT license
   flutter_local_notifications: ^1.4.4 # BSD https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/LICENSE
   flutter_spinkit: ^4.1.2+1 #MIT
+  fluttertoast: ^7.1.2 #MIT https://pub.dev/packages/fluttertoast
   geolocator: ^5.3.2+2 #mit license
   google_maps_flutter: ^0.5.30 # bsd  https://github.com/flutter/plugins/blob/master/packages/google_maps_flutter/google_maps_flutter/LICENSE
   location: ^2.3.5 #MIT

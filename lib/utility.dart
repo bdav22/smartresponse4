@@ -21,6 +21,7 @@ Future<double> distanceBetweenInMinutes (dynamic a, dynamic b) async {
    return meters/1100 + 2;
 }
 
+//distance between in meters
 Future<double> distanceBetween (dynamic a, dynamic b) {
     return Geolocator().distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude);
 }

@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:background_locator/background_locator.dart';
 import 'package:background_locator/settings/android_settings.dart';
 import 'package:background_locator/settings/ios_settings.dart';
@@ -17,10 +19,13 @@ class BackgroundLocationInterface{
 
   Future<void> initPlatformState() async {
     print("MAP_LOCATION.DART: initPlatformState");
-    return; // TODO FIX ON IOS
+
+    //return; // TODO FIX ON IOS
 
     print('map_location.dart: Initializing background locator ...');
-    await BackgroundLocator.initialize();
+    if(Platform.isAndroid) {
+      await BackgroundLocator.initialize();
+    }
     print('map_location.dart: Initialization done');
   }
 
