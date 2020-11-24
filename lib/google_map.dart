@@ -201,7 +201,64 @@ class _MyMapPageState extends State<MyMapPage> {
     setState(() {
       _cameraTrackerOn = !_cameraTrackerOn;
     });
+  }
 
+  void distanceMarkerTouch(LatLng latlng) async {
+    if (!_startDistance) {
+      Fluttertoast.showToast(
+          msg: "Touch another location to find the distance",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.blue,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+      setState(() {
+        _enderMarker = null;
+        _starterMarker = Marker(
+          markerId: MarkerId("touchedMarkerLocation-starter"),
+          position: latlng,
+          icon: CustomMarkers.instance.myMarkerData.inlist[5].iconBitmap,
+        );
+        _lastTouch = latlng;
+      });
+    }
+    else {
+      Fluttertoast.cancel();
+      double distance = await distanceBetween(_lastTouch, latlng);
+      distance = distance * 3.28084; //meters to feet
+      int fractional = ((distance - distance.toInt()) * 12 + 0.5).toInt();
+      String distanceString = "";
+      if (distance.toInt() != 0) {
+        distanceString = distanceString + distance.toInt().toString() + " ft ";
+      }
+      if (fractional != 0 && distance.toInt() < 100) {
+        distanceString = distanceString + fractional.toString() + " in";
+      }
+      if (distance.toInt() == 0 && fractional == 0) {
+        distanceString = distanceString + " - same spot - 0 ft 0 in";
+      }
+
+      Fluttertoast.showToast(
+          msg: "Distance: " + distanceString,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.blue,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
+
+    setState(() {
+      _enderMarker = Marker(
+        markerId: MarkerId("touchedMarkerLocation-ender"),
+        position: latlng,
+        icon: CustomMarkers.instance.myMarkerData.inlist[5].iconBitmap,
+      );
+      _startDistance = !_startDistance;
+    });
   }
 
   void addMarker(LatLng latlng) { //removed async here...no longer needed? - may need to add it back to add to fire base
@@ -388,11 +445,13 @@ class _MyMapPageState extends State<MyMapPage> {
                               markers.addAll(sceneMarkers);
                               markers.addAll(individualMarkers);
                             }
-                            if(_starterMarker != null) {
-                              markers.add(_starterMarker);
-                            }
-                            if(_enderMarker != null) {
-                              markers.add(_enderMarker);
+                            else {
+                              if (_starterMarker != null) {
+                                markers.add(_starterMarker);
+                              }
+                              if (_enderMarker != null) {
+                                markers.add(_enderMarker);
+                              }
                             }
 
 
@@ -408,60 +467,9 @@ class _MyMapPageState extends State<MyMapPage> {
                                     print('google_map.dart - marker placed at ${latlng.latitude}, ${latlng.longitude}');
                                   }
                                   else {
-                                    if(!_startDistance) {
-                                      Fluttertoast.showToast(
-                                          msg: "Touch another location to find the distance",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.blue,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0
-                                      );
-                                      setState(() {
-                                        _enderMarker = null;
-                                        _starterMarker = Marker(
-                                          markerId: MarkerId("touchedMarkerLocation-starter"),
-                                          position: latlng,
-                                          icon: CustomMarkers.instance.myMarkerData.inlist[5].iconBitmap,
-                                        );
-                                        _lastTouch = latlng;
-                                      });
+                                    if(!_markersOn) {
+                                     distanceMarkerTouch(latlng);
                                     }
-                                    else {
-                                      Fluttertoast.cancel();
-                                      double distance = await distanceBetween(_lastTouch, latlng);
-                                      distance = distance*3.28084; //meters to feet
-                                      int fractional = ((distance - distance.toInt())*12 + 0.5).toInt();
-                                      String distanceString = "";
-                                      if(distance.toInt() != 0) {
-                                        distanceString = distanceString + distance.toInt().toString() + " ft ";
-                                      }
-                                      if(fractional != 0 && distance.toInt() < 100) {
-                                        distanceString = distanceString + fractional.toString() + " in";
-                                      }
-                                      if(distance.toInt() == 0 && fractional == 0) {
-                                        distanceString = distanceString + " - same spot - 0 ft 0 in";
-                                      }
-
-                                      Fluttertoast.showToast(
-                                          msg: "Distance: " + distanceString,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.blue,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0
-                                      );
-                                    }
-                                    setState(() {
-                                      _enderMarker = Marker(
-                                        markerId: MarkerId("touchedMarkerLocation-ender"),
-                                        position: latlng,
-                                        icon: CustomMarkers.instance.myMarkerData.inlist[5].iconBitmap,
-                                      );
-                                      _startDistance = !_startDistance;
-                                    });
                                   }
                                 },
                                 onMapCreated: _onMapCreated,
@@ -537,9 +545,9 @@ class _MyMapPageState extends State<MyMapPage> {
                   }),
               SizedBox(width: 20),
               FloatingActionButton(
-                  child: Icon(Icons.not_interested),
+                  child: Icon(Icons.linear_scale),
                   heroTag: null,
-                  backgroundColor: (_markersOn ? Colors.blue :  Colors.brown),
+                  backgroundColor: (!_markersOn ? Colors.blue :  Colors.brown),
                   onPressed: () async {
                     toggleMarkers();
                     //toggleBGLocation();
