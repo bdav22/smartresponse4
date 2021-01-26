@@ -380,7 +380,8 @@ class _MyMapPageState extends State<MyMapPage> {
                   value: DatabaseService().markers(context, customMarkersData.data),   //GET CUSTOM MARKERs
                   updateShouldNotify: (_, __) => true,
                   child: StreamProvider<List<Scene>>.value(
-                    value: DatabaseService().scenes,  //get all the scenes for markers
+                    //value: DatabaseService().scenes,  //get all the scenes for markers
+                    value: DatabaseService().getSquadScenes(EmailStorage.instance.userData.squadID),
                     updateShouldNotify: (_, __) => true,
                     child: StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance.collection("profiles").where("squadID", isEqualTo: EmailStorage.instance.userData.squadID).snapshots(), //get all the people with the app for the moment
@@ -399,8 +400,8 @@ class _MyMapPageState extends State<MyMapPage> {
 
                                       return Marker(
                                         markerId: MarkerId(doc.id),
-                                        position: LatLng(doc.data()['location']?.latitude ?? 0.0,
-                                            doc.data()['location']?.longitude ?? 0.0),
+                                        position: LatLng(doc.data()['location']?.latitude ?? -76.0, //default marker location
+                                            doc.data()['location']?.longitude ?? 39.0),
                                         rotation: doc.data()['heading'] != null ? doc.data()['heading'] * 1.0 : 0.0,
                                         icon:  getIconFromString(customMarkersData.data, doc?.data()['icon'] ?? "helmet"),
                                         infoWindow: InfoWindow(

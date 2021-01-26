@@ -114,7 +114,7 @@ Scene sceneFromSnapshot(DocumentSnapshot doc) {
     created: doc.data()['created'] ?? '',
     desc: doc.data()['desc'] ?? ' ',
     units: doc.data()['units'] ?? 8,
-    priority: doc.data()['priority'] ?? 3,
+    priority: (doc.data()['priority'])?.toString() ?? "3",
     squad: doc.data()['squad'] ?? '',
     ref: doc.reference,
   );

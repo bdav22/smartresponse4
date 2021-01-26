@@ -23,6 +23,7 @@ class SceneHome extends StatefulWidget {
 
 
 class _SceneHomeState extends State<SceneHome> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final Color evens = Colors.white;//[100];
   final Color odds = Colors.white; //e[100]; //Colors.blue[300];
   final AuthService _auth = AuthService();
@@ -45,8 +46,10 @@ class _SceneHomeState extends State<SceneHome> {
     final p = ProfileInfo.of(context);
 
     return StreamProvider<List<Scene>>.value(
-      value: DatabaseService().scenes, //getSquadScenes(p.profile.squadID),
+      //value: DatabaseService().scenes, //getSquadScenes(p.profile.squadID),
+      value: DatabaseService().getSquadScenes(p.profile.squadID),
       child: Scaffold(
+        key: _scaffoldKey,
         drawer: Drawer(
           child: Container(
             decoration: customBoxDecoration(),

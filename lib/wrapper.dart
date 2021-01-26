@@ -17,7 +17,7 @@ class ProfileInfo extends InheritedWidget {
       context.dependOnInheritedWidgetOfExactType<ProfileInfo>();
 
   bool updateShouldNotify(ProfileInfo old) =>
-      old.profile.uid != profile.uid;
+      old.profile.uid != profile.uid || old.profile.squadID != profile.squadID;
 }
 
 Future<ProfileInfo> getProfileInfo(String inUid, Widget child) async  {

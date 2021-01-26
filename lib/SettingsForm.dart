@@ -155,7 +155,7 @@ class _SettingsFormState extends State<SettingsForm> {
                       );
                       await DatabaseService(uid: widget.userData.uid).updateProfile(p);
                       EmailStorage.instance.userData = p;
-                      Navigator.pop(context);
+                      //Navigator.pop(context);
                     }
                   }
               ),

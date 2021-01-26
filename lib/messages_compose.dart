@@ -38,6 +38,7 @@ class _ComposePrivateMessageState extends State<ComposePrivateMessage> {
     if (messageController.text.length > 0) {
       auth.User user = auth.FirebaseAuth.instance.currentUser;
       //print("log this: "+  messageController.text + " " + user_email);
+      print("log this: " + EmailStorage.instance.uid + " " + _profile.uid);
       await pmsRef.collection('messages').add({
         'text': messageController.text,
         'from': EmailStorage.instance.userData.name,

@@ -67,7 +67,7 @@ class ProfileTile extends StatelessWidget {
                   getMyButton("Show on Map",
                       () {
                       print("profile_tile.dart: My profile name is: " + profile.name);
-                      print("profile_tile.dart: My latitude is    : " + profile.location.latitude.toString());
+                      print("profile_tile.dart: My latitude is    : " + (profile?.location?.latitude?.toString() ?? "not exist"));
                       Navigator.of(context).pushNamed('/MyMapPage', arguments: Scene(location: profile.location));
                     },
                   ),

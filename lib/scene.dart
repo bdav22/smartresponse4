@@ -11,7 +11,7 @@ import 'package:smartresponse4/user.dart';
 class Scene {
   final GeoPoint location;
   final Timestamp created;
-  final int priority;
+  final String priority;
   final int units;
   final String desc;
   final DocumentReference ref;
