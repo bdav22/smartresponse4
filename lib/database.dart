@@ -275,7 +275,8 @@ class DatabaseService {
   }
 
   Stream<List<Scene>> getSquadScenes(String squadID) {
-    return sceneCollection.where("squad", isEqualTo: squadID).orderBy('created', descending: true).snapshots().map(_sceneListFromSnapshot);
+    final beginningdate = Timestamp.fromMicrosecondsSinceEpoch(DateTime.now().microsecondsSinceEpoch-7200000000);
+    return sceneCollection.where("squad", isEqualTo: squadID).where("created", isGreaterThan: beginningdate).orderBy('created', descending: true).snapshots().map(_sceneListFromSnapshot);
   }
 
   //explicitly link demos to zebra ... see scene_home
