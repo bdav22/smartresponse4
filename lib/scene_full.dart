@@ -28,7 +28,8 @@ class _FullSceneTileState extends State<FullSceneTile> {
     displayRespond = EmailStorage.instance.userData.responding != widget.scene.ref.id;
 
     actualWidgetRespond =         getMyButton("Respond", () async {
-        String address = await widget.scene.getAddress();
+        //String address = await widget.scene.getAddress();
+        String address = widget.scene.address;
         await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
           "responding": widget.scene.ref.id
         });
@@ -108,8 +109,10 @@ class _FullSceneTileState extends State<FullSceneTile> {
                             style: TextStyle(color: appColorMidLight)
                           ),
                         ),
+                        Flexible(child: Text(widget.scene.address, overflow: TextOverflow.ellipsis)),
+                        /*
                         FutureBuilder<String>(
-                            future: widget.scene.getLocality(),
+                            future: widget.scene.address, //getLocality(),
                             builder: (context, snapshot) {
                               if(snapshot.hasError) { return Text('Error: ${snapshot.error}');    }
                               if(snapshot.connectionState == ConnectionState.waiting) { return Text('Loading...Connection Waiting'); }
@@ -119,10 +122,12 @@ class _FullSceneTileState extends State<FullSceneTile> {
                                 return Text("location data is loading");
                               }
                             })
+                         */
                       ]),
                   subtitle: Text('Lat: ${widget.scene.location.latitude.toString()}, Long:${widget.scene.location.longitude.toString()} '),
                 ),
-                FutureBuilder<String>( future: widget.scene.getLocality( version: 1), builder: (context, snapshot) { if(snapshot.hasData) { return(Flexible(child: Text(snapshot.data))); } else { return Text("full loc"); }}),
+                //FutureBuilder<String>( future: widget.scene.getLocality( version: 1), builder: (context, snapshot) { if(snapshot.hasData) { return(Flexible(child: Text(snapshot.data))); } else { return Text("full loc"); }}),
+                Flexible(child: Text(widget.scene.address)),
                 Padding( padding: EdgeInsets.all(18.0), child: Text(widget.scene?.desc ?? "---")),
                 Flexible( child: SizedBox(height: 550) ),
                 Row(
@@ -140,7 +145,7 @@ class _FullSceneTileState extends State<FullSceneTile> {
                       p.profile.responding != widget.scene.ref.id ? respondButton : SizedBox(),
                       getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: widget.scene);}),
                       getMyButton( 'Drive',  () async {
-                        String address = await widget.scene.getAddress();
+                        String address = widget.scene.address; //await getAddress();
                         MapsLauncher.launchQuery(address);
                       }),
 

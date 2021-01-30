@@ -117,6 +117,7 @@ Scene sceneFromSnapshot(DocumentSnapshot doc) {
     priority: (doc.data()['priority'])?.toString() ?? "3",
     squad: doc.data()['squad'] ?? '',
     ref: doc.reference,
+    address: doc.data()['address'] ?? '-/\\-',
   );
 }
 

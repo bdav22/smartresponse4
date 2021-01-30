@@ -16,9 +16,12 @@ class Scene {
   final String desc;
   final DocumentReference ref;
   final String squad;
-  Placemark placemark;
-  Scene ({this.location, this.created, this.desc, this.ref, this.priority, this.units, this.squad});
+  final String address;
+  //Placemark placemark;
+  Scene ({this.location, this.created, this.desc, this.ref, this.priority, this.units, this.squad, this.address});
 
+
+  /*
   Future<String> getAddress() async {
     String address = "-loading address-";
     if(placemark == null) {
@@ -65,6 +68,7 @@ class Scene {
         return placemark.locality + shortName;
     }
   }
+   */
 }
 
 

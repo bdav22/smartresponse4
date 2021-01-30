@@ -129,8 +129,11 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                                                   return Text('Loading...Connection Waiting');
                                                 }
                                                 if (snapshot.hasData) {
-                                                  return FutureBuilder<String>(
-                                                      future: sceneFromSnapshot(snapshot.data).getAddress(),
+                                                  return Text(snapshot.data["address"]);
+                                                  /*
+                                                  return FutureBuilder<String>(ƒ
+//                                                      future: sceneFromSnapshot(snapshot.data).getAddress(),
+                                                      future: snapshot.data["address"],
                                                       builder: (context, address) {
                                                         if (address.hasError) {
                                                           return Text('-, MD'); //Error: ${address.error}');
@@ -147,6 +150,8 @@ class _DepartmentProfileListState extends State<DepartmentProfileList> {
                                                       }
 
                                                   );
+
+                                                   */
                                                 }
                                                 else {
                                                   return Text("b");

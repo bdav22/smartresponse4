@@ -65,6 +65,8 @@ class _SceneTileState extends State<SceneTile> {
                   style: TextStyle(color: appColorMidLight)
               ),
             ),
+            Flexible(child:Text(scene.address)),
+            /*
             FutureBuilder<String>(
               future: scene.getLocality(),
               builder: (context, snapshot) {
@@ -80,6 +82,8 @@ class _SceneTileState extends State<SceneTile> {
                 }
               }
             )
+
+             */
           ]),
           subtitle: Column(
             children: <Widget>[
@@ -113,7 +117,7 @@ class _SceneTileState extends State<SceneTile> {
                 getMyButton( 'More',  () {Navigator.pushNamed(context, '/FullSceneTile', arguments: scene);}),
                 getMyButton( 'Map',  () {Navigator.pushNamed(context, '/MyMapPage', arguments: scene);}),
                 getMyButton( 'Drive',  () async {
-                  String address = await scene.getAddress();
+                  String address = scene.address; //await scene.getAddress();
                   MapsLauncher.launchQuery(address);
                 }),
 
@@ -129,7 +133,7 @@ class _SceneTileState extends State<SceneTile> {
                     //EmailStorage.instance.updateData();
                     //if(EmailStorage.instance.userData?.responding != widget.scene.ref.documentID) {
                     if(respond == "Respond") {
-                      String address = await scene.getAddress();
+                      String address = scene.address; // await scene.getAddress();
                       await FirebaseFirestore.instance.collection("profiles").doc(EmailStorage.instance.uid).update({
                         "responding": scene.ref.id
                       });
