@@ -209,7 +209,7 @@ class DatabaseService {
   }
 
 
-
+/*
   List<Marker> _markersFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       LatLng pos = LatLng(doc?.data()['loc']?.latitude ?? 0.0, doc?.data()['loc']?.longitude ?? 0.0);
@@ -232,6 +232,8 @@ class DatabaseService {
       return m;
     }).toList();
   }
+
+ */
 
   List<Scene> _sceneListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {

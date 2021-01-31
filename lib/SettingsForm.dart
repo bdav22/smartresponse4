@@ -5,6 +5,7 @@ import 'package:smartresponse4/equipment.dart';
 import 'package:smartresponse4/equipment_chooser.dart';
 import 'package:smartresponse4/marker_chooser.dart';
 import 'package:smartresponse4/marker_data.dart';
+import 'package:smartresponse4/notifications.dart';
 import 'package:smartresponse4/profile.dart';
 import 'package:smartresponse4/push_notifications.dart';
 import 'package:smartresponse4/user.dart';
@@ -141,7 +142,7 @@ class _SettingsFormState extends State<SettingsForm> {
                 child: Text('Modify Notifications', style: TextStyle(color: Colors.white)
                 ),
                   onPressed: () async {
-
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationsSelection(widget.userData.squadID)));
                   }
               ),
               RaisedButton(
