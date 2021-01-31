@@ -6,6 +6,7 @@ import 'package:smartresponse4/equipment_chooser.dart';
 import 'package:smartresponse4/marker_chooser.dart';
 import 'package:smartresponse4/marker_data.dart';
 import 'package:smartresponse4/profile.dart';
+import 'package:smartresponse4/push_notifications.dart';
 import 'package:smartresponse4/user.dart';
 
 
@@ -136,12 +137,23 @@ class _SettingsFormState extends State<SettingsForm> {
 
               SizedBox(height: 40.0),
               RaisedButton(
+                color: Colors.blue[400],
+                child: Text('Modify Notifications', style: TextStyle(color: Colors.white)
+                ),
+                  onPressed: () async {
+
+                  }
+              ),
+              RaisedButton(
                   color: Colors.blue[400],
                   child: Text(
                     'Update',
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () async {
+                    PushNotificationsManager pnm = new PushNotificationsManager();
+                    String _pnmtoken = await pnm.getToken();
+                    print("profile has token:"+_pnmtoken);
                     if (_formKey.currentState.validate()) {
                       Profile p = Profile(
                         name: _currentName ?? widget.userData.name,
@@ -152,6 +164,7 @@ class _SettingsFormState extends State<SettingsForm> {
                         uid: widget.userData.uid ?? widget.userData.uid,
                         icon: _currentIcon ?? "helmet",
                         equipment: _currentEquipment ?? "unset",
+                        token: _pnmtoken ?? "unset"
                       );
                       await DatabaseService(uid: widget.userData.uid).updateProfile(p);
                       EmailStorage.instance.userData = p;

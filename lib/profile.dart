@@ -12,8 +12,9 @@ class Profile {
   final String squadID;
   final String icon;
   final String equipment;
+  final String token;
 
-  Profile({ this.name, this.rank, this.department, this.email, this.uid, this.location, this.responding, this.squadID, this.icon, this.equipment });
+  Profile({ this.name, this.rank, this.department, this.email, this.uid, this.location, this.responding, this.squadID, this.icon, this.equipment, this.token});
 }
 
 Profile defaultProfile() {
@@ -28,6 +29,7 @@ Profile defaultProfile() {
     squadID: "No",
     icon: "truck",
     equipment: "unset",
+    token: "unset"
   );
 }
 
@@ -43,6 +45,7 @@ Profile fromSnapshot(DocumentSnapshot doc) {
         squadID: doc.data()['squadID'] ?? "",
         icon: doc.data()['icon'] ?? "helmet",
         equipment: doc.data()['equipment'] ?? "unset",
+        token: doc.data()['token'] ?? "unset"
         );
   }
   else {

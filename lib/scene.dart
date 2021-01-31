@@ -5,8 +5,8 @@
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:smartresponse4/user.dart';
+//import 'package:geolocator/geolocator.dart';
+//import 'package:smartresponse4/user.dart';
 
 class Scene {
   final GeoPoint location;

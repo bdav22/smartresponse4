@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:isolate';
 import 'dart:math';
-import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:background_locator/location_dto.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'file_manager.dart';
+//import 'dart:isolate';
+//import 'dart:ui';
 
 class LocationServiceRepository {
   static LocationServiceRepository _instance = LocationServiceRepository._();

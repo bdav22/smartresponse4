@@ -1,7 +1,5 @@
 
 import 'dart:io';
-
-import 'package:background_locator/background_locator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
@@ -10,7 +8,7 @@ import 'package:smartresponse4/map_location.dart';
 import 'package:smartresponse4/scene.dart';
 import 'package:smartresponse4/user.dart';
 import 'package:smartresponse4/wrapper.dart';
-
+//import 'package:background_locator/background_locator.dart';
 
 class SceneTile extends StatefulWidget {
 
