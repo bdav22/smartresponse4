@@ -127,7 +127,9 @@ class _FullSceneTileState extends State<FullSceneTile> {
                   subtitle: Text('Lat: ${widget.scene.location.latitude.toString()}, Long:${widget.scene.location.longitude.toString()} '),
                 ),
                 //FutureBuilder<String>( future: widget.scene.getLocality( version: 1), builder: (context, snapshot) { if(snapshot.hasData) { return(Flexible(child: Text(snapshot.data))); } else { return Text("full loc"); }}),
-                Flexible(child: Text(widget.scene.address)),
+                Flexible(child: Text(widget?.scene?.address ?? "No Address")),
+                Flexible(child: Text(widget?.scene?.priority ?? "No Priority")),
+                Flexible(child: Text(widget?.scene?.units ?? "No Units")),
                 Padding( padding: EdgeInsets.all(18.0), child: Text(widget.scene?.desc ?? "---")),
                 Flexible( child: SizedBox(height: 550) ),
                 Row(

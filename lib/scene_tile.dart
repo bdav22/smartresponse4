@@ -121,8 +121,8 @@ class _SceneTileState extends State<SceneTile> {
             children: <Widget>[
               Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text( 'Priority: ${widget.scene?.priority ?? 2} '),
-                    Text( 'Units: ${widget.scene?.units ?? 8} '),
+                    Text( 'Priority: ${widget.scene?.priority ?? "2"} '),
+                    Flexible(child: Text( 'Units: ${widget.scene?.units ?? "--"} ', overflow: TextOverflow.ellipsis)),
                     ]
               ),
               Row (mainAxisAlignment: MainAxisAlignment.spaceBetween,

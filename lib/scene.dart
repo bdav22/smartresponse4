@@ -12,7 +12,7 @@ class Scene {
   final GeoPoint location;
   final Timestamp created;
   final String priority;
-  final int units;
+  final String units;
   final String desc;
   final DocumentReference ref;
   final String squad;
