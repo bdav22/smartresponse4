@@ -57,6 +57,14 @@ class Repository {
     return null;
   }
 
+  Stream<List<String>> getNotifications(String uid) {
+    return _firestore.collection('profiles/'+uid+"/notifications").snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return doc.id;
+      }).toList();
+    });
+  }
+
   Stream<List<Responder>> getResponders(String sceneIDIn) {
     return _firestore.collection('profiles').where("responding", isEqualTo: sceneIDIn).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {

@@ -35,9 +35,9 @@ class ChooseEquipment extends StatelessWidget {
                     return Card(child:
                     ListTile(
                       leading: Image( image: AssetImage("assets/" + assetFromString(eqs[index].iconName)), height: 40 ),
-                      title: Text(eqs[index].equipmentName),
+                      title: Text(eqs[index]?.equipmentName ?? "-"),
                       onTap: () async {
-                        print("equipment_chooser.dart: Choose name=  " + eqs[index].equipmentName);
+                        print("equipment_chooser.dart: Choose name=  " + (eqs[index]?.equipmentName ?? "-"));
                         Navigator.pop(context, eqs[index]);
                       },
                     )

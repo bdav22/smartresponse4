@@ -142,7 +142,7 @@ class _SettingsFormState extends State<SettingsForm> {
                 child: Text('Modify Notifications', style: TextStyle(color: Colors.white)
                 ),
                   onPressed: () async {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationsSelection(widget.userData.squadID)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationsSelection(widget.userData.squadID, widget.userData.uid)));
                   }
               ),
               RaisedButton(
